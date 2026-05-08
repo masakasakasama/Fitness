@@ -197,7 +197,7 @@
     background: var(--bg-2);
     border-top: 1px solid var(--border);
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     padding-bottom: var(--safe-bottom);
     z-index: 20;
   }
@@ -497,14 +497,52 @@
     <hr class="sep">
 
     <div class="card">
-      <strong style="font-size:14px;">データ管理</strong>
-      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">記録はこの端末のブラウザに保存されています。バックアップとしてエクスポートできます。</p>
+      <strong style="font-size:14px;">種目をデフォルトに戻す</strong>
+      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">チョコザップの標準機材リストを再追加します（既存の種目はそのまま、不足分のみ追加）。</p>
+      <button class="secondary small" id="restoreDefaultsBtn" style="width:100%;">デフォルト種目を復元</button>
+    </div>
+  </section>
+
+  <!-- =========== 設定タブ =========== -->
+  <section id="tab-settings">
+    <div class="card">
+      <strong style="font-size:14px;">☁️ GitHub自動保存</strong>
+      <p style="color:var(--muted); font-size:12px; margin:6px 0 10px; line-height:1.6;">
+        Personal Access Token を設定すると、記録が自動で <code style="color:var(--accent); font-size:11px;">masakasakasama/Fitness</code> リポジトリに保存され、別の端末からも同じデータを使えるようになります。
+      </p>
+      <details style="margin-bottom:12px;">
+        <summary style="cursor:pointer; color:var(--accent); font-size:13px;">トークンの作り方</summary>
+        <ol style="font-size:12px; color:var(--muted); padding-left:18px; margin:8px 0; line-height:1.7;">
+          <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--accent);">Fine-grained PAT 作成画面</a> を開く</li>
+          <li>Repository access → Only select repositories → <strong>Fitness</strong> を選択</li>
+          <li>Repository permissions → Contents → <strong>Read and write</strong></li>
+          <li>Generate token して <code>github_pat_…</code> をコピー、下に貼り付け</li>
+        </ol>
+        <p style="font-size:11px; color:var(--muted); margin:0;">⚠️ トークンはこの端末のブラウザにのみ保存されます。リポジトリが Public のままだと記録は誰でも閲覧可能です。非公開にしたい場合は GitHub の Settings → General → Change visibility → Private に変更してください。</p>
+      </details>
+      <input type="password" id="ghToken" placeholder="github_pat_... を貼り付け" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <div class="btn-grid" style="margin-top:8px;">
+        <button class="small" id="saveTokenBtn">保存して同期</button>
+        <button class="ghost small" id="clearTokenBtn">トークン削除</button>
+      </div>
+      <div id="syncStatus" style="font-size:12px; color:var(--muted); margin-top:10px; line-height:1.5;"></div>
+      <button class="secondary small" id="syncNowBtn" style="width:100%; margin-top:8px; display:none;">🔄 今すぐ同期</button>
+    </div>
+
+    <div class="card">
+      <strong style="font-size:14px;">手動バックアップ</strong>
+      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">JSONファイルとして書き出し／読み込みできます。</p>
       <div class="btn-grid">
         <button class="secondary small" id="exportBtn">📤 エクスポート</button>
         <button class="secondary small" id="importBtn">📥 インポート</button>
       </div>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
-      <button class="danger small" id="resetBtn" style="width:100%; margin-top:10px;">全データを削除</button>
+    </div>
+
+    <div class="card">
+      <strong style="font-size:14px; color:var(--danger);">データの削除</strong>
+      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">この端末の記録を全て削除します。GitHub自動保存が有効な場合、リモートも空になります。</p>
+      <button class="danger small" id="resetBtn" style="width:100%;">全データを削除</button>
     </div>
   </section>
 </main>
@@ -513,6 +551,7 @@
   <button data-tab="record" class="active"><span class="ic">📝</span><span>記録</span></button>
   <button data-tab="history"><span class="ic">📊</span><span>履歴</span></button>
   <button data-tab="exercises"><span class="ic">🏋️</span><span>種目</span></button>
+  <button data-tab="settings"><span class="ic">⚙️</span><span>設定</span></button>
 </nav>
 
 <div class="modal-bg" id="exPickerModal">
@@ -530,30 +569,31 @@
 'use strict';
 
 const STORAGE_KEY = 'gym-tracker-v1';
+const TOKEN_KEY = 'gym-tracker-gh-token';
+const REPO_OWNER = 'masakasakasama';
+const REPO_NAME = 'Fitness';
+const REPO_BRANCH = 'claude/gym-tracking-app-SVUkz';
+const DATA_PATH = 'data.json';
+
+// チョコザップ標準機材（東上野店ほか共通の基本マシン）
 const DEFAULT_EXERCISES = [
-  { name: 'ベンチプレス', group: '胸' },
-  { name: 'インクラインダンベルプレス', group: '胸' },
-  { name: 'ダンベルフライ', group: '胸' },
-  { name: 'チェストプレス（マシン）', group: '胸' },
-  { name: 'デッドリフト', group: '背中' },
+  { name: 'チェストプレス', group: '胸' },
+  { name: 'ペクトラルフライ', group: '胸' },
+  { name: 'ショルダープレス', group: '肩' },
   { name: 'ラットプルダウン', group: '背中' },
   { name: 'シーテッドロー', group: '背中' },
-  { name: '懸垂', group: '背中' },
-  { name: 'ショルダープレス', group: '肩' },
-  { name: 'サイドレイズ', group: '肩' },
-  { name: 'リアレイズ', group: '肩' },
-  { name: 'バーベルカール', group: '腕' },
-  { name: 'ダンベルカール', group: '腕' },
-  { name: 'トライセプスエクステンション', group: '腕' },
-  { name: 'ケーブルプレスダウン', group: '腕' },
-  { name: 'スクワット', group: '脚' },
+  { name: 'バックエクステンション', group: '背中' },
+  { name: 'アブドミナル', group: '体幹' },
+  { name: 'ロータリートーソ', group: '体幹' },
   { name: 'レッグプレス', group: '脚' },
   { name: 'レッグエクステンション', group: '脚' },
   { name: 'レッグカール', group: '脚' },
-  { name: 'カーフレイズ', group: '脚' },
-  { name: 'プランク', group: '体幹' },
-  { name: 'アブローラー', group: '体幹' },
-  { name: 'ランニング', group: '有酸素' },
+  { name: 'ヒップアブダクション', group: '脚' },
+  { name: 'ヒップアダクション', group: '脚' },
+  { name: 'バイセップスカール', group: '腕' },
+  { name: 'トライセップスエクステンション', group: '腕' },
+  { name: 'ランニングマシン', group: '有酸素' },
+  { name: 'エアロバイク', group: '有酸素' },
 ];
 
 // ========== State ==========
@@ -569,16 +609,19 @@ function loadState() {
     const parsed = JSON.parse(raw);
     if (!parsed.exercises) parsed.exercises = DEFAULT_EXERCISES.slice();
     if (!parsed.sessions) parsed.sessions = [];
+    if (!parsed.updatedAt) parsed.updatedAt = 0;
     return parsed;
   } catch (e) {
     return initialState();
   }
 }
 function initialState() {
-  return { exercises: DEFAULT_EXERCISES.slice(), sessions: [] };
+  return { exercises: DEFAULT_EXERCISES.slice(), sessions: [], updatedAt: 0 };
 }
 function saveState() {
+  state.updatedAt = Date.now();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  scheduleSync();
 }
 
 // ========== Utilities ==========
@@ -1106,6 +1149,224 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   toast('削除しました');
 });
 
+// ========== Restore default exercises ==========
+document.getElementById('restoreDefaultsBtn').addEventListener('click', () => {
+  const existing = new Set(state.exercises.map(e => e.name));
+  let added = 0;
+  DEFAULT_EXERCISES.forEach(ex => {
+    if (!existing.has(ex.name)) {
+      state.exercises.push({ ...ex });
+      added++;
+    }
+  });
+  saveState();
+  refreshExerciseSelect();
+  renderExerciseList();
+  toast(added ? `${added}種目を追加しました` : '全てのデフォルト種目が既に存在します');
+});
+
+// ========== GitHub sync ==========
+let syncTimer = null;
+let remoteSha = null;
+let syncing = false;
+
+function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+function setToken(t) {
+  if (t) localStorage.setItem(TOKEN_KEY, t);
+  else localStorage.removeItem(TOKEN_KEY);
+}
+
+function b64encode(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+function b64decode(str) {
+  return decodeURIComponent(escape(atob(str.replace(/\s/g, ''))));
+}
+
+async function ghFetchRemote() {
+  const token = getToken();
+  if (!token) return null;
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}?ref=${encodeURIComponent(REPO_BRANCH)}`;
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+    },
+    cache: 'no-store',
+  });
+  if (res.status === 404) {
+    remoteSha = null;
+    return null;
+  }
+  if (res.status === 401) throw new Error('トークンが無効です');
+  if (res.status === 403) throw new Error('権限不足（Contents: Read and write が必要）');
+  if (!res.ok) throw new Error(`取得失敗 (HTTP ${res.status})`);
+  const json = await res.json();
+  remoteSha = json.sha;
+  try {
+    return JSON.parse(b64decode(json.content));
+  } catch (e) {
+    throw new Error('リモートデータが壊れています');
+  }
+}
+
+async function ghPushRemote() {
+  const token = getToken();
+  if (!token) return false;
+  const body = {
+    message: `Update gym data ${new Date().toISOString()}`,
+    content: b64encode(JSON.stringify(state, null, 2)),
+    branch: REPO_BRANCH,
+  };
+  if (remoteSha) body.sha = remoteSha;
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}`;
+  let res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (res.status === 409 || res.status === 422) {
+    // SHA conflict — refetch and retry once
+    await ghFetchRemote();
+    if (remoteSha) body.sha = remoteSha; else delete body.sha;
+    res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+  }
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error(`保存失敗 (HTTP ${res.status}) ${txt.slice(0, 100)}`);
+  }
+  const json = await res.json();
+  remoteSha = json.content?.sha || remoteSha;
+  localStorage.setItem('gym-tracker-last-sync', String(Date.now()));
+  return true;
+}
+
+function scheduleSync() {
+  if (!getToken()) return;
+  clearTimeout(syncTimer);
+  updateSyncStatus('保存待ち...');
+  syncTimer = setTimeout(async () => {
+    if (syncing) return;
+    syncing = true;
+    try {
+      await ghPushRemote();
+      updateSyncStatus();
+    } catch (e) {
+      updateSyncStatus(`❌ ${e.message}`);
+    } finally {
+      syncing = false;
+    }
+  }, 2500);
+}
+
+function updateSyncStatus(override) {
+  const el = document.getElementById('syncStatus');
+  const btn = document.getElementById('syncNowBtn');
+  if (!el) return;
+  const hasToken = !!getToken();
+  btn.style.display = hasToken ? 'block' : 'none';
+  if (override) { el.innerHTML = override; return; }
+  if (!hasToken) {
+    el.innerHTML = '<span style="color:var(--muted);">未設定</span>';
+    return;
+  }
+  const last = +localStorage.getItem('gym-tracker-last-sync') || 0;
+  if (last) {
+    const date = new Date(last);
+    const m = String(date.getMinutes()).padStart(2, '0');
+    el.innerHTML = `<span style="color:var(--success);">✓ 自動保存中</span> · 最終 ${date.getHours()}:${m}`;
+  } else {
+    el.innerHTML = '<span style="color:var(--success);">✓ 接続済み</span>';
+  }
+}
+
+async function performInitialSync() {
+  if (!getToken()) {
+    updateSyncStatus();
+    return;
+  }
+  updateSyncStatus('接続中...');
+  try {
+    const remote = await ghFetchRemote();
+    if (remote) {
+      const remoteUpdated = remote.updatedAt || 0;
+      const localUpdated = state.updatedAt || 0;
+      const remoteHasData = (remote.sessions || []).length > 0;
+      const localHasData = state.sessions.length > 0;
+      if (remoteUpdated > localUpdated || (!localHasData && remoteHasData)) {
+        state = remote;
+        if (!state.exercises) state.exercises = DEFAULT_EXERCISES.slice();
+        if (!state.sessions) state.sessions = [];
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        refreshExerciseSelect();
+        renderTodaySummary();
+        renderExerciseList();
+        renderHistory();
+        updateSyncStatus();
+        toast('GitHubから読み込みました');
+      } else if (localUpdated > remoteUpdated) {
+        await ghPushRemote();
+        updateSyncStatus();
+      } else {
+        updateSyncStatus();
+      }
+    } else {
+      // Remote is empty — push current
+      await ghPushRemote();
+      updateSyncStatus();
+    }
+  } catch (e) {
+    updateSyncStatus(`❌ ${e.message}`);
+  }
+}
+
+document.getElementById('saveTokenBtn').addEventListener('click', async () => {
+  const t = document.getElementById('ghToken').value.trim();
+  if (!t) { toast('トークンを入力してください'); return; }
+  setToken(t);
+  document.getElementById('ghToken').value = '';
+  await performInitialSync();
+});
+
+document.getElementById('clearTokenBtn').addEventListener('click', () => {
+  if (!confirm('トークンを削除して自動保存をオフにしますか？\nGitHub上のデータはそのまま残ります。')) return;
+  setToken('');
+  remoteSha = null;
+  localStorage.removeItem('gym-tracker-last-sync');
+  updateSyncStatus();
+  toast('トークンを削除しました');
+});
+
+document.getElementById('syncNowBtn').addEventListener('click', async () => {
+  if (syncing) return;
+  syncing = true;
+  updateSyncStatus('同期中...');
+  try {
+    await ghPushRemote();
+    updateSyncStatus();
+    toast('同期しました');
+  } catch (e) {
+    updateSyncStatus(`❌ ${e.message}`);
+  } finally {
+    syncing = false;
+  }
+});
+
 // ========== Helpers ==========
 function escapeHTML(s) {
   return String(s).replace(/[&<>"']/g, c => ({
@@ -1118,6 +1379,15 @@ dateInput.value = todayStr();
 refreshDateBadge();
 refreshExerciseSelect();
 renderTodaySummary();
+updateSyncStatus();
+performInitialSync();
+
+// Re-sync when app becomes visible again
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && getToken()) {
+    performInitialSync();
+  }
+});
 
 // Service worker (offline support)
 if ('serviceWorker' in navigator) {
