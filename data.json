@@ -89,6 +89,22 @@
       "group": "有酸素"
     }
   ],
-  "sessions": [],
-  "updatedAt": 0
+  "sessions": [
+    {
+      "id": "moxkqs3wkivg",
+      "date": "2026-05-09",
+      "exercises": [
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 35,
+              "reps": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "updatedAt": 1778284611788
 }
