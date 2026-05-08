@@ -497,9 +497,9 @@
     <hr class="sep">
 
     <div class="card">
-      <strong style="font-size:14px;">機材をデフォルトに戻す</strong>
-      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">チョコザップの標準機材リストを再追加します（既存の機材はそのまま、不足分のみ追加）。</p>
-      <button class="secondary small" id="restoreDefaultsBtn" style="width:100%;">デフォルト機材を復元</button>
+      <strong style="font-size:14px;">東上野店の機材構成にする</strong>
+      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">機材リストをチョコザップ東上野店の実機材（10種）に置き換えます。過去の記録は残ります。</p>
+      <button class="secondary small" id="restoreDefaultsBtn" style="width:100%;">機材リストを置き換え</button>
     </div>
   </section>
 
@@ -575,25 +575,18 @@ const REPO_NAME = 'Fitness';
 const REPO_BRANCH = 'claude/gym-tracking-app-SVUkz';
 const DATA_PATH = 'data.json';
 
-// チョコザップ標準機材（東上野店ほか共通の基本マシン）
+// チョコザップ東上野店の実機材リスト
 const DEFAULT_EXERCISES = [
   { name: 'チェストプレス', group: '胸' },
-  { name: 'ペクトラルフライ', group: '胸' },
   { name: 'ショルダープレス', group: '肩' },
+  { name: 'マルチプレス', group: '胸' },
   { name: 'ラットプルダウン', group: '背中' },
-  { name: 'シーテッドロー', group: '背中' },
-  { name: 'バックエクステンション', group: '背中' },
-  { name: 'アブドミナル', group: '体幹' },
-  { name: 'ロータリートーソ', group: '体幹' },
   { name: 'レッグプレス', group: '脚' },
-  { name: 'レッグエクステンション', group: '脚' },
-  { name: 'レッグカール', group: '脚' },
-  { name: 'ヒップアブダクション', group: '脚' },
-  { name: 'ヒップアダクション', group: '脚' },
-  { name: 'バイセップスカール', group: '腕' },
-  { name: 'トライセップスエクステンション', group: '腕' },
-  { name: 'ランニングマシン', group: '有酸素' },
-  { name: 'エアロバイク', group: '有酸素' },
+  { name: 'アダクション/アブダクション', group: '脚' },
+  { name: 'ダンベル', group: 'その他' },
+  { name: 'ケーブルマシン', group: 'その他' },
+  { name: 'トレッドミル', group: '有酸素' },
+  { name: 'バイク', group: '有酸素' },
 ];
 
 // ========== State ==========
@@ -1151,18 +1144,12 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 
 // ========== Restore default exercises ==========
 document.getElementById('restoreDefaultsBtn').addEventListener('click', () => {
-  const existing = new Set(state.exercises.map(e => e.name));
-  let added = 0;
-  DEFAULT_EXERCISES.forEach(ex => {
-    if (!existing.has(ex.name)) {
-      state.exercises.push({ ...ex });
-      added++;
-    }
-  });
+  if (!confirm('機材リストを東上野店の構成（10種）に置き換えますか？\n\n過去の記録は残ります。\n手動で追加した機材は消えます。')) return;
+  state.exercises = DEFAULT_EXERCISES.map(e => ({ ...e }));
   saveState();
   refreshExerciseSelect();
   renderExerciseList();
-  toast(added ? `${added}機材を追加しました` : '全てのデフォルト機材が既に存在します');
+  toast('機材リストを置き換えました');
 });
 
 // ========== GitHub sync ==========
