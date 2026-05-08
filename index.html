@@ -404,14 +404,14 @@
     </div>
 
     <div class="card">
-      <label>種目</label>
+      <label>機材</label>
       <div class="row" style="margin-bottom: 8px;">
         <select id="exerciseSelect">
           <option value="">— 選択 —</option>
         </select>
         <button class="secondary small" id="openExercisePicker" style="flex: 0 0 auto;">一覧</button>
       </div>
-      <button class="ghost small" id="addCustomExercise">＋ 新しい種目を追加</button>
+      <button class="ghost small" id="addCustomExercise">＋ 新しい機材を追加</button>
     </div>
 
     <div class="card" id="setEntryCard" style="display:none;">
@@ -443,7 +443,7 @@
 
       <div id="pendingSets"></div>
 
-      <button id="saveSessionBtn" class="secondary" style="width:100%; display:none;">この種目を保存</button>
+      <button id="saveSessionBtn" class="secondary" style="width:100%; display:none;">この機材を保存</button>
     </div>
 
     <div class="card" id="todaySummary" style="display:none;">
@@ -472,10 +472,10 @@
     <div id="historyList"></div>
   </section>
 
-  <!-- =========== 種目タブ =========== -->
+  <!-- =========== 機材タブ =========== -->
   <section id="tab-exercises">
     <div class="card">
-      <label for="newExName">新しい種目を追加</label>
+      <label for="newExName">新しい機材を追加</label>
       <div class="row">
         <input type="text" id="newExName" placeholder="例：インクラインダンベルプレス">
         <select id="newExGroup" style="flex:0 0 110px;">
@@ -497,9 +497,9 @@
     <hr class="sep">
 
     <div class="card">
-      <strong style="font-size:14px;">種目をデフォルトに戻す</strong>
-      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">チョコザップの標準機材リストを再追加します（既存の種目はそのまま、不足分のみ追加）。</p>
-      <button class="secondary small" id="restoreDefaultsBtn" style="width:100%;">デフォルト種目を復元</button>
+      <strong style="font-size:14px;">機材をデフォルトに戻す</strong>
+      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">チョコザップの標準機材リストを再追加します（既存の機材はそのまま、不足分のみ追加）。</p>
+      <button class="secondary small" id="restoreDefaultsBtn" style="width:100%;">デフォルト機材を復元</button>
     </div>
   </section>
 
@@ -550,13 +550,13 @@
 <nav class="tabbar">
   <button data-tab="record" class="active"><span class="ic">📝</span><span>記録</span></button>
   <button data-tab="history"><span class="ic">📊</span><span>履歴</span></button>
-  <button data-tab="exercises"><span class="ic">🏋️</span><span>種目</span></button>
+  <button data-tab="exercises"><span class="ic">🏋️</span><span>機材</span></button>
   <button data-tab="settings"><span class="ic">⚙️</span><span>設定</span></button>
 </nav>
 
 <div class="modal-bg" id="exPickerModal">
   <div class="modal">
-    <h2>種目を選択</h2>
+    <h2>機材を選択</h2>
     <input type="text" id="exSearchInput" placeholder="検索..." style="margin-bottom:10px;">
     <div id="exPickerList"></div>
     <button class="ghost" id="closeExPicker" style="width:100%; margin-top:10px;">閉じる</button>
@@ -880,7 +880,7 @@ dateInput.addEventListener('change', () => {
 
 // Add custom exercise quickly from record tab
 document.getElementById('addCustomExercise').addEventListener('click', () => {
-  const name = prompt('種目名を入力');
+  const name = prompt('機材名を入力');
   if (!name) return;
   const trimmed = name.trim();
   if (!trimmed) return;
@@ -917,7 +917,7 @@ function renderPickerList(q) {
   );
   exPickerList.innerHTML = '';
   if (!filtered.length) {
-    exPickerList.innerHTML = '<div class="empty">該当する種目なし</div>';
+    exPickerList.innerHTML = '<div class="empty">該当する機材なし</div>';
     return;
   }
   filtered.forEach(ex => {
@@ -997,7 +997,7 @@ function renderHistory() {
     card.innerHTML = `
       <h3>
         <span>${fmtDate(s.date)}</span>
-        <span class="date">${s.exercises.length}種目 / ${Math.round(vol).toLocaleString()}kg</span>
+        <span class="date">${s.exercises.length}機材 / ${Math.round(vol).toLocaleString()}kg</span>
       </h3>
     `;
     s.exercises.forEach(ex => {
@@ -1049,7 +1049,7 @@ function renderHistory() {
 document.getElementById('addExBtn').addEventListener('click', () => {
   const name = document.getElementById('newExName').value.trim();
   const group = document.getElementById('newExGroup').value;
-  if (!name) { toast('種目名を入力'); return; }
+  if (!name) { toast('機材名を入力'); return; }
   if (state.exercises.some(e => e.name === name)) { toast('既に存在します'); return; }
   state.exercises.push({ name, group });
   saveState();
@@ -1083,7 +1083,7 @@ function renderExerciseList() {
       del.title = '削除';
       del.addEventListener('click', () => {
         if (used) {
-          if (!confirm(`${ex.name} は記録に使われています。種目リストから削除しますか？\n（過去の記録は残ります）`)) return;
+          if (!confirm(`${ex.name} は記録に使われています。機材リストから削除しますか？\n（過去の記録は残ります）`)) return;
         }
         state.exercises = state.exercises.filter(e => e.name !== ex.name);
         saveState();
@@ -1138,7 +1138,7 @@ document.getElementById('importFile').addEventListener('change', (e) => {
 });
 
 document.getElementById('resetBtn').addEventListener('click', () => {
-  if (!confirm('全ての記録と種目を削除しますか？\nこの操作は取り消せません。')) return;
+  if (!confirm('全ての記録と機材を削除しますか？\nこの操作は取り消せません。')) return;
   if (!confirm('本当によろしいですか？')) return;
   state = initialState();
   saveState();
@@ -1162,7 +1162,7 @@ document.getElementById('restoreDefaultsBtn').addEventListener('click', () => {
   saveState();
   refreshExerciseSelect();
   renderExerciseList();
-  toast(added ? `${added}種目を追加しました` : '全てのデフォルト種目が既に存在します');
+  toast(added ? `${added}機材を追加しました` : '全てのデフォルト機材が既に存在します');
 });
 
 // ========== GitHub sync ==========
