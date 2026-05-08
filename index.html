@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ジム記録">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Ctext x='50%25' y='54%25' font-size='38' text-anchor='middle' fill='%2360a5fa' font-family='system-ui' font-weight='800'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E">
+<title>ジム記録</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --bg-2: #111a2e;
+    --card: #16213a;
+    --card-2: #1c2a47;
+    --border: #243355;
+    --text: #e6edf7;
+    --muted: #8aa0c4;
+    --accent: #60a5fa;
+    --accent-2: #3b82f6;
+    --danger: #f87171;
+    --success: #34d399;
+    --warn: #fbbf24;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    overscroll-behavior-y: contain;
+  }
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-top: var(--safe-top);
+    padding-bottom: calc(var(--safe-bottom) + 72px);
+  }
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: linear-gradient(180deg, var(--bg) 80%, transparent);
+    padding: 12px 16px 8px;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  header h1 .badge {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+  main { padding: 0 16px 24px; }
+  section { display: none; }
+  section.active { display: block; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .row { display: flex; gap: 8px; }
+  .row > * { flex: 1; min-width: 0; }
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  input[type="text"], input[type="number"], input[type="date"], select, textarea {
+    width: 100%;
+    background: var(--bg-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 12px;
+    font-size: 16px;
+    font-family: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+  }
+  textarea { min-height: 64px; resize: vertical; }
+
+  button {
+    background: var(--accent-2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform .05s ease, background .15s ease;
+  }
+  button:active { transform: scale(0.97); }
+  button.secondary {
+    background: var(--card-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  button.danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+  button.ghost { background: transparent; color: var(--muted); padding: 8px 10px; }
+  button.small { padding: 8px 12px; font-size: 14px; }
+  button.icon {
+    background: transparent;
+    color: var(--muted);
+    padding: 8px;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .btn-grid.three { grid-template-columns: repeat(3, 1fr); }
+
+  .stepper {
+    display: grid;
+    grid-template-columns: 44px 1fr 44px;
+    align-items: stretch;
+    gap: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .stepper button {
+    background: var(--bg-2);
+    color: var(--text);
+    border-radius: 0;
+    padding: 0;
+    font-size: 22px;
+    font-weight: 400;
+  }
+  .stepper input {
+    border: none;
+    border-radius: 0;
+    text-align: center;
+    background: var(--bg-2);
+    font-size: 17px;
+    font-weight: 600;
+    padding: 12px 4px;
+  }
+  .stepper input:focus { box-shadow: none; }
+
+  .chip-row {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin: 0 -16px 12px;
+    padding-left: 16px;
+    padding-right: 16px;
+    scrollbar-width: none;
+  }
+  .chip-row::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .chip.active { background: var(--accent-2); border-color: var(--accent-2); color: white; }
+
+  nav.tabbar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg-2);
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding-bottom: var(--safe-bottom);
+    z-index: 20;
+  }
+  nav.tabbar button {
+    background: transparent;
+    color: var(--muted);
+    border-radius: 0;
+    padding: 10px 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  nav.tabbar button.active { color: var(--accent); }
+  nav.tabbar button .ic { font-size: 22px; line-height: 1; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .stat .v { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .stat .l { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  .session {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .session h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .session h3 .date { color: var(--muted); font-weight: 500; font-size: 13px; }
+  .ex-block { padding: 8px 0; border-top: 1px dashed var(--border); }
+  .ex-block:first-of-type { border-top: none; padding-top: 0; }
+  .ex-name {
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .ex-name .vol { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .set-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .set-pill {
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .set-pill .w { color: var(--accent); font-weight: 600; }
+  .set-pill .x { color: var(--muted); margin: 0 2px; }
+
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .empty .ic { font-size: 40px; opacity: 0.4; margin-bottom: 8px; }
+
+  .pending-set {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 6px;
+    align-items: center;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px;
+    margin-bottom: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  .pending-set .label-mini { font-size: 11px; color: var(--muted); margin-right: 4px; }
+
+  .toast {
+    position: fixed;
+    bottom: calc(var(--safe-bottom) + 84px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, -8px); }
+
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 50;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-bg.show { display: flex; }
+  .modal {
+    background: var(--card);
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    width: 100%;
+    max-width: 600px;
+    padding: 18px 16px calc(20px + var(--safe-bottom));
+    border-top: 1px solid var(--border);
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal h2 { margin: 0 0 12px; font-size: 17px; }
+
+  .ex-pick {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .ex-pick:active { background: var(--card-2); }
+  .ex-pick .group { font-size: 11px; color: var(--muted); }
+
+  .group-tag {
+    display: inline-block;
+    font-size: 10px;
+    color: var(--muted);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  hr.sep { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+  .mini-link {
+    color: var(--accent);
+    background: none;
+    border: none;
+    font-size: 13px;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  details.exercise-day {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+  }
+  details.exercise-day[open] summary { margin-bottom: 8px; }
+  details summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary .meta { font-size: 12px; color: var(--muted); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="appTitle">💪 ジム記録 <span class="badge" id="todayBadge"></span></h1>
+</header>
+
+<main>
+  <!-- =========== 記録タブ =========== -->
+  <section id="tab-record" class="active">
+    <div class="card">
+      <label for="recordDate">日付</label>
+      <input type="date" id="recordDate">
+    </div>
+
+    <div class="card">
+      <label>種目</label>
+      <div class="row" style="margin-bottom: 8px;">
+        <select id="exerciseSelect">
+          <option value="">— 選択 —</option>
+        </select>
+        <button class="secondary small" id="openExercisePicker" style="flex: 0 0 auto;">一覧</button>
+      </div>
+      <button class="ghost small" id="addCustomExercise">＋ 新しい種目を追加</button>
+    </div>
+
+    <div class="card" id="setEntryCard" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <strong id="currentExName" style="font-size:15px;"></strong>
+        <span id="lastTimeHint" style="font-size:11px; color:var(--muted);"></span>
+      </div>
+
+      <div class="row" style="margin-bottom:10px;">
+        <div>
+          <label>重量 (kg)</label>
+          <div class="stepper">
+            <button type="button" data-step="weight" data-d="-2.5">−</button>
+            <input type="number" id="inputWeight" inputmode="decimal" step="0.5" placeholder="0">
+            <button type="button" data-step="weight" data-d="2.5">＋</button>
+          </div>
+        </div>
+        <div>
+          <label>回数</label>
+          <div class="stepper">
+            <button type="button" data-step="reps" data-d="-1">−</button>
+            <input type="number" id="inputReps" inputmode="numeric" step="1" placeholder="0">
+            <button type="button" data-step="reps" data-d="1">＋</button>
+          </div>
+        </div>
+      </div>
+
+      <button id="addSetBtn" style="width:100%; margin-bottom:10px;">＋ セットを追加</button>
+
+      <div id="pendingSets"></div>
+
+      <button id="saveSessionBtn" class="secondary" style="width:100%; display:none;">この種目を保存</button>
+    </div>
+
+    <div class="card" id="todaySummary" style="display:none;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <strong style="font-size:14px;">今日の記録</strong>
+        <span id="todayVolume" style="font-size:12px; color:var(--muted);"></span>
+      </div>
+      <div id="todayList"></div>
+    </div>
+  </section>
+
+  <!-- =========== 履歴タブ =========== -->
+  <section id="tab-history">
+    <div class="stat-grid">
+      <div class="stat"><div class="v" id="statSessions">0</div><div class="l">セッション</div></div>
+      <div class="stat"><div class="v" id="statVolume">0</div><div class="l">総ボリューム kg</div></div>
+      <div class="stat"><div class="v" id="statStreak">0</div><div class="l">連続日数</div></div>
+    </div>
+
+    <div class="chip-row" id="historyFilter">
+      <div class="chip active" data-filter="all">すべて</div>
+      <div class="chip" data-filter="week">今週</div>
+      <div class="chip" data-filter="month">今月</div>
+    </div>
+
+    <div id="historyList"></div>
+  </section>
+
+  <!-- =========== 種目タブ =========== -->
+  <section id="tab-exercises">
+    <div class="card">
+      <label for="newExName">新しい種目を追加</label>
+      <div class="row">
+        <input type="text" id="newExName" placeholder="例：インクラインダンベルプレス">
+        <select id="newExGroup" style="flex:0 0 110px;">
+          <option value="胸">胸</option>
+          <option value="背中">背中</option>
+          <option value="肩">肩</option>
+          <option value="腕">腕</option>
+          <option value="脚">脚</option>
+          <option value="体幹">体幹</option>
+          <option value="有酸素">有酸素</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+      <button id="addExBtn" style="width:100%; margin-top:10px;">追加</button>
+    </div>
+
+    <div id="exerciseList"></div>
+
+    <hr class="sep">
+
+    <div class="card">
+      <strong style="font-size:14px;">データ管理</strong>
+      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">記録はこの端末のブラウザに保存されています。バックアップとしてエクスポートできます。</p>
+      <div class="btn-grid">
+        <button class="secondary small" id="exportBtn">📤 エクスポート</button>
+        <button class="secondary small" id="importBtn">📥 インポート</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" style="display:none;">
+      <button class="danger small" id="resetBtn" style="width:100%; margin-top:10px;">全データを削除</button>
+    </div>
+  </section>
+</main>
+
+<nav class="tabbar">
+  <button data-tab="record" class="active"><span class="ic">📝</span><span>記録</span></button>
+  <button data-tab="history"><span class="ic">📊</span><span>履歴</span></button>
+  <button data-tab="exercises"><span class="ic">🏋️</span><span>種目</span></button>
+</nav>
+
+<div class="modal-bg" id="exPickerModal">
+  <div class="modal">
+    <h2>種目を選択</h2>
+    <input type="text" id="exSearchInput" placeholder="検索..." style="margin-bottom:10px;">
+    <div id="exPickerList"></div>
+    <button class="ghost" id="closeExPicker" style="width:100%; margin-top:10px;">閉じる</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+const STORAGE_KEY = 'gym-tracker-v1';
+const DEFAULT_EXERCISES = [
+  { name: 'ベンチプレス', group: '胸' },
+  { name: 'インクラインダンベルプレス', group: '胸' },
+  { name: 'ダンベルフライ', group: '胸' },
+  { name: 'チェストプレス（マシン）', group: '胸' },
+  { name: 'デッドリフト', group: '背中' },
+  { name: 'ラットプルダウン', group: '背中' },
+  { name: 'シーテッドロー', group: '背中' },
+  { name: '懸垂', group: '背中' },
+  { name: 'ショルダープレス', group: '肩' },
+  { name: 'サイドレイズ', group: '肩' },
+  { name: 'リアレイズ', group: '肩' },
+  { name: 'バーベルカール', group: '腕' },
+  { name: 'ダンベルカール', group: '腕' },
+  { name: 'トライセプスエクステンション', group: '腕' },
+  { name: 'ケーブルプレスダウン', group: '腕' },
+  { name: 'スクワット', group: '脚' },
+  { name: 'レッグプレス', group: '脚' },
+  { name: 'レッグエクステンション', group: '脚' },
+  { name: 'レッグカール', group: '脚' },
+  { name: 'カーフレイズ', group: '脚' },
+  { name: 'プランク', group: '体幹' },
+  { name: 'アブローラー', group: '体幹' },
+  { name: 'ランニング', group: '有酸素' },
+];
+
+// ========== State ==========
+let state = loadState();
+let pendingSets = [];
+let currentExercise = null;
+let historyFilter = 'all';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return initialState();
+    const parsed = JSON.parse(raw);
+    if (!parsed.exercises) parsed.exercises = DEFAULT_EXERCISES.slice();
+    if (!parsed.sessions) parsed.sessions = [];
+    return parsed;
+  } catch (e) {
+    return initialState();
+  }
+}
+function initialState() {
+  return { exercises: DEFAULT_EXERCISES.slice(), sessions: [] };
+}
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+// ========== Utilities ==========
+function todayStr() {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+function fmtDate(s) {
+  const [y, m, d] = s.split('-');
+  const dt = new Date(+y, +m - 1, +d);
+  const wk = ['日','月','火','水','木','金','土'][dt.getDay()];
+  return `${+m}/${+d}（${wk}）`;
+}
+function fmtNum(n) {
+  if (n === Math.floor(n)) return String(n);
+  return n.toFixed(1);
+}
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function getOrCreateSession(date) {
+  let s = state.sessions.find(x => x.date === date);
+  if (!s) {
+    s = { id: uid(), date, exercises: [] };
+    state.sessions.push(s);
+  }
+  return s;
+}
+
+function sessionVolume(session) {
+  let v = 0;
+  for (const ex of session.exercises) {
+    for (const set of ex.sets) {
+      v += (set.weight || 0) * (set.reps || 0);
+    }
+  }
+  return v;
+}
+
+function lastSetForExercise(exerciseName, beforeDate) {
+  const sorted = state.sessions
+    .filter(s => !beforeDate || s.date < beforeDate)
+    .sort((a, b) => b.date.localeCompare(a.date));
+  for (const s of sorted) {
+    const ex = s.exercises.find(e => e.name === exerciseName);
+    if (ex && ex.sets.length) {
+      const top = ex.sets[ex.sets.length - 1];
+      return { date: s.date, weight: top.weight, reps: top.reps };
+    }
+  }
+  return null;
+}
+
+// ========== Tabs ==========
+function showTab(name) {
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('nav.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  if (name === 'history') renderHistory();
+  if (name === 'exercises') renderExerciseList();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('nav.tabbar button').forEach(b => {
+  b.addEventListener('click', () => showTab(b.dataset.tab));
+});
+
+// ========== Record tab ==========
+const dateInput = document.getElementById('recordDate');
+const exerciseSelect = document.getElementById('exerciseSelect');
+const setEntryCard = document.getElementById('setEntryCard');
+const inputWeight = document.getElementById('inputWeight');
+const inputReps = document.getElementById('inputReps');
+const pendingSetsEl = document.getElementById('pendingSets');
+const saveSessionBtn = document.getElementById('saveSessionBtn');
+const currentExName = document.getElementById('currentExName');
+const lastTimeHint = document.getElementById('lastTimeHint');
+const todaySummary = document.getElementById('todaySummary');
+const todayList = document.getElementById('todayList');
+const todayVolume = document.getElementById('todayVolume');
+const todayBadge = document.getElementById('todayBadge');
+
+function refreshDateBadge() {
+  todayBadge.textContent = fmtDate(dateInput.value);
+}
+
+function refreshExerciseSelect() {
+  const cur = exerciseSelect.value;
+  exerciseSelect.innerHTML = '<option value="">— 選択 —</option>';
+  const groups = {};
+  state.exercises.forEach(ex => {
+    if (!groups[ex.group]) groups[ex.group] = [];
+    groups[ex.group].push(ex);
+  });
+  for (const g of Object.keys(groups)) {
+    const og = document.createElement('optgroup');
+    og.label = g;
+    for (const ex of groups[g]) {
+      const opt = document.createElement('option');
+      opt.value = ex.name;
+      opt.textContent = ex.name;
+      og.appendChild(opt);
+    }
+    exerciseSelect.appendChild(og);
+  }
+  if (cur && state.exercises.some(e => e.name === cur)) exerciseSelect.value = cur;
+}
+
+function selectExercise(name) {
+  if (!name) {
+    currentExercise = null;
+    setEntryCard.style.display = 'none';
+    return;
+  }
+  currentExercise = name;
+  exerciseSelect.value = name;
+  currentExName.textContent = name;
+  setEntryCard.style.display = 'block';
+  pendingSets = [];
+  renderPending();
+  // Prefill from last set
+  const last = lastSetForExercise(name, dateInput.value);
+  if (last) {
+    inputWeight.value = last.weight;
+    inputReps.value = last.reps;
+    lastTimeHint.textContent = `前回 ${fmtDate(last.date)}: ${fmtNum(last.weight)}kg × ${last.reps}`;
+  } else {
+    inputWeight.value = '';
+    inputReps.value = '';
+    lastTimeHint.textContent = '初回記録';
+  }
+  // Existing sets today (if any)
+  const sess = state.sessions.find(s => s.date === dateInput.value);
+  const ex = sess?.exercises.find(e => e.name === name);
+  if (ex) pendingSets = ex.sets.map(s => ({ ...s }));
+  renderPending();
+}
+
+exerciseSelect.addEventListener('change', () => selectExercise(exerciseSelect.value));
+
+document.querySelectorAll('button[data-step]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.step === 'weight' ? inputWeight : inputReps;
+    const d = parseFloat(btn.dataset.d);
+    const cur = parseFloat(target.value) || 0;
+    let next = cur + d;
+    if (next < 0) next = 0;
+    target.value = btn.dataset.step === 'weight' ? next : Math.round(next);
+  });
+});
+
+document.getElementById('addSetBtn').addEventListener('click', () => {
+  const w = parseFloat(inputWeight.value);
+  const r = parseInt(inputReps.value, 10);
+  if (isNaN(w) || isNaN(r) || r <= 0) {
+    toast('重量と回数を入力してください');
+    return;
+  }
+  pendingSets.push({ weight: w, reps: r });
+  renderPending();
+  // Auto-save into session
+  commitCurrentExercise(false);
+  toast(`セット${pendingSets.length} 追加`);
+});
+
+function renderPending() {
+  pendingSetsEl.innerHTML = '';
+  if (!pendingSets.length) {
+    saveSessionBtn.style.display = 'none';
+    return;
+  }
+  pendingSets.forEach((s, i) => {
+    const row = document.createElement('div');
+    row.className = 'pending-set';
+    row.innerHTML = `
+      <div><span class="label-mini">重量</span><strong>${fmtNum(s.weight)}</strong> kg</div>
+      <div><span class="label-mini">回数</span><strong>${s.reps}</strong> 回</div>
+      <button class="icon" title="削除" data-i="${i}">✕</button>
+    `;
+    row.querySelector('button').addEventListener('click', () => {
+      pendingSets.splice(i, 1);
+      renderPending();
+      commitCurrentExercise(false);
+    });
+    pendingSetsEl.appendChild(row);
+  });
+  saveSessionBtn.style.display = 'none'; // auto-saved already
+}
+
+function commitCurrentExercise(showToast = true) {
+  if (!currentExercise) return;
+  const date = dateInput.value;
+  const sess = getOrCreateSession(date);
+  const idx = sess.exercises.findIndex(e => e.name === currentExercise);
+  if (pendingSets.length === 0) {
+    if (idx >= 0) sess.exercises.splice(idx, 1);
+  } else {
+    if (idx >= 0) sess.exercises[idx].sets = pendingSets.map(s => ({ ...s }));
+    else sess.exercises.push({ name: currentExercise, sets: pendingSets.map(s => ({ ...s })) });
+  }
+  // Cleanup empty session
+  if (sess.exercises.length === 0) {
+    state.sessions = state.sessions.filter(s => s !== sess);
+  }
+  saveState();
+  renderTodaySummary();
+  if (showToast) toast('保存しました');
+}
+
+saveSessionBtn.addEventListener('click', () => commitCurrentExercise(true));
+
+function renderTodaySummary() {
+  const sess = state.sessions.find(s => s.date === dateInput.value);
+  if (!sess || sess.exercises.length === 0) {
+    todaySummary.style.display = 'none';
+    return;
+  }
+  todaySummary.style.display = 'block';
+  todayVolume.textContent = `合計 ${Math.round(sessionVolume(sess)).toLocaleString()} kg`;
+  todayList.innerHTML = '';
+  sess.exercises.forEach(ex => {
+    const block = document.createElement('div');
+    block.className = 'ex-block';
+    const vol = ex.sets.reduce((a, s) => a + s.weight * s.reps, 0);
+    block.innerHTML = `
+      <div class="ex-name">
+        <span>${escapeHTML(ex.name)}</span>
+        <span class="vol">${ex.sets.length}セット / ${Math.round(vol).toLocaleString()}kg</span>
+      </div>
+      <div class="set-list">
+        ${ex.sets.map(s => `<span class="set-pill"><span class="w">${fmtNum(s.weight)}</span>kg<span class="x">×</span>${s.reps}</span>`).join('')}
+      </div>
+    `;
+    block.style.cursor = 'pointer';
+    block.addEventListener('click', () => {
+      selectExercise(ex.name);
+      window.scrollTo({ top: setEntryCard.offsetTop - 16, behavior: 'smooth' });
+    });
+    todayList.appendChild(block);
+  });
+}
+
+dateInput.addEventListener('change', () => {
+  refreshDateBadge();
+  if (currentExercise) selectExercise(currentExercise);
+  renderTodaySummary();
+});
+
+// Add custom exercise quickly from record tab
+document.getElementById('addCustomExercise').addEventListener('click', () => {
+  const name = prompt('種目名を入力');
+  if (!name) return;
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  if (state.exercises.some(e => e.name === trimmed)) {
+    toast('既に存在します');
+    selectExercise(trimmed);
+    return;
+  }
+  state.exercises.push({ name: trimmed, group: 'その他' });
+  saveState();
+  refreshExerciseSelect();
+  selectExercise(trimmed);
+});
+
+// ========== Exercise picker modal ==========
+const exPickerModal = document.getElementById('exPickerModal');
+const exPickerList = document.getElementById('exPickerList');
+const exSearchInput = document.getElementById('exSearchInput');
+
+document.getElementById('openExercisePicker').addEventListener('click', () => {
+  exSearchInput.value = '';
+  renderPickerList('');
+  exPickerModal.classList.add('show');
+  setTimeout(() => exSearchInput.focus(), 100);
+});
+document.getElementById('closeExPicker').addEventListener('click', () => exPickerModal.classList.remove('show'));
+exPickerModal.addEventListener('click', (e) => { if (e.target === exPickerModal) exPickerModal.classList.remove('show'); });
+exSearchInput.addEventListener('input', () => renderPickerList(exSearchInput.value));
+
+function renderPickerList(q) {
+  const norm = q.trim().toLowerCase();
+  const filtered = state.exercises.filter(e =>
+    !norm || e.name.toLowerCase().includes(norm) || e.group.toLowerCase().includes(norm)
+  );
+  exPickerList.innerHTML = '';
+  if (!filtered.length) {
+    exPickerList.innerHTML = '<div class="empty">該当する種目なし</div>';
+    return;
+  }
+  filtered.forEach(ex => {
+    const row = document.createElement('div');
+    row.className = 'ex-pick';
+    row.innerHTML = `<div>${escapeHTML(ex.name)}</div><div class="group">${escapeHTML(ex.group)}</div>`;
+    row.addEventListener('click', () => {
+      exPickerModal.classList.remove('show');
+      selectExercise(ex.name);
+    });
+    exPickerList.appendChild(row);
+  });
+}
+
+// ========== History tab ==========
+document.querySelectorAll('#historyFilter .chip').forEach(c => {
+  c.addEventListener('click', () => {
+    document.querySelectorAll('#historyFilter .chip').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    historyFilter = c.dataset.filter;
+    renderHistory();
+  });
+});
+
+function filteredSessions() {
+  const sorted = state.sessions.slice().sort((a, b) => b.date.localeCompare(a.date));
+  if (historyFilter === 'all') return sorted;
+  const now = new Date();
+  let cutoff;
+  if (historyFilter === 'week') {
+    cutoff = new Date(now);
+    cutoff.setDate(now.getDate() - 7);
+  } else if (historyFilter === 'month') {
+    cutoff = new Date(now);
+    cutoff.setMonth(now.getMonth() - 1);
+  }
+  const cutStr = cutoff.toISOString().slice(0, 10);
+  return sorted.filter(s => s.date >= cutStr);
+}
+
+function computeStreak() {
+  if (!state.sessions.length) return 0;
+  const dates = new Set(state.sessions.map(s => s.date));
+  let streak = 0;
+  const d = new Date();
+  // Allow today to be missing; start from yesterday if today empty
+  if (!dates.has(toISO(d))) d.setDate(d.getDate() - 1);
+  while (dates.has(toISO(d))) {
+    streak++;
+    d.setDate(d.getDate() - 1);
+  }
+  return streak;
+}
+function toISO(d) {
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+function renderHistory() {
+  const sessions = filteredSessions();
+  const totalVol = sessions.reduce((a, s) => a + sessionVolume(s), 0);
+  document.getElementById('statSessions').textContent = sessions.length;
+  document.getElementById('statVolume').textContent = Math.round(totalVol).toLocaleString();
+  document.getElementById('statStreak').textContent = computeStreak();
+
+  const list = document.getElementById('historyList');
+  list.innerHTML = '';
+  if (!sessions.length) {
+    list.innerHTML = '<div class="empty"><div class="ic">📭</div>記録がまだありません</div>';
+    return;
+  }
+  sessions.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'session';
+    const vol = sessionVolume(s);
+    card.innerHTML = `
+      <h3>
+        <span>${fmtDate(s.date)}</span>
+        <span class="date">${s.exercises.length}種目 / ${Math.round(vol).toLocaleString()}kg</span>
+      </h3>
+    `;
+    s.exercises.forEach(ex => {
+      const block = document.createElement('div');
+      block.className = 'ex-block';
+      const exVol = ex.sets.reduce((a, x) => a + x.weight * x.reps, 0);
+      block.innerHTML = `
+        <div class="ex-name">
+          <span>${escapeHTML(ex.name)}</span>
+          <span class="vol">${ex.sets.length}セット / ${Math.round(exVol).toLocaleString()}kg</span>
+        </div>
+        <div class="set-list">
+          ${ex.sets.map(x => `<span class="set-pill"><span class="w">${fmtNum(x.weight)}</span>kg<span class="x">×</span>${x.reps}</span>`).join('')}
+        </div>
+      `;
+      card.appendChild(block);
+    });
+    const actions = document.createElement('div');
+    actions.style.cssText = 'display:flex; gap:8px; margin-top:10px;';
+    const editBtn = document.createElement('button');
+    editBtn.className = 'ghost small';
+    editBtn.textContent = '✏️ 編集';
+    editBtn.addEventListener('click', () => {
+      dateInput.value = s.date;
+      refreshDateBadge();
+      renderTodaySummary();
+      showTab('record');
+    });
+    const delBtn = document.createElement('button');
+    delBtn.className = 'ghost small';
+    delBtn.style.color = 'var(--danger)';
+    delBtn.textContent = '🗑 削除';
+    delBtn.addEventListener('click', () => {
+      if (confirm(`${fmtDate(s.date)}の記録を削除しますか？`)) {
+        state.sessions = state.sessions.filter(x => x.id !== s.id);
+        saveState();
+        renderHistory();
+        renderTodaySummary();
+      }
+    });
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+    card.appendChild(actions);
+    list.appendChild(card);
+  });
+}
+
+// ========== Exercises tab ==========
+document.getElementById('addExBtn').addEventListener('click', () => {
+  const name = document.getElementById('newExName').value.trim();
+  const group = document.getElementById('newExGroup').value;
+  if (!name) { toast('種目名を入力'); return; }
+  if (state.exercises.some(e => e.name === name)) { toast('既に存在します'); return; }
+  state.exercises.push({ name, group });
+  saveState();
+  document.getElementById('newExName').value = '';
+  refreshExerciseSelect();
+  renderExerciseList();
+  toast('追加しました');
+});
+
+function renderExerciseList() {
+  const list = document.getElementById('exerciseList');
+  list.innerHTML = '';
+  const groups = {};
+  state.exercises.forEach(ex => {
+    if (!groups[ex.group]) groups[ex.group] = [];
+    groups[ex.group].push(ex);
+  });
+  for (const g of Object.keys(groups)) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<strong style="font-size:14px;">${escapeHTML(g)}</strong>`;
+    groups[g].forEach(ex => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-top:1px dashed var(--border);';
+      const used = state.sessions.some(s => s.exercises.some(e => e.name === ex.name));
+      row.innerHTML = `<span>${escapeHTML(ex.name)}</span>`;
+      const del = document.createElement('button');
+      del.className = 'icon';
+      del.style.color = 'var(--danger)';
+      del.textContent = '✕';
+      del.title = '削除';
+      del.addEventListener('click', () => {
+        if (used) {
+          if (!confirm(`${ex.name} は記録に使われています。種目リストから削除しますか？\n（過去の記録は残ります）`)) return;
+        }
+        state.exercises = state.exercises.filter(e => e.name !== ex.name);
+        saveState();
+        refreshExerciseSelect();
+        renderExerciseList();
+      });
+      row.appendChild(del);
+      card.appendChild(row);
+    });
+    list.appendChild(card);
+  }
+}
+
+// ========== Data management ==========
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `gym-tracker-${todayStr()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!data.exercises || !data.sessions) throw new Error('invalid');
+      if (!confirm('現在のデータを上書きしますか？')) return;
+      state = data;
+      saveState();
+      refreshExerciseSelect();
+      renderExerciseList();
+      renderHistory();
+      renderTodaySummary();
+      toast('インポートしました');
+    } catch (err) {
+      toast('読み込みに失敗しました');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm('全ての記録と種目を削除しますか？\nこの操作は取り消せません。')) return;
+  if (!confirm('本当によろしいですか？')) return;
+  state = initialState();
+  saveState();
+  refreshExerciseSelect();
+  renderExerciseList();
+  renderHistory();
+  renderTodaySummary();
+  toast('削除しました');
+});
+
+// ========== Helpers ==========
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
+
+// ========== Init ==========
+dateInput.value = todayStr();
+refreshDateBadge();
+refreshExerciseSelect();
+renderTodaySummary();
+
+// Service worker (offline support)
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>

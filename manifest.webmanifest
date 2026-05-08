@@ -1,0 +1,26 @@
+{
+  "name": "ジム記録",
+  "short_name": "ジム記録",
+  "description": "スマホで使えるシンプルな筋トレ記録アプリ",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%230b1220'/%3E%3Ctext x='50%25' y='58%25' font-size='110' text-anchor='middle' fill='%2360a5fa' font-family='system-ui' font-weight='800'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230b1220'/%3E%3Ctext x='50%25' y='58%25' font-size='300' text-anchor='middle' fill='%2360a5fa' font-family='system-ui' font-weight='800'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
