@@ -2234,7 +2234,8 @@ function repRangeFor(goal) {
   return [8, 12]; // bulk and maintain
 }
 
-function freqTargetFor(goal) {
+function freqTargetFor(goal, weekendOnly) {
+  if (weekendOnly) return 2; // realistic ceiling for weekend-only trainers
   if (goal === 'bulk') return 3;
   if (goal === 'cut') return 4;
   return 3;
@@ -2378,7 +2379,7 @@ function renderCoach() {
 
   const goal = getGoalKind(profile);
   const repRange = repRangeFor(goal);
-  const freqTarget = freqTargetFor(goal);
+  const freqTarget = freqTargetFor(goal, detectWeekendOnly());
 
   // Greeting
   const h = today.getHours();
@@ -2534,6 +2535,19 @@ function renderCoach() {
   renderUntrainedGroups(sortedSessions, todayIso);
 }
 
+function detectWeekendOnly() {
+  // Returns true if all past sessions are on Sat/Sun (or user has explicitly set it).
+  if (state.profile && state.profile.trainingDays === 'weekend') return true;
+  if (state.profile && state.profile.trainingDays === 'weekday') return false;
+  // Auto-detect from last 8 sessions
+  const recent = state.sessions.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
+  if (recent.length < 2) return false;
+  return recent.every(s => {
+    const day = parseISO(s.date).getDay();
+    return day === 0 || day === 6;
+  });
+}
+
 function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSession, sortedSessions) {
   const focusValue = document.getElementById('focusValue');
   const focusTags = document.getElementById('focusTags');
@@ -2544,6 +2558,9 @@ function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSess
   cutoff30.setDate(today.getDate() - 30);
   const cut30Iso = toISO(cutoff30);
   const last30Count = state.sessions.filter(s => s.date >= cut30Iso && s.date <= todayIso).length;
+  const weekendOnly = detectWeekendOnly();
+  const todayDow = today.getDay(); // 0=Sun, 6=Sat
+  const isWeekend = todayDow === 0 || todayDow === 6;
 
   if (last30Count === 0) {
     focusValue.textContent = '今日からスタート';
@@ -2552,10 +2569,11 @@ function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSess
     return;
   }
 
-  if (last30Count <= 4) {
+  const monthlyTarget = freqTargetFor(goal, weekendOnly) * 4;
+  if (last30Count < monthlyTarget * 0.6) {
     focusValue.textContent = '頻度を上げる';
     focusTags.innerHTML = `<span class="focus-tag">最優先</span>`;
-    focusReason.textContent = `直近30日で${last30Count}回は筋肥大には不足。週${freqTargetFor(goal)}回を3週間続けることがまず最優先。今日も全身メニュー推奨。`;
+    focusReason.textContent = `直近30日で${last30Count}回は筋肥大には不足。${weekendOnly ? '土日とも行く' : `週${freqTargetFor(goal, weekendOnly)}回`}を3週間続けることがまず最優先。今日も全身メニュー推奨。`;
     return;
   }
 
@@ -2603,6 +2621,26 @@ function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSess
     const avgRpe = allRpes.length ? allRpes.reduce((a, b) => a + b, 0) / allRpes.length : 0;
     const heavySession = yesterdayMachines >= 4 && yesterdaySets >= 12;
     const intenseSession = avgRpe >= 2.0 || limitMachines.length >= 2;
+    const allGroups = ['胸', '背中', '肩', '腕', '脚', '体幹'];
+    const missingGroups = allGroups.filter(g => !yesterdayGroups.has(g));
+
+    // Weekend-only users: today is weekend → going is the right call,
+    // but complementary muscle groups + lower intensity.
+    if (weekendOnly && isWeekend && heavySession) {
+      const focus = missingGroups[0] || '軽め全身';
+      focusValue.textContent = `${focus} を軽めに`;
+      const tagPicks = state.exercises
+        .filter(e => e.group === focus)
+        .slice(0, 3)
+        .map(e => `<span class="focus-tag">${escapeHTML(e.name)}</span>`)
+        .join('');
+      focusTags.innerHTML = tagPicks || `<span class="focus-tag">背中・体幹</span>`;
+      const limitTxt = limitMachines.length
+        ? `昨日「限界」だった${limitMachines.slice(0, 2).join('・')}は今日避ける。`
+        : '';
+      focusReason.textContent = `週末しか行けない前提なら、今日も行くべき (週1だと筋肥大ペースが足りない)。ただし昨日 ${yesterdayMachines}機材 ${yesterdaySets}セット、平均RPE ${avgRpe.toFixed(1)} のフルボディ。${limitTxt}今日は ${focus} 中心に2-3セット軽めで、有酸素+ストレッチを足すと回復にもなる。`;
+      return;
+    }
 
     if (heavySession && intenseSession) {
       focusValue.textContent = '今日は休息推奨';
