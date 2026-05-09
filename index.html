@@ -1307,6 +1307,7 @@ function selectExercise(name) {
   pendingSets = [];
   editingGroupIdx = null;
   editingGroupIndices = null;
+  inputSets.value = 3;
   resetRPE();
   resetAddBtnLabel();
   setSetsInputDisabled(false);
@@ -1327,7 +1328,7 @@ function selectExercise(name) {
     lastTimeHint.innerHTML = `<span class="dot"></span>前回 ${fmtDateLong(last.date)} · <strong style="color:var(--text-soft);">${fmtNum(last.weight)}kg × ${last.reps}</strong>`;
   } else {
     inputWeight.value = '';
-    inputReps.value = '';
+    inputReps.value = 10;
     lastTimeHint.style.display = 'none';
   }
 
