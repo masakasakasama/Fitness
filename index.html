@@ -167,6 +167,43 @@
   }
   .stepper input:focus { box-shadow: none; }
 
+  .weight-select {
+    height: 48px;
+    text-align: center;
+    text-align-last: center;
+    font-size: 17px;
+    font-weight: 600;
+    background-position: right 12px center;
+  }
+
+  .rpe-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .rpe-chip {
+    background: var(--bg-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 4px 8px;
+    font-size: 12px;
+    line-height: 1.2;
+    text-align: center;
+    font-weight: 500;
+  }
+  .rpe-chip .emoji {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 2px;
+    line-height: 1;
+  }
+  .rpe-chip.active {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+    color: white;
+  }
+
   .chip-row {
     display: flex;
     gap: 8px;
@@ -423,11 +460,7 @@
       <div class="row" style="margin-bottom:10px;">
         <div>
           <label>重量 (kg)</label>
-          <div class="stepper">
-            <button type="button" data-step="weight" data-d="-2.5">−</button>
-            <input type="number" id="inputWeight" inputmode="decimal" step="0.5" placeholder="0">
-            <button type="button" data-step="weight" data-d="2.5">＋</button>
-          </div>
+          <select id="inputWeight" class="weight-select"></select>
         </div>
         <div>
           <label>回数</label>
@@ -436,6 +469,15 @@
             <input type="number" id="inputReps" inputmode="numeric" step="1" placeholder="0">
             <button type="button" data-step="reps" data-d="1">＋</button>
           </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label>きつさ（任意）</label>
+        <div class="rpe-row" id="rpeRow">
+          <button type="button" class="rpe-chip" data-rpe="1"><span class="emoji">😌</span>余裕</button>
+          <button type="button" class="rpe-chip" data-rpe="2"><span class="emoji">😐</span>普通</button>
+          <button type="button" class="rpe-chip" data-rpe="3"><span class="emoji">😣</span>限界</button>
         </div>
       </div>
 
@@ -593,7 +635,11 @@ const DEFAULT_EXERCISES = [
 let state = loadState();
 let pendingSets = [];
 let currentExercise = null;
+let currentRPE = null;
 let historyFilter = 'all';
+
+const RPE_EMOJI = { 1: '😌', 2: '😐', 3: '😣' };
+const RPE_LABEL = { 1: '余裕', 2: '普通', 3: '限界' };
 
 function loadState() {
   try {
@@ -742,11 +788,12 @@ function selectExercise(name) {
   currentExName.textContent = name;
   setEntryCard.style.display = 'block';
   pendingSets = [];
+  resetRPE();
   renderPending();
-  // Prefill from last set
+  // Prefill from last set (round weight to nearest 5kg)
   const last = lastSetForExercise(name, dateInput.value);
   if (last) {
-    inputWeight.value = last.weight;
+    inputWeight.value = String(Math.round(last.weight / 5) * 5);
     inputReps.value = last.reps;
     lastTimeHint.textContent = `前回 ${fmtDate(last.date)}: ${fmtNum(last.weight)}kg × ${last.reps}`;
   } else {
@@ -760,6 +807,36 @@ function selectExercise(name) {
   if (ex) pendingSets = ex.sets.map(s => ({ ...s }));
   renderPending();
 }
+
+function populateWeightSelect() {
+  const sel = document.getElementById('inputWeight');
+  sel.innerHTML = '<option value="">—</option>';
+  for (let w = 0; w <= 150; w += 5) {
+    const opt = document.createElement('option');
+    opt.value = w;
+    opt.textContent = w + ' kg';
+    sel.appendChild(opt);
+  }
+}
+
+function resetRPE() {
+  currentRPE = null;
+  document.querySelectorAll('#rpeRow .rpe-chip').forEach(b => b.classList.remove('active'));
+}
+
+document.querySelectorAll('#rpeRow .rpe-chip').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const v = +btn.dataset.rpe;
+    if (currentRPE === v) {
+      currentRPE = null;
+    } else {
+      currentRPE = v;
+    }
+    document.querySelectorAll('#rpeRow .rpe-chip').forEach(b => {
+      b.classList.toggle('active', currentRPE !== null && +b.dataset.rpe === currentRPE);
+    });
+  });
+});
 
 exerciseSelect.addEventListener('change', () => selectExercise(exerciseSelect.value));
 
@@ -781,8 +858,11 @@ document.getElementById('addSetBtn').addEventListener('click', () => {
     toast('重量と回数を入力してください');
     return;
   }
-  pendingSets.push({ weight: w, reps: r });
+  const set = { weight: w, reps: r };
+  if (currentRPE) set.rpe = currentRPE;
+  pendingSets.push(set);
   renderPending();
+  resetRPE();
   // Auto-save into session
   commitCurrentExercise(false);
   toast(`セット${pendingSets.length} 追加`);
@@ -797,9 +877,10 @@ function renderPending() {
   pendingSets.forEach((s, i) => {
     const row = document.createElement('div');
     row.className = 'pending-set';
+    const rpeIc = s.rpe ? RPE_EMOJI[s.rpe] : '';
     row.innerHTML = `
       <div><span class="label-mini">重量</span><strong>${fmtNum(s.weight)}</strong> kg</div>
-      <div><span class="label-mini">回数</span><strong>${s.reps}</strong> 回</div>
+      <div><span class="label-mini">回数</span><strong>${s.reps}</strong> 回 ${rpeIc}</div>
       <button class="icon" title="削除" data-i="${i}">✕</button>
     `;
     row.querySelector('button').addEventListener('click', () => {
@@ -853,7 +934,7 @@ function renderTodaySummary() {
         <span class="vol">${ex.sets.length}セット / ${Math.round(vol).toLocaleString()}kg</span>
       </div>
       <div class="set-list">
-        ${ex.sets.map(s => `<span class="set-pill"><span class="w">${fmtNum(s.weight)}</span>kg<span class="x">×</span>${s.reps}</span>`).join('')}
+        ${ex.sets.map(s => `<span class="set-pill"><span class="w">${fmtNum(s.weight)}</span>kg<span class="x">×</span>${s.reps}${s.rpe ? ' ' + RPE_EMOJI[s.rpe] : ''}</span>`).join('')}
       </div>
     `;
     block.style.cursor = 'pointer';
@@ -1003,7 +1084,7 @@ function renderHistory() {
           <span class="vol">${ex.sets.length}セット / ${Math.round(exVol).toLocaleString()}kg</span>
         </div>
         <div class="set-list">
-          ${ex.sets.map(x => `<span class="set-pill"><span class="w">${fmtNum(x.weight)}</span>kg<span class="x">×</span>${x.reps}</span>`).join('')}
+          ${ex.sets.map(x => `<span class="set-pill"><span class="w">${fmtNum(x.weight)}</span>kg<span class="x">×</span>${x.reps}${x.rpe ? ' ' + RPE_EMOJI[x.rpe] : ''}</span>`).join('')}
         </div>
       `;
       card.appendChild(block);
@@ -1364,6 +1445,7 @@ function escapeHTML(s) {
 // ========== Init ==========
 dateInput.value = todayStr();
 refreshDateBadge();
+populateWeightSelect();
 refreshExerciseSelect();
 renderTodaySummary();
 updateSyncStatus();
