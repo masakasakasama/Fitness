@@ -64,7 +64,8 @@
     "goalWeight": 70,
     "age": null,
     "sex": "male",
-    "activity": 1.55
+    "activity": 1.55,
+    "trainingDays": "weekend"
   },
   "updatedAt": 9999999999999
 }
