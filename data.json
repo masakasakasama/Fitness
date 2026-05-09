@@ -99,12 +99,13 @@
           "sets": [
             {
               "weight": 35,
-              "reps": 3
+              "reps": 3,
+              "rpe": 3
             }
           ]
         }
       ]
     }
   ],
-  "updatedAt": 1778284611788
+  "updatedAt": 1778284942376
 }
