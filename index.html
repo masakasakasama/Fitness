@@ -952,6 +952,173 @@
   .equip-row:first-of-type { border-top: none; }
   .equip-row .equip-name { font-size: 14px; font-weight: 500; }
 
+  /* Coach tab — diagnosis */
+  .diag-card {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elev) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .diag-card .card-title { margin-bottom: 14px; }
+  .diag-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 0;
+    border-top: 1px dashed var(--border-soft);
+    font-size: 13px;
+  }
+  .diag-row:first-of-type { border-top: none; padding-top: 0; }
+  .diag-label {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+  .diag-value {
+    font-weight: 700;
+    text-align: right;
+    color: var(--text);
+  }
+  .diag-value .num { font-size: 16px; }
+  .diag-value .sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-left: 4px;
+  }
+  .verdict {
+    display: inline-block;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-left: 6px;
+  }
+  .verdict.good { background: var(--success-glow); color: var(--success); border: 1px solid color-mix(in srgb, var(--success) 30%, transparent); }
+  .verdict.warn { background: var(--warn-glow); color: var(--warn); border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent); }
+  .verdict.bad { background: var(--danger-glow); color: var(--danger); border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent); }
+  .goal-bar {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+  }
+  .goal-bar-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .goal-bar-row .gb-label { color: var(--muted); font-weight: 500; }
+  .goal-bar-row .gb-val { color: var(--text); font-weight: 700; }
+  .goal-bar-track {
+    height: 8px;
+    background: var(--surface-3);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .goal-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan) 0%, var(--accent) 100%);
+    border-radius: 999px;
+    transition: width 0.5s var(--ease);
+  }
+
+  /* Routine list (today's recommended workout) */
+  .routine-list { display: flex; flex-direction: column; gap: 8px; }
+  .routine-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s var(--ease);
+  }
+  .routine-item:hover { border-color: var(--border-strong); }
+  .routine-num {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .routine-info { flex: 1; min-width: 0; }
+  .routine-name { font-size: 14px; font-weight: 700; }
+  .routine-target {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .routine-arrow { flex-shrink: 0; color: var(--muted); }
+  .routine-summary {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-soft);
+    font-size: 11px;
+    color: var(--muted-soft);
+    text-align: center;
+  }
+
+  /* Nutrition card */
+  .nut-card {
+    background: linear-gradient(160deg, var(--surface) 0%, var(--bg-elev) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .nut-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .nut-cell {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .nut-cell .nut-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .nut-cell .nut-value {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .nut-cell .nut-unit {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-left: 2px;
+  }
+  .nut-note {
+    font-size: 12px;
+    color: var(--text-soft);
+    line-height: 1.55;
+  }
+
   /* Coach tab */
   .focus-card {
     background:
@@ -1531,47 +1698,110 @@
   <!-- =========== 提案タブ =========== -->
   <section id="tab-coach">
     <div class="section-head">
-      <h2>次のトレーニング</h2>
+      <h2>あなたへの提案</h2>
       <span class="greeting" id="coachGreeting"></span>
     </div>
 
-    <div class="focus-card" id="focusCard">
-      <div class="focus-label">本日のおすすめ</div>
-      <div class="focus-value" id="focusValue">—</div>
-      <div class="focus-tags" id="focusTags"></div>
-      <div class="focus-reason" id="focusReason"></div>
+    <div id="coachNoProfile" style="display:none;">
+      <div class="card" style="text-align:center; padding:32px 20px;">
+        <div style="font-size:14px; font-weight:700; color:var(--text-soft); margin-bottom:8px;">プロフィール未設定</div>
+        <p style="font-size:12px; color:var(--muted); margin:0 0 14px; line-height:1.6;">身長・体重・目標体重を入れると、あなたの体型・ゴールに合った具体的な提案を出します。</p>
+        <button id="goToProfile">設定で入力</button>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        今週のペース
-      </div>
-      <div class="freq-stats">
-        <div class="freq-row">
-          <div><span class="freq-current num" id="freqCurrent">0</span> <span class="freq-target">/ 週<span id="freqTarget">3〜4</span>回</span></div>
-          <div id="freqBadge" style="font-size:11px; color:var(--muted); font-weight:600;"></div>
+    <div id="coachWithProfile" style="display:none;">
+      <div class="diag-card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          現状の診断
         </div>
-        <div class="freq-bar"><div class="freq-bar-fill" id="freqFill" style="width:0%;"></div></div>
-        <div class="freq-msg" id="freqMsg"></div>
+        <div class="diag-row">
+          <span class="diag-label">体組成</span>
+          <span class="diag-value"><span id="diagComposition"></span></span>
+        </div>
+        <div class="diag-row">
+          <span class="diag-label">頻度</span>
+          <span class="diag-value"><span id="diagFreq"></span></span>
+        </div>
+        <div class="diag-row">
+          <span class="diag-label">トレ品質</span>
+          <span class="diag-value"><span id="diagQuality"></span></span>
+        </div>
+        <div class="goal-bar" id="goalBarWrap">
+          <div class="goal-bar-row">
+            <span class="gb-label" id="goalBarLabel">目標まで</span>
+            <span class="gb-val" id="goalBarVal"></span>
+          </div>
+          <div class="goal-bar-track"><div class="goal-bar-fill" id="goalBarFill" style="width:0%;"></div></div>
+        </div>
       </div>
-    </div>
 
-    <div class="subhead" id="coachExHead" style="display:none;">機材ごとの次回目安</div>
-    <div id="coachExList"></div>
-
-    <div class="card" id="untrainedCard" style="display:none;">
-      <div class="card-title" style="color:var(--warn);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        最近やってない部位
+      <div class="focus-card" id="focusCard">
+        <div class="focus-label">本日のおすすめ</div>
+        <div class="focus-value" id="focusValue">—</div>
+        <div class="focus-tags" id="focusTags"></div>
+        <div class="focus-reason" id="focusReason"></div>
       </div>
-      <div class="untrained-list" id="untrainedList"></div>
-    </div>
 
-    <p style="font-size:11px; color:var(--muted-soft); text-align:center; margin:18px 0 0; line-height:1.6;">
-      提案は記録データから自動算出されます。<br>
-      最終的な負荷は自分の体感を優先してください。
-    </p>
+      <div class="card" id="routineCard" style="display:none;">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          推奨ルーティン
+        </div>
+        <div class="routine-list" id="routineList"></div>
+        <div class="routine-summary" id="routineSummary"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          頻度の進捗
+        </div>
+        <div class="freq-stats">
+          <div class="freq-row">
+            <div><span class="freq-current num" id="freqCurrent">0</span> <span class="freq-target">/ 週 <span id="freqTarget">3</span>回</span></div>
+            <div id="freqBadge" style="font-size:11px; font-weight:700;"></div>
+          </div>
+          <div class="freq-bar"><div class="freq-bar-fill" id="freqFill" style="width:0%;"></div></div>
+          <div class="freq-msg" id="freqMsg"></div>
+        </div>
+      </div>
+
+      <div class="nut-card" id="nutCard" style="display:none;">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          食事の目安
+        </div>
+        <div class="nut-grid">
+          <div class="nut-cell">
+            <div class="nut-label">摂取カロリー</div>
+            <div><span class="nut-value num" id="nutCal">—</span><span class="nut-unit">kcal/日</span></div>
+          </div>
+          <div class="nut-cell">
+            <div class="nut-label">タンパク質</div>
+            <div><span class="nut-value num" id="nutProt">—</span><span class="nut-unit">g/日</span></div>
+          </div>
+        </div>
+        <div class="nut-note" id="nutNote"></div>
+      </div>
+
+      <div class="subhead" id="coachExHead" style="display:none;">機材別の次回目安</div>
+      <div id="coachExList"></div>
+
+      <div class="card" id="untrainedCard" style="display:none;">
+        <div class="card-title" style="color:var(--warn);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          最近やってない部位
+        </div>
+        <div class="untrained-list" id="untrainedList"></div>
+      </div>
+
+      <p style="font-size:11px; color:var(--muted-soft); text-align:center; margin:18px 0 0; line-height:1.6;">
+        計算は記録と一般的なガイドラインに基づきます。<br>
+        最終的な負荷・摂取量は自分の体感を優先してください。
+      </p>
+    </div>
   </section>
 
   <!-- =========== 履歴タブ =========== -->
@@ -1668,6 +1898,54 @@
   <section id="tab-settings">
     <div class="section-head">
       <h2>設定</h2>
+    </div>
+
+    <div class="card" id="profileCard">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        プロフィール
+      </div>
+      <p style="color:var(--muted); font-size:12px; margin:0 0 12px;">設定すると提案タブの精度が上がります。</p>
+      <div class="row">
+        <div>
+          <label>身長 (cm)</label>
+          <input type="number" id="profileHeight" inputmode="decimal" step="0.5" placeholder="170">
+        </div>
+        <div>
+          <label>体重 (kg)</label>
+          <input type="number" id="profileWeight" inputmode="decimal" step="0.1" placeholder="65">
+        </div>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <div>
+          <label>目標体重 (kg)</label>
+          <input type="number" id="profileGoalWeight" inputmode="decimal" step="0.1" placeholder="70">
+        </div>
+        <div>
+          <label>年齢</label>
+          <input type="number" id="profileAge" inputmode="numeric" step="1" placeholder="25">
+        </div>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <div>
+          <label>性別</label>
+          <select id="profileSex">
+            <option value="">—</option>
+            <option value="male">男性</option>
+            <option value="female">女性</option>
+          </select>
+        </div>
+        <div>
+          <label>活動レベル</label>
+          <select id="profileActivity">
+            <option value="1.4">軽め（座り仕事中心）</option>
+            <option value="1.55" selected>普通（週2-3トレ）</option>
+            <option value="1.7">活発（週4以上）</option>
+          </select>
+        </div>
+      </div>
+      <button id="saveProfileBtn" style="width:100%; margin-top:10px;">保存</button>
+      <div id="profileSummary" class="sync-status" style="margin-top:10px;"></div>
     </div>
 
     <div class="card">
@@ -1804,13 +2082,14 @@ function loadState() {
     if (!Array.isArray(parsed.exercises)) parsed.exercises = DEFAULT_EXERCISES.slice();
     if (!Array.isArray(parsed.sessions)) parsed.sessions = [];
     if (!parsed.updatedAt) parsed.updatedAt = 0;
+    if (!parsed.profile) parsed.profile = null;
     return parsed;
   } catch {
     return initialState();
   }
 }
 function initialState() {
-  return { exercises: DEFAULT_EXERCISES.map(e => ({ ...e })), sessions: [], updatedAt: 0 };
+  return { exercises: DEFAULT_EXERCISES.map(e => ({ ...e })), sessions: [], updatedAt: 0, profile: null };
 }
 function saveState() {
   state.updatedAt = Date.now();
@@ -1920,7 +2199,7 @@ function showTab(name) {
   document.querySelectorAll('nav.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   if (name === 'history') renderHistory();
   if (name === 'exercises') renderExerciseList();
-  if (name === 'settings') updateSyncStatus();
+  if (name === 'settings') { updateSyncStatus(); loadProfileForm(); }
   if (name === 'coach') renderCoach();
   window.scrollTo(0, 0);
 }
@@ -2546,101 +2825,508 @@ function renderExerciseProgress() {
 }
 
 // ====================================================================
+// Profile management
+// ====================================================================
+function isProfileComplete(p) {
+  return p && p.height > 0 && p.weight > 0 && p.goalWeight > 0;
+}
+
+function loadProfileForm() {
+  const p = state.profile || {};
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v != null ? v : ''; };
+  set('profileHeight', p.height);
+  set('profileWeight', p.weight);
+  set('profileGoalWeight', p.goalWeight);
+  set('profileAge', p.age);
+  set('profileSex', p.sex || '');
+  set('profileActivity', p.activity || 1.55);
+  updateProfileSummary();
+}
+
+function saveProfile() {
+  const height = parseFloat(document.getElementById('profileHeight').value);
+  const weight = parseFloat(document.getElementById('profileWeight').value);
+  const goalWeight = parseFloat(document.getElementById('profileGoalWeight').value);
+  const ageStr = document.getElementById('profileAge').value;
+  const age = ageStr ? parseInt(ageStr, 10) : null;
+  const sex = document.getElementById('profileSex').value || null;
+  const activity = parseFloat(document.getElementById('profileActivity').value) || 1.55;
+
+  if (isNaN(height) || isNaN(weight) || isNaN(goalWeight)) {
+    toast('身長・体重・目標体重は必須');
+    return;
+  }
+  state.profile = { height, weight, goalWeight, age, sex, activity };
+  saveState();
+  updateProfileSummary();
+  toast('保存しました');
+}
+
+function updateProfileSummary() {
+  const el = document.getElementById('profileSummary');
+  if (!el) return;
+  const p = state.profile;
+  el.classList.remove('ok', 'err', 'busy');
+  if (!isProfileComplete(p)) {
+    el.innerHTML = '<span class="status-dot"></span><span>未設定</span>';
+    return;
+  }
+  const bmi = (p.weight / Math.pow(p.height / 100, 2)).toFixed(1);
+  const cat = bmiCategory(+bmi);
+  el.classList.add('ok');
+  el.innerHTML = `<span class="status-dot"></span><span>${p.height}cm / ${p.weight}kg → ${p.goalWeight}kg ・ BMI ${bmi} (${cat})</span>`;
+}
+
+function bmiCategory(bmi) {
+  if (bmi < 18.5) return '低体重';
+  if (bmi < 22) return '痩せ型';
+  if (bmi < 25) return '標準';
+  if (bmi < 30) return 'がっしり';
+  return '肥満';
+}
+
+function getGoalKind(p) {
+  if (!p) return 'maintain';
+  const diff = p.goalWeight - p.weight;
+  if (diff > 1) return 'bulk';
+  if (diff < -1) return 'cut';
+  return 'maintain';
+}
+
+function calcBMR(p) {
+  const age = p.age || 30;
+  const sexAdj = p.sex === 'female' ? -161 : 5;
+  return 10 * p.weight + 6.25 * p.height - 5 * age + sexAdj;
+}
+
+function calcTDEE(p) {
+  return calcBMR(p) * (p.activity || 1.55);
+}
+
+function calorieTarget(p, goal) {
+  const tdee = calcTDEE(p);
+  if (goal === 'bulk') return Math.round(tdee + 350);
+  if (goal === 'cut') return Math.round(tdee - 400);
+  return Math.round(tdee);
+}
+
+function proteinTarget(p, goal) {
+  const factor = goal === 'cut' ? 2.0 : goal === 'bulk' ? 1.8 : 1.5;
+  return Math.round(p.weight * factor);
+}
+
+function repRangeFor(goal) {
+  if (goal === 'cut') return [10, 15];
+  return [8, 12]; // bulk and maintain
+}
+
+function freqTargetFor(goal) {
+  if (goal === 'bulk') return 3;
+  if (goal === 'cut') return 4;
+  return 3;
+}
+
+function starterWeight(exName, profile) {
+  const isMale = profile.sex !== 'female';
+  const mult = profile.weight / 65;
+  const base = {
+    'チェストプレス': isMale ? 30 : 15,
+    'マルチプレス': isMale ? 25 : 12,
+    'ペクトラルフライ': isMale ? 20 : 10,
+    'ラットプルダウン': isMale ? 30 : 20,
+    'シーテッドロー': isMale ? 30 : 18,
+    'ショルダープレス': isMale ? 20 : 10,
+    'サイドレイズ': isMale ? 6 : 4,
+    'リアレイズ': isMale ? 6 : 4,
+    'レッグプレス': isMale ? 50 : 30,
+    'レッグエクステンション': isMale ? 25 : 15,
+    'レッグカール': isMale ? 25 : 15,
+    'アダクション/アブダクション': isMale ? 30 : 20,
+    'ヒップアブダクション': isMale ? 30 : 20,
+    'ヒップアダクション': isMale ? 30 : 20,
+    'バイセップスカール': isMale ? 15 : 8,
+    'トライセップスエクステンション': isMale ? 15 : 8,
+    'バーベルカール': isMale ? 15 : 8,
+    'ダンベルカール': isMale ? 8 : 4,
+    'ダンベル': isMale ? 8 : 4,
+    'ケーブルマシン': isMale ? 15 : 10,
+    'バックエクステンション': 0,
+    'アブドミナル': isMale ? 20 : 10,
+    'プランク': 0,
+  };
+  const v = base[exName] != null ? base[exName] : null;
+  if (v == null) return 0;
+  return snapWeight(Math.max(0, v * mult));
+}
+
+function lastSetForExerciseAnyDate(exName) {
+  const sessions = state.sessions.slice().sort((a, b) => b.date.localeCompare(a.date));
+  for (const s of sessions) {
+    const ex = s.exercises.find(e => e.name === exName);
+    if (ex && ex.sets.length) {
+      return { date: s.date, set: ex.sets[ex.sets.length - 1] };
+    }
+  }
+  return null;
+}
+
+// ====================================================================
 // Coach tab — recommendations
 // ====================================================================
 function renderCoach() {
+  const profile = state.profile;
+  const noProfile = document.getElementById('coachNoProfile');
+  const withProfile = document.getElementById('coachWithProfile');
+
+  if (!isProfileComplete(profile)) {
+    noProfile.style.display = 'block';
+    withProfile.style.display = 'none';
+    return;
+  }
+  noProfile.style.display = 'none';
+  withProfile.style.display = 'block';
+
   const today = new Date();
   const todayIso = toISO(today);
   const sortedSessions = state.sessions.slice().sort((a, b) => a.date.localeCompare(b.date));
   const lastSession = sortedSessions[sortedSessions.length - 1];
+  const todaySession = state.sessions.find(s => s.date === todayIso);
+
+  const goal = getGoalKind(profile);
+  const repRange = repRangeFor(goal);
+  const freqTarget = freqTargetFor(goal);
 
   // Greeting
   const h = today.getHours();
-  let g = h < 11 ? 'おはよう' : h < 17 ? 'こんにちは' : h < 21 ? 'お疲れさま' : '今日もお疲れさま';
+  let g = h < 11 ? 'おはよう' : h < 17 ? 'こんにちは' : h < 21 ? 'お疲れさま' : '深夜の追い込み';
   document.getElementById('coachGreeting').textContent = g;
 
-  // ----- Today's focus -----
-  const focusValueEl = document.getElementById('focusValue');
-  const focusTagsEl = document.getElementById('focusTags');
-  const focusReasonEl = document.getElementById('focusReason');
+  // ----- Diagnosis -----
+  const bmi = profile.weight / Math.pow(profile.height / 100, 2);
+  const cat = bmiCategory(bmi);
+  document.getElementById('diagComposition').innerHTML =
+    `<span class="num">${profile.height}</span><span class="sub">cm</span> / <span class="num">${profile.weight}</span><span class="sub">kg</span> ・ BMI <span class="num">${bmi.toFixed(1)}</span> <span class="sub">${cat}</span>`;
 
-  if (!lastSession) {
-    focusValueEl.textContent = 'スタート';
-    focusTagsEl.innerHTML = '';
-    focusReasonEl.textContent = 'まだ記録がありません。「記録」タブから1セット入れてみよう。';
+  // Frequency diagnosis (based on last 30 days)
+  const cutoff30 = new Date(today);
+  cutoff30.setDate(today.getDate() - 30);
+  const cut30Iso = toISO(cutoff30);
+  const last30 = state.sessions.filter(s => s.date >= cut30Iso && s.date <= todayIso);
+  const perWeek30 = (last30.length / 30) * 7;
+  let freqVerdict = 'good';
+  let freqText;
+  if (perWeek30 < 1.5) {
+    freqVerdict = 'bad';
+    freqText = `${last30.length}回 / 30日 (週${perWeek30.toFixed(1)}回)`;
+  } else if (perWeek30 < 2.5) {
+    freqVerdict = 'warn';
+    freqText = `${last30.length}回 / 30日 (週${perWeek30.toFixed(1)}回)`;
   } else {
-    const daysSince = Math.floor((parseISO(todayIso) - parseISO(lastSession.date)) / 86400000);
-    const lastGroups = new Set();
-    for (const ex of lastSession.exercises) {
-      const grp = exerciseGroup(ex.name);
-      if (grp && grp !== '—') lastGroups.add(grp);
-    }
-    const streak = computeStreak();
+    freqText = `${last30.length}回 / 30日 (週${perWeek30.toFixed(1)}回)`;
+  }
+  document.getElementById('diagFreq').innerHTML = `${freqText}<span class="verdict ${freqVerdict}">${freqVerdict === 'bad' ? '不足' : freqVerdict === 'warn' ? 'もう少し' : '十分'}</span>`;
 
-    if (streak >= 5) {
-      focusValueEl.textContent = '休息日も◎';
-      focusTagsEl.innerHTML = `<span class="focus-tag">${streak}日連続</span>`;
-      focusReasonEl.textContent = '完全休息か軽い有酸素のみで回復させるのも有効。';
-    } else if (daysSince === 0) {
-      focusValueEl.textContent = '今日はトレ済み';
-      focusTagsEl.innerHTML = lastSession.exercises.slice(0, 3).map(e => `<span class="focus-tag">${escapeHTML(e.name)}</span>`).join('');
-      focusReasonEl.textContent = `${lastSession.exercises.length}機材 ${sessionSetCount(lastSession)}セット完了。お疲れさま。`;
+  // Quality diagnosis
+  let qualityVerdict, qualityText;
+  if (last30.length === 0) {
+    qualityVerdict = 'bad';
+    qualityText = '記録なし';
+  } else {
+    const avgMachines = last30.reduce((a, s) => a + s.exercises.length, 0) / last30.length;
+    const avgSets = last30.reduce((a, s) => a + sessionSetCount(s), 0) / last30.length;
+    const allRpes = [];
+    for (const s of last30) for (const ex of s.exercises) for (const set of ex.sets) if (set.rpe) allRpes.push(set.rpe);
+    const avgRpe = allRpes.length ? allRpes.reduce((a, b) => a + b, 0) / allRpes.length : null;
+    qualityText = `1回あたり ${avgMachines.toFixed(1)}機材 ${avgSets.toFixed(1)}セット`;
+    if (avgMachines < 3 || avgSets < 6) {
+      qualityVerdict = 'bad';
+      qualityText += ` <span class="verdict bad">薄い</span>`;
+    } else if (avgMachines < 4 || avgSets < 9) {
+      qualityVerdict = 'warn';
+      qualityText += ` <span class="verdict warn">標準</span>`;
     } else {
-      // Suggest a body part rotation
-      const trainedRecently = countRecentByGroup(7);
-      const candidates = ['背中', '胸', '肩', '脚', '腕', '体幹'];
-      const sortedByLeast = candidates
-        .map(g => ({ g, count: trainedRecently[g] || 0 }))
-        .sort((a, b) => a.count - b.count);
-      const focusGroup = sortedByLeast[0].g;
-      const lastGroupsArr = [...lastGroups];
-      focusValueEl.textContent = focusGroup;
-      const tags = state.exercises
-        .filter(e => e.group === focusGroup)
-        .slice(0, 3)
-        .map(e => `<span class="focus-tag">${escapeHTML(e.name)}</span>`)
-        .join('');
-      focusTagsEl.innerHTML = tags;
-      let reason = `${focusGroup}は直近7日で${sortedByLeast[0].count}回。`;
-      if (lastGroupsArr.length) reason += `前回は${lastGroupsArr.join('・')}。バランスを取る日。`;
-      if (daysSince >= 2) reason += ` (最終トレから${daysSince}日)`;
-      focusReasonEl.textContent = reason;
+      qualityVerdict = 'good';
+      qualityText += ` <span class="verdict good">良好</span>`;
     }
   }
+  document.getElementById('diagQuality').innerHTML = qualityText;
+
+  // Goal bar
+  const goalEl = document.getElementById('goalBarWrap');
+  const goalLabelEl = document.getElementById('goalBarLabel');
+  const goalValEl = document.getElementById('goalBarVal');
+  const goalFillEl = document.getElementById('goalBarFill');
+  const diff = profile.goalWeight - profile.weight;
+  if (Math.abs(diff) >= 0.5) {
+    goalEl.style.display = 'block';
+    if (diff > 0) {
+      // Bulking: 0.3-0.5kg/month is realistic for natural lifters
+      const months = (diff / 0.5).toFixed(0);
+      goalLabelEl.textContent = '目標まで';
+      goalValEl.innerHTML = `+<span class="num">${diff.toFixed(1)}</span>kg ・ 約${months}ヶ月の目安`;
+      // Progress visualized by some assumed start point at goal - 10kg
+      const start = profile.goalWeight - Math.max(diff * 1.5, 5);
+      const totalRange = profile.goalWeight - start;
+      const progressed = profile.weight - start;
+      const pct = Math.max(0, Math.min(100, (progressed / totalRange) * 100));
+      goalFillEl.style.width = pct + '%';
+    } else {
+      const months = (Math.abs(diff) / 0.5).toFixed(0);
+      goalLabelEl.textContent = '減量目標まで';
+      goalValEl.innerHTML = `<span class="num">${diff.toFixed(1)}</span>kg ・ 約${months}ヶ月の目安`;
+      const start = profile.goalWeight + Math.max(Math.abs(diff) * 1.5, 5);
+      const totalRange = start - profile.goalWeight;
+      const progressed = start - profile.weight;
+      const pct = Math.max(0, Math.min(100, (progressed / totalRange) * 100));
+      goalFillEl.style.width = pct + '%';
+    }
+  } else {
+    goalEl.style.display = 'none';
+  }
+
+  // ----- Today's focus -----
+  renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSession, sortedSessions);
+
+  // ----- Routine -----
+  renderRoutine(profile, goal, todaySession, repRange);
 
   // ----- Frequency -----
+  document.getElementById('freqTarget').textContent = freqTarget;
   const cutoff7 = new Date(today);
   cutoff7.setDate(today.getDate() - 7);
   const cut7Iso = toISO(cutoff7);
   const lastWeek = state.sessions.filter(s => s.date >= cut7Iso && s.date <= todayIso).length;
-  const target = 4;
-  const pct = Math.min(100, Math.round((lastWeek / target) * 100));
+  const pct = Math.min(100, Math.round((lastWeek / freqTarget) * 100));
   document.getElementById('freqCurrent').textContent = lastWeek;
   document.getElementById('freqFill').style.width = pct + '%';
 
-  let freqMsg, freqBadge;
+  let freqMsg, freqBadge, freqBadgeColor;
   if (lastWeek === 0) {
-    freqMsg = '今週まだ0回。今日始めるのがおすすめ。';
-    freqBadge = 'スタート';
-  } else if (lastWeek < 3) {
-    freqMsg = `あと${3 - lastWeek}回で目安の3回に到達。`;
+    freqMsg = `今週まだ0回。${goal === 'bulk' ? '増量目標達成には' : ''}最低でも週${freqTarget}回がスタートライン。今日トレ推奨。`;
+    freqBadge = '不足';
+    freqBadgeColor = 'var(--danger)';
+  } else if (lastWeek < freqTarget) {
+    freqMsg = `あと${freqTarget - lastWeek}回で目標達成。継続が筋肥大の鍵。`;
     freqBadge = '進行中';
-  } else if (lastWeek <= 4) {
-    freqMsg = '目安ペースを達成。継続が一番効きます。';
-    freqBadge = '◎ 順調';
+    freqBadgeColor = 'var(--warn)';
+  } else if (lastWeek <= freqTarget + 1) {
+    freqMsg = '目標ペース達成。回復のための休息日も入れつつ継続。';
+    freqBadge = '達成';
+    freqBadgeColor = 'var(--success)';
   } else {
-    freqMsg = `${lastWeek}回でやや多め。1日休む日も入れて回復を優先。`;
+    freqMsg = `${lastWeek}回はやや多め。回復不足にならないよう休息日を確保。`;
     freqBadge = 'やや多め';
+    freqBadgeColor = 'var(--warn)';
   }
   document.getElementById('freqMsg').textContent = freqMsg;
-  document.getElementById('freqBadge').textContent = freqBadge;
+  const fb = document.getElementById('freqBadge');
+  fb.textContent = freqBadge;
+  fb.style.color = freqBadgeColor;
 
-  // ----- Per-exercise next-session targets -----
+  // ----- Nutrition -----
+  const nutCard = document.getElementById('nutCard');
+  if (goal !== 'maintain') {
+    nutCard.style.display = 'block';
+    const cal = calorieTarget(profile, goal);
+    const prot = proteinTarget(profile, goal);
+    document.getElementById('nutCal').textContent = cal.toLocaleString();
+    document.getElementById('nutProt').textContent = prot;
+    const tdee = Math.round(calcTDEE(profile));
+    let note;
+    if (goal === 'bulk') {
+      note = `維持カロリー ${tdee.toLocaleString()} kcal に対して +350 kcal/日。1ヶ月+0.3〜0.5kgが現実的（早すぎると体脂肪増）。タンパク質は体重×1.8gが目安。`;
+    } else {
+      note = `維持カロリー ${tdee.toLocaleString()} kcal に対して -400 kcal/日。1週間 -0.3〜0.5kgが目安。筋量維持のためタンパク質は体重×2.0gをキープ。`;
+    }
+    document.getElementById('nutNote').textContent = note;
+  } else {
+    nutCard.style.display = 'none';
+  }
+
+  // ----- Per-exercise progressions -----
+  renderCoachExList(sortedSessions, todayIso, repRange, profile);
+
+  // ----- Untrained groups -----
+  renderUntrainedGroups(sortedSessions, todayIso);
+}
+
+function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSession, sortedSessions) {
+  const focusValue = document.getElementById('focusValue');
+  const focusTags = document.getElementById('focusTags');
+  const focusReason = document.getElementById('focusReason');
+
+  const streak = computeStreak();
+  const cutoff30 = new Date(today);
+  cutoff30.setDate(today.getDate() - 30);
+  const cut30Iso = toISO(cutoff30);
+  const last30Count = state.sessions.filter(s => s.date >= cut30Iso && s.date <= todayIso).length;
+
+  if (last30Count === 0) {
+    focusValue.textContent = '今日からスタート';
+    focusTags.innerHTML = '';
+    focusReason.textContent = `${goal === 'bulk' ? '増量' : goal === 'cut' ? '減量' : '体型維持'}には継続が必須。今日4-5機材の全身メニューで習慣化を始めよう。`;
+    return;
+  }
+
+  if (last30Count <= 4) {
+    focusValue.textContent = '頻度を上げる';
+    focusTags.innerHTML = `<span class="focus-tag">最優先</span>`;
+    focusReason.textContent = `直近30日で${last30Count}回は筋肥大には不足。週${freqTargetFor(goal)}回を3週間続けることがまず最優先。今日も全身メニュー推奨。`;
+    return;
+  }
+
+  if (streak >= 5) {
+    focusValue.textContent = '休息日';
+    focusTags.innerHTML = `<span class="focus-tag">${streak}日連続</span>`;
+    focusReason.textContent = '筋肉は休息中に育つ。今日は完全休息か軽い有酸素のみで超回復を。';
+    return;
+  }
+
+  if (todaySession) {
+    const sets = sessionSetCount(todaySession);
+    const machines = todaySession.exercises.length;
+    if (machines >= 4 && sets >= 9) {
+      focusValue.textContent = 'セッション完了';
+      focusTags.innerHTML = todaySession.exercises.slice(0, 3).map(e => `<span class="focus-tag">${escapeHTML(e.name)}</span>`).join('');
+      focusReason.textContent = `${machines}機材 ${sets}セット完了。明日は休息か違う部位を。`;
+      return;
+    }
+    focusValue.textContent = 'セッション拡張';
+    focusTags.innerHTML = `<span class="focus-tag">あと${Math.max(0, 4 - machines)}機材</span>`;
+    focusReason.textContent = `現在${machines}機材 ${sets}セット。${goal === 'bulk' ? '増量目的なら' : ''}1セッション4-5機材・各3セットが目安。下のルーティンで追加を。`;
+    return;
+  }
+
+  // No session today
+  const daysSinceLast = lastSession
+    ? Math.floor((parseISO(todayIso) - parseISO(lastSession.date)) / 86400000)
+    : 999;
+
+  if (daysSinceLast === 1) {
+    // Yesterday trained
+    const yesterdayGroups = new Set();
+    for (const ex of lastSession.exercises) {
+      const grp = exerciseGroup(ex.name);
+      if (grp && grp !== '—' && grp !== '有酸素') yesterdayGroups.add(grp);
+    }
+    if (yesterdayGroups.size >= 3 || sessionSetCount(lastSession) >= 12) {
+      focusValue.textContent = '休息も◎';
+      focusTags.innerHTML = `<span class="focus-tag">回復日</span>`;
+      focusReason.textContent = '昨日しっかりトレ済み。完全休息か軽め有酸素で回復させると次が伸びる。';
+      return;
+    }
+  }
+
+  // Otherwise: train today, suggest the least-trained group
+  const trainedRecently = countRecentByGroup(7);
+  const candidates = ['胸', '背中', '肩', '脚'];
+  const sortedByLeast = candidates
+    .map(g => ({ g, count: trainedRecently[g] || 0 }))
+    .sort((a, b) => a.count - b.count);
+  const focusGroup = sortedByLeast[0].g;
+  focusValue.textContent = focusGroup + ' 中心';
+  const tags = state.exercises
+    .filter(e => e.group === focusGroup)
+    .slice(0, 3)
+    .map(e => `<span class="focus-tag">${escapeHTML(e.name)}</span>`)
+    .join('');
+  focusTags.innerHTML = tags || `<span class="focus-tag">全身</span>`;
+  focusReason.textContent = `${focusGroup}は直近7日で${sortedByLeast[0].count}回。${daysSinceLast}日ぶりのセッションになる。`;
+}
+
+function renderRoutine(profile, goal, todaySession, repRange) {
+  const card = document.getElementById('routineCard');
+  const list = document.getElementById('routineList');
+  const summary = document.getElementById('routineSummary');
+
+  // Build routine: compound first, then accessory
+  const compounds = ['チェストプレス', 'ラットプルダウン', 'レッグプレス', 'ショルダープレス'];
+  const accessory = ['マルチプレス', 'シーテッドロー', 'ペクトラルフライ', 'アダクション/アブダクション', 'サイドレイズ', 'バックエクステンション', 'アブドミナル', 'ダンベル', 'ケーブルマシン'];
+
+  const have = new Set(state.exercises.map(e => e.name));
+  const doneToday = todaySession ? new Set(todaySession.exercises.map(e => e.name)) : new Set();
+
+  const picks = [];
+  for (const n of compounds) {
+    if (have.has(n) && !doneToday.has(n)) picks.push(n);
+  }
+  // Limit to 4 from compounds, fill with accessory up to 5 total
+  const max = 5;
+  const remaining = max - doneToday.size;
+  const final = picks.slice(0, Math.min(picks.length, remaining));
+  if (final.length < remaining) {
+    for (const n of accessory) {
+      if (final.length >= remaining) break;
+      if (have.has(n) && !doneToday.has(n)) final.push(n);
+    }
+  }
+
+  if (final.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+  list.innerHTML = '';
+  final.forEach((name, i) => {
+    const last = lastSetForExerciseAnyDate(name);
+    let weight, target;
+    if (last) {
+      // For bulking, ensure weight allows hypertrophy rep range (8-12)
+      // If last was very heavy/few reps, suggest lighter
+      const lastReps = last.set.reps;
+      const lastW = last.set.weight;
+      if (goal === 'bulk' && lastReps < repRange[0]) {
+        // Reduce weight to enable more reps
+        weight = snapWeight(lastW * 0.85);
+        target = `${repRange[0]}-${repRange[1]}回`;
+      } else if (lastReps > repRange[1]) {
+        weight = snapWeight(lastW * 1.1);
+        target = `${repRange[0]}-${repRange[1]}回`;
+      } else {
+        weight = snapWeight(lastW);
+        target = `${repRange[0]}-${repRange[1]}回`;
+      }
+    } else {
+      weight = starterWeight(name, profile);
+      target = `${repRange[0]}-${repRange[1]}回`;
+    }
+    const isCardio = name === 'トレッドミル' || name === 'バイク';
+    const item = document.createElement('div');
+    item.className = 'routine-item';
+    item.innerHTML = `
+      <div class="routine-num num">${i + 1}</div>
+      <div class="routine-info">
+        <div class="routine-name">${escapeHTML(name)}</div>
+        <div class="routine-target">${isCardio ? '15-20分' : `${weight ? fmtNum(weight) + 'kg × ' : ''}${target} × 3セット`}</div>
+      </div>
+      <svg class="routine-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    `;
+    item.addEventListener('click', () => {
+      const todayIso = toISO(new Date());
+      dateInput.value = todayIso;
+      onDateChange();
+      showTab('record');
+      setTimeout(() => {
+        selectExercise(name);
+        if (weight) inputWeight.value = String(snapWeight(weight));
+        inputReps.value = repRange[0];
+        setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }, 50);
+    });
+    list.appendChild(item);
+  });
+
+  summary.textContent = `合計${final.length}機材 × 3セット ・ 推定45-60分`;
+}
+
+function renderCoachExList(sortedSessions, todayIso, repRange, profile) {
   const exHead = document.getElementById('coachExHead');
   const exList = document.getElementById('coachExList');
   exList.innerHTML = '';
+
   const exNames = new Set();
   for (const s of sortedSessions) for (const ex of s.exercises) exNames.add(ex.name);
+  const goal = getGoalKind(profile);
 
   const exCards = [];
   for (const name of exNames) {
@@ -2653,11 +3339,6 @@ function renderCoach() {
     const lastSet = lastEx.sets[lastEx.sets.length - 1];
     const daysSince = Math.floor((parseISO(todayIso) - parseISO(lastSess.date)) / 86400000);
 
-    let nextW = lastSet.weight;
-    let nextR = lastSet.reps;
-    let reason;
-    let kind = 'maintain';
-
     const recent = points.slice(-3);
     const rpes = [];
     for (const s of sessions.slice(-3)) {
@@ -2666,125 +3347,126 @@ function renderCoach() {
     }
     const avgRpe = rpes.length ? rpes.reduce((a, b) => a + b, 0) / rpes.length : null;
 
-    if (recent.length >= 3 && recent.every(p => p.maxW === recent[0].maxW) && avgRpe !== null && avgRpe <= 1.5) {
-      nextW = nextWeightStep(recent[0].maxW);
-      reason = `直近3回${fmtNum(recent[0].maxW)}kgで「余裕」が続いている → 次は${fmtNum(nextW)}kgに挑戦`;
-      kind = 'up';
-    } else if (avgRpe !== null && avgRpe >= 2.6 && rpes.length >= 3) {
-      nextR = Math.max(1, Math.round(lastSet.reps * 0.8));
-      reason = `「限界」が続いている → 同じ重量で${nextR}回に絞るか、1段下げる`;
+    let nextW = lastSet.weight, nextR = lastSet.reps, reason, kind = 'maintain';
+
+    if (lastSet.reps < repRange[0]) {
+      // Weight too heavy for hypertrophy range
+      nextW = snapWeight(lastSet.weight * 0.85);
+      nextR = repRange[0];
+      reason = `前回${lastSet.reps}回は強度が高すぎ。${goal === 'bulk' ? '筋肥大目的なら' : ''}${repRange[0]}-${repRange[1]}回が効率的 → 重量を下げて回数を稼ぐ`;
       kind = 'easier';
-    } else if (recent.length >= 2 && recent[recent.length - 1].maxW > recent[recent.length - 2].maxW) {
-      reason = `前回${fmtNum(lastSet.weight)}kgまで上げた。同じ重量で${lastSet.reps}回 × 3セットを安定させる`;
-      kind = 'maintain';
-    } else if (daysSince >= 14) {
-      reason = `最終${daysSince}日前。前回より1段下げて感覚を取り戻すのが安全`;
-      kind = 'restart';
-    } else if (avgRpe !== null && avgRpe >= 1.6 && avgRpe <= 2.4) {
-      reason = `「普通」で安定。同じ${fmtNum(lastSet.weight)}kg × ${lastSet.reps}回でレップ数+1を狙う`;
+    } else if (recent.length >= 3 && recent.every(p => p.maxW === recent[0].maxW) && avgRpe !== null && avgRpe <= 1.5) {
+      nextW = nextWeightStep(recent[0].maxW);
+      nextR = repRange[0];
+      reason = `直近3回${fmtNum(recent[0].maxW)}kgで「余裕」続き → ${fmtNum(nextW)}kgへ`;
+      kind = 'up';
+    } else if (avgRpe !== null && avgRpe >= 2.6) {
+      nextW = snapWeight(lastSet.weight * 0.9);
+      nextR = repRange[0];
+      reason = `「限界」続き → 1段下げて${repRange[0]}-${repRange[1]}回しっかり狙う`;
+      kind = 'easier';
+    } else if (lastSet.reps < repRange[1]) {
       nextR = lastSet.reps + 1;
+      reason = `${fmtNum(lastSet.weight)}kgで${nextR}回目標。${repRange[1]}回できたら重量UP`;
       kind = 'reps';
+    } else if (lastSet.reps >= repRange[1]) {
+      nextW = nextWeightStep(lastSet.weight);
+      nextR = repRange[0];
+      reason = `${repRange[1]}回到達。重量を上げて${repRange[0]}回からやり直し`;
+      kind = 'up';
+    } else if (daysSince >= 14) {
+      nextW = snapWeight(lastSet.weight * 0.9);
+      reason = `${daysSince}日ぶり。1段下げて感覚を取り戻す`;
+      kind = 'restart';
     } else {
-      reason = `前回 ${fmtNum(lastSet.weight)}kg × ${lastSet.reps}回。同じ負荷で継続`;
-      kind = 'maintain';
+      reason = `前回 ${fmtNum(lastSet.weight)}kg × ${lastSet.reps}回 を維持`;
     }
 
     exCards.push({
-      name,
-      group: exerciseGroup(name),
-      lastSession: lastSess.date,
-      lastWeight: lastSet.weight,
-      lastReps: lastSet.reps,
-      nextW,
-      nextR,
-      reason,
-      kind,
-      sessionCount: sessions.length,
-      daysSince,
+      name, lastSession: lastSess.date, lastWeight: lastSet.weight, lastReps: lastSet.reps,
+      nextW, nextR, reason, kind, sessionCount: sessions.length, daysSince,
     });
   }
 
-  // Prioritize: weight-up > maintain > easier > restart, then by frequency
-  const kindRank = { up: 0, reps: 1, maintain: 2, easier: 3, restart: 4 };
+  const kindRank = { up: 0, easier: 1, reps: 2, maintain: 3, restart: 4 };
   exCards.sort((a, b) => {
     const r = kindRank[a.kind] - kindRank[b.kind];
     if (r !== 0) return r;
     return b.sessionCount - a.sessionCount;
   });
 
-  if (exCards.length === 0) {
+  if (!exCards.length) {
     exHead.style.display = 'none';
-  } else {
-    exHead.style.display = 'flex';
-    const limit = 6;
-    exCards.slice(0, limit).forEach(c => {
-      const card = document.createElement('div');
-      card.className = 'coach-ex';
-      const lastDt = parseISO(c.lastSession);
-      const dayLabel = c.daysSince === 0 ? '今日' : c.daysSince === 1 ? '昨日' : `${c.daysSince}日前`;
-      card.innerHTML = `
-        <div class="coach-ex-head">
-          <div class="coach-ex-info">
-            <div class="coach-ex-name">${escapeHTML(c.name)}</div>
-            <div class="coach-ex-prev">前回 ${dayLabel} · ${fmtNum(c.lastWeight)}kg × ${c.lastReps}</div>
-          </div>
-          <div class="coach-ex-target">
-            <span class="num">${fmtNum(c.nextW)}</span><span class="unit">kg</span>
-            <div style="font-size:11px; color:var(--muted); font-weight:500; margin-top:2px;">× ${c.nextR}回</div>
-          </div>
-        </div>
-        <div class="coach-ex-reason">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>
-          <span>${escapeHTML(c.reason)}</span>
-        </div>
-      `;
-      card.addEventListener('click', () => {
-        dateInput.value = todayIso;
-        onDateChange();
-        showTab('record');
-        setTimeout(() => {
-          selectExercise(c.name);
-          inputWeight.value = String(snapWeight(c.nextW));
-          inputReps.value = c.nextR;
-          setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-        }, 50);
-      });
-      exList.appendChild(card);
-    });
+    return;
   }
+  exHead.style.display = 'flex';
+  const limit = 6;
+  exCards.slice(0, limit).forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'coach-ex';
+    const dayLabel = c.daysSince === 0 ? '今日' : c.daysSince === 1 ? '昨日' : `${c.daysSince}日前`;
+    card.innerHTML = `
+      <div class="coach-ex-head">
+        <div class="coach-ex-info">
+          <div class="coach-ex-name">${escapeHTML(c.name)}</div>
+          <div class="coach-ex-prev">前回 ${dayLabel} · ${fmtNum(c.lastWeight)}kg × ${c.lastReps}</div>
+        </div>
+        <div class="coach-ex-target">
+          <span class="num">${fmtNum(c.nextW)}</span><span class="unit">kg</span>
+          <div style="font-size:11px; color:var(--muted); font-weight:500; margin-top:2px;">× ${c.nextR}回</div>
+        </div>
+      </div>
+      <div class="coach-ex-reason">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>
+        <span>${escapeHTML(c.reason)}</span>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      const todayIso = toISO(new Date());
+      dateInput.value = todayIso;
+      onDateChange();
+      showTab('record');
+      setTimeout(() => {
+        selectExercise(c.name);
+        inputWeight.value = String(snapWeight(c.nextW));
+        inputReps.value = c.nextR;
+        setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }, 50);
+    });
+    exList.appendChild(card);
+  });
+}
 
-  // ----- Untrained groups -----
+function renderUntrainedGroups(sortedSessions, todayIso) {
   const untrainedCard = document.getElementById('untrainedCard');
   const untrainedList = document.getElementById('untrainedList');
   if (sortedSessions.length === 0) {
     untrainedCard.style.display = 'none';
-  } else {
-    const lastByGroup = new Map();
-    for (const s of sortedSessions) {
-      for (const ex of s.exercises) {
-        const grp = exerciseGroup(ex.name);
-        if (!grp || grp === '—' || grp === '有酸素') continue;
-        const prev = lastByGroup.get(grp);
-        if (!prev || s.date > prev) lastByGroup.set(grp, s.date);
-      }
-    }
-    const cutoffDays = 7;
-    const inactive = [];
-    for (const [grp, lastDate] of lastByGroup) {
-      const days = Math.floor((parseISO(todayIso) - parseISO(lastDate)) / 86400000);
-      if (days >= cutoffDays) inactive.push({ group: grp, days });
-    }
-    inactive.sort((a, b) => b.days - a.days);
-
-    if (!inactive.length) {
-      untrainedCard.style.display = 'none';
-    } else {
-      untrainedCard.style.display = 'block';
-      untrainedList.innerHTML = inactive.map(({ group, days }) =>
-        `<div class="untrained-row"><span class="group-name">${escapeHTML(group)}</span><span class="days">最終 ${days}日前</span></div>`
-      ).join('');
+    return;
+  }
+  const lastByGroup = new Map();
+  for (const s of sortedSessions) {
+    for (const ex of s.exercises) {
+      const grp = exerciseGroup(ex.name);
+      if (!grp || grp === '—' || grp === '有酸素') continue;
+      const prev = lastByGroup.get(grp);
+      if (!prev || s.date > prev) lastByGroup.set(grp, s.date);
     }
   }
+  const inactive = [];
+  for (const [grp, lastDate] of lastByGroup) {
+    const days = Math.floor((parseISO(todayIso) - parseISO(lastDate)) / 86400000);
+    if (days >= 7) inactive.push({ group: grp, days });
+  }
+  inactive.sort((a, b) => b.days - a.days);
+  if (!inactive.length) {
+    untrainedCard.style.display = 'none';
+    return;
+  }
+  untrainedCard.style.display = 'block';
+  untrainedList.innerHTML = inactive.map(({ group, days }) =>
+    `<div class="untrained-row"><span class="group-name">${escapeHTML(group)}</span><span class="days">最終 ${days}日前</span></div>`
+  ).join('');
 }
 
 function countRecentByGroup(days) {
@@ -2826,12 +3508,13 @@ function generateInsights() {
   // Frequency
   if (inRange.length || priorRange.length) {
     const diff = inRange.length - priorRange.length;
+    const perWeek = (inRange.length / rangeDays) * 7;
     if (priorRange.length === 0 && inRange.length > 0) {
-      insights.push({
-        kind: 'good',
-        title: `${word}は ${inRange.length}回 トレーニング`,
-        body: 'いいスタート。',
-      });
+      if (perWeek >= 2.5) {
+        insights.push({ kind: 'good', title: `${word}は ${inRange.length}回 トレーニング`, body: `週${perWeek.toFixed(1)}回ペース。` });
+      } else {
+        insights.push({ kind: 'warn', title: `${word}は ${inRange.length}回のみ`, body: `週${perWeek.toFixed(1)}回ペース。週2-3回が筋肥大の最低ライン。` });
+      }
     } else if (diff > 0) {
       insights.push({
         kind: 'good',
@@ -3283,10 +3966,12 @@ async function performInitialSync() {
         state = remote;
         if (!Array.isArray(state.exercises)) state.exercises = DEFAULT_EXERCISES.map(e => ({ ...e }));
         if (!Array.isArray(state.sessions)) state.sessions = [];
+        if (!state.profile) state.profile = null;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         renderTodaySummary();
         renderExerciseList();
         renderHistory();
+        loadProfileForm();
         refreshHeader();
         updateSyncStatus();
       } else if (localUpdated > remoteUpdated) {
@@ -3391,6 +4076,10 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   toast('削除しました');
 });
 
+// Profile button wiring
+document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
+document.getElementById('goToProfile').addEventListener('click', () => showTab('settings'));
+
 // ====================================================================
 // Init
 // ====================================================================
@@ -3400,6 +4089,7 @@ refreshDateHeading();
 refreshHeader();
 renderTodaySummary();
 updateSyncStatus();
+loadProfileForm();
 performInitialSync();
 
 document.addEventListener('visibilitychange', () => {
