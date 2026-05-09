@@ -155,7 +155,17 @@
           "sets": [
             {
               "weight": 12,
-              "reps": 3,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 12,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 12,
+              "reps": 10,
               "rpe": 2
             }
           ]
@@ -181,5 +191,5 @@
     "sex": null,
     "activity": 1.55
   },
-  "updatedAt": 1778294912616
+  "updatedAt": 1778294934108
 }
