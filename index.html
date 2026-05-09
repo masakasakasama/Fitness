@@ -54,7 +54,7 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
     font-size: 15px;
     line-height: 1.55;
-    overscroll-behavior-y: contain;
+    overscroll-behavior-y: auto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
@@ -624,6 +624,9 @@
     <div class="pill-mini" id="streakPill" style="display:none;">
       <span id="streakNum" class="num">0</span>連続
     </div>
+    <button class="icon" id="refreshBtn" title="更新" aria-label="更新" style="margin-left:2px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </button>
   </div>
 </header>
 
@@ -2549,21 +2552,6 @@ function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSess
     return;
   }
 
-  const monthlyTarget = freqTargetFor(goal, weekendOnly) * 4;
-  if (last30Count < monthlyTarget * 0.6) {
-    focusValue.textContent = '頻度を上げる';
-    focusTags.innerHTML = `<span class="focus-tag">最優先</span>`;
-    focusReason.textContent = `直近30日で${last30Count}回は筋肥大には不足。${weekendOnly ? '土日とも行く' : `週${freqTargetFor(goal, weekendOnly)}回`}を3週間続けることがまず最優先。今日も全身メニュー推奨。`;
-    return;
-  }
-
-  if (streak >= 5) {
-    focusValue.textContent = '休息日';
-    focusTags.innerHTML = `<span class="focus-tag">${streak}日連続</span>`;
-    focusReason.textContent = '筋肉は休息中に育つ。今日は完全休息か軽い有酸素のみで超回復を。';
-    return;
-  }
-
   if (todaySession) {
     const sets = sessionSetCount(todaySession);
     const machines = todaySession.exercises.length;
@@ -2579,7 +2567,14 @@ function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSess
     return;
   }
 
-  // No session today
+  if (streak >= 5) {
+    focusValue.textContent = '休息日';
+    focusTags.innerHTML = `<span class="focus-tag">${streak}日連続</span>`;
+    focusReason.textContent = '筋肉は休息中に育つ。今日は完全休息か軽い有酸素のみで超回復を。';
+    return;
+  }
+
+  const monthlyTarget = freqTargetFor(goal, weekendOnly) * 4;
   const daysSinceLast = lastSession
     ? Math.floor((parseISO(todayIso) - parseISO(lastSession.date)) / 86400000)
     : 999;
@@ -2643,6 +2638,13 @@ function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSess
       focusReason.textContent = '昨日しっかりトレ済み。完全休息か軽め有酸素で回復させると次が伸びる。';
       return;
     }
+  }
+
+  if (last30Count < monthlyTarget * 0.6) {
+    focusValue.textContent = '頻度を上げる';
+    focusTags.innerHTML = `<span class="focus-tag">最優先</span>`;
+    focusReason.textContent = `直近30日で${last30Count}回は筋肥大には不足。${weekendOnly ? '土日とも行く' : `週${freqTargetFor(goal, weekendOnly)}回`}を3週間続けることがまず最優先。今日も全身メニュー推奨。`;
+    return;
   }
 
   // Otherwise: train today, suggest the least-trained group
@@ -3503,6 +3505,18 @@ document.getElementById('syncNowBtn').addEventListener('click', async () => {
 // Profile button wiring
 document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
 document.getElementById('goToProfile').addEventListener('click', () => showTab('settings'));
+
+// Refresh button: invalidate SW cache and reload
+document.getElementById('refreshBtn').addEventListener('click', async () => {
+  toast('更新中...');
+  try {
+    if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistrations) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const r of regs) await r.update();
+    }
+  } catch {}
+  setTimeout(() => location.reload(), 200);
+});
 
 // ====================================================================
 // Init
