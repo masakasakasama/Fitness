@@ -180,6 +180,106 @@
   .date-nav:active { transform: scale(0.96); background: var(--surface-2); }
   .date-nav svg { width: 18px; height: 18px; }
 
+  /* EQUIPMENT GRID (record tab) */
+  .equip-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .equip-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border-soft);
+    border-radius: var(--r);
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .equip-card:active { transform: scale(0.99); }
+  .equip-card.active {
+    border-color: var(--accent);
+    background: rgba(250, 204, 21, 0.04);
+  }
+  .equip-card .ec-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--surface-2);
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 12px;
+    color: var(--text-soft);
+  }
+  .equip-card .ec-icon svg { width: 18px; height: 18px; }
+  .equip-card.active .ec-icon { background: var(--accent); color: var(--bg); }
+  .equip-card .ec-name {
+    font-size: 15.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+    line-height: 1.25;
+  }
+  .equip-card .ec-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .equip-card .ec-meta .en { letter-spacing: 0.04em; font-weight: 600; }
+  .equip-card .ec-stat {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  .equip-card .ec-stat .unit { font-size: 11px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+  .ec-sparkline {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 16px;
+  }
+  .ec-sparkline .seg {
+    flex: 1;
+    background: transparent;
+    border-radius: 2px;
+    min-height: 2px;
+  }
+  .ec-sparkline .seg.has-1 { background: var(--surface-3); height: 30%; }
+  .ec-sparkline .seg.has-2 { background: var(--text-soft); height: 60%; }
+  .ec-sparkline .seg.has-3 { background: var(--text-soft); height: 100%; }
+  .ec-sparkline .seg.empty { border-bottom: 2px solid var(--surface-3); height: 0; align-self: flex-end; }
+  .equip-card.active .ec-sparkline .seg.has-1,
+  .equip-card.active .ec-sparkline .seg.has-2,
+  .equip-card.active .ec-sparkline .seg.has-3 { background: var(--accent); }
+
+  .equip-grid-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 12px;
+  }
+  .equip-grid-foot a {
+    color: var(--muted);
+    border-bottom: none;
+    font-weight: 500;
+  }
+  .equip-grid-foot a:hover { color: var(--text); }
+
+  .record-cta {
+    width: 100%;
+    margin: 4px 0 18px;
+    padding: 16px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
   /* EX SELECTOR */
   .ex-selector { width: 100%; background: var(--surface); border: 1px solid var(--border-soft); padding: 16px 18px; color: var(--text); text-align: left; font-size: 15px; font-weight: 500; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: var(--r); margin-bottom: 14px; }
   .ex-selector:active { background: var(--surface-2); }
@@ -503,13 +603,15 @@
       </button>
     </div>
 
-    <button class="ex-selector" id="openExercisePicker">
-      <div>
-        <span class="ex-selector-label">機材</span>
-        <span class="ex-selector-value empty" id="currentExLabel">選択してください</span>
-      </div>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
+    <div class="subhead">
+      機材 <span class="en">EQUIPMENT</span>
+      <span id="equipCount" style="font-weight:600; color:var(--muted-soft); font-size:11px; letter-spacing:0.16em;"></span>
+    </div>
+    <div class="equip-grid" id="equipGrid"></div>
+    <div class="equip-grid-foot">
+      <a href="#" id="openExercisePicker">+ 他の機材から選ぶ</a>
+      <span id="currentExLabel" style="display:none;"></span>
+    </div>
 
     <div id="setEntryCard" style="display:none; margin-top:12px;">
       <div class="card">
@@ -953,6 +1055,8 @@ let pendingSets = [];
 let currentExercise = null;
 let currentRPE = null;
 let editingIndex = null;
+let editingGroupIdx = null;
+let editingGroupIndices = null;
 let historyFilter = 'all';
 
 function loadState() {
@@ -1152,7 +1256,7 @@ dateInput.addEventListener('change', onDateChange);
 function onDateChange() {
   refreshDateHeading();
   if (currentExercise) selectExercise(currentExercise);
-  renderTodaySummary();
+  renderTodaySummary(); renderEquipGrid();
 }
 
 function refreshDateHeading() {
@@ -1187,21 +1291,33 @@ function selectExercise(name) {
   if (!name) {
     currentExercise = null;
     setEntryCard.style.display = 'none';
-    currentExLabel.textContent = '選択してください';
-    currentExLabel.classList.add('empty');
+    if (currentExLabel) { currentExLabel.textContent = ''; currentExLabel.style.display = 'none'; }
+    renderEquipGrid();
     return;
   }
   currentExercise = name;
-  currentExLabel.textContent = name;
-  currentExLabel.classList.remove('empty');
+  if (currentExLabel) {
+    currentExLabel.textContent = name;
+    currentExLabel.style.display = 'inline';
+    currentExLabel.style.color = 'var(--text)';
+    currentExLabel.style.fontWeight = '600';
+    currentExLabel.style.fontSize = '13px';
+  }
   setEntryCard.style.display = 'block';
   pendingSets = [];
-  editingIndex = null;
+  editingGroupIdx = null;
+  editingGroupIndices = null;
   resetRPE();
   resetAddBtnLabel();
   setSetsInputDisabled(false);
   const cancelBtn = document.getElementById('cancelEditBtn');
   if (cancelBtn) cancelBtn.style.display = 'none';
+  renderEquipGrid();
+  // Update card-title in setEntryCard to show exercise name
+  const setCardTitle = document.querySelector('#setEntryCard .card-title');
+  if (setCardTitle) {
+    setCardTitle.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>${escapeHTML(name)}を記録`;
+  }
 
   const last = lastSetForExercise(name, dateInput.value);
   if (last) {
@@ -1238,7 +1354,11 @@ document.querySelectorAll('button[data-step]').forEach(btn => {
 inputSets.addEventListener('input', () => refreshAddBtnLabel());
 
 function refreshAddBtnLabel() {
-  if (editingIndex !== null) return;
+  if (editingGroupIdx !== null) {
+    const sets = parseInt(inputSets.value, 10) || 1;
+    document.getElementById('addSetLabel').textContent = `${sets}セットに上書き`;
+    return;
+  }
   const sets = parseInt(inputSets.value, 10) || 1;
   document.getElementById('addSetLabel').textContent = sets > 1 ? `＋ ${sets}セット追加` : '＋ セット追加';
 }
@@ -1271,18 +1391,18 @@ document.getElementById('addSetBtn').addEventListener('click', () => {
   }
   const baseSet = { weight: w, reps: r };
   if (currentRPE) baseSet.rpe = currentRPE;
-  if (editingIndex !== null) {
-    pendingSets[editingIndex] = { ...baseSet };
-    editingIndex = null;
+  const setsCount = Math.max(1, Math.min(10, parseInt(inputSets.value, 10) || 1));
+  if (editingGroupIndices && editingGroupIndices.length) {
+    const newSets = Array.from({ length: setsCount }, () => ({ ...baseSet }));
+    const startIdx = editingGroupIndices[0];
+    pendingSets.splice(startIdx, editingGroupIndices.length, ...newSets);
+    editingGroupIdx = null;
+    editingGroupIndices = null;
     document.getElementById('cancelEditBtn').style.display = 'none';
-    setSetsInputDisabled(false);
     refreshAddBtnLabel();
-    toast('セットを更新しました');
+    toast(`${setsCount}セットに更新`);
   } else {
-    const setsCount = Math.max(1, Math.min(10, parseInt(inputSets.value, 10) || 1));
-    for (let i = 0; i < setsCount; i++) {
-      pendingSets.push({ ...baseSet });
-    }
+    for (let i = 0; i < setsCount; i++) pendingSets.push({ ...baseSet });
     toast(setsCount > 1 ? `${setsCount}セット追加` : `セット追加`);
   }
   resetRPE();
@@ -1290,21 +1410,38 @@ document.getElementById('addSetBtn').addEventListener('click', () => {
   commitCurrentExercise(false);
 });
 
+function computeGroups(sets) {
+  const groups = [];
+  for (let i = 0; i < sets.length; i++) {
+    const s = sets[i];
+    const last = groups[groups.length - 1];
+    const key = `${s.weight}|${s.reps}|${s.rpe || 0}`;
+    if (last && last.key === key) {
+      last.count++;
+      last.indices.push(i);
+    } else {
+      groups.push({ key, weight: s.weight, reps: s.reps, rpe: s.rpe, count: 1, indices: [i] });
+    }
+  }
+  return groups;
+}
+
 function renderPending() {
   pendingSetsEl.innerHTML = '';
   if (!pendingSets.length) return;
-  pendingSets.forEach((s, i) => {
+  const groups = computeGroups(pendingSets);
+  groups.forEach((g, gi) => {
     const row = document.createElement('div');
-    row.className = 'pending-set' + (editingIndex === i ? ' editing' : '');
+    row.className = 'pending-set' + (editingGroupIdx === gi ? ' editing' : '');
     row.title = 'タップして編集';
-    const rpeHtml = s.rpe ? `<span class="rpe-dot r${s.rpe}"></span>` : '';
+    const rpeHtml = g.rpe ? `<span class="rpe-dot r${g.rpe}"></span>` : '';
     row.innerHTML = `
-      <div class="ps-idx num">${i + 1}</div>
+      <div class="ps-idx num">${gi + 1}</div>
       <div class="ps-w">
-        <span class="ps-num num">${fmtNum(s.weight)}</span><span class="ps-unit">kg</span>
+        <span class="ps-num num">${fmtNum(g.weight)}</span><span class="ps-unit">kg</span>
       </div>
       <div class="ps-r">
-        <span class="ps-num num">${s.reps}</span><span class="ps-unit">回${rpeHtml}</span>
+        <span class="ps-num num">${g.reps}</span><span class="ps-unit">回 × ${g.count}セット ${rpeHtml}</span>
       </div>
       <div class="ps-actions">
         <button class="icon del" title="削除">
@@ -1314,13 +1451,12 @@ function renderPending() {
     `;
     row.addEventListener('click', (e) => {
       if (e.target.closest('.del')) return;
-      editSet(i);
+      editGroup(gi);
     });
     row.querySelector('.del').addEventListener('click', (e) => {
       e.stopPropagation();
-      pendingSets.splice(i, 1);
-      if (editingIndex === i) { editingIndex = null; resetAddBtnLabel(); cancelEditBtn().style.display = 'none'; }
-      else if (editingIndex !== null && editingIndex > i) editingIndex--;
+      pendingSets.splice(g.indices[0], g.indices.length);
+      if (editingGroupIdx === gi) { editingGroupIdx = null; editingGroupIndices = null; resetAddBtnLabel(); document.getElementById('cancelEditBtn').style.display = 'none'; }
       renderPending();
       commitCurrentExercise(false);
     });
@@ -1328,34 +1464,34 @@ function renderPending() {
   });
 }
 
-function cancelEditBtn() {
-  return document.getElementById('cancelEditBtn');
-}
-
 function setSetsInputDisabled(disabled) {
   inputSets.disabled = disabled;
   document.querySelectorAll('button[data-step="sets"]').forEach(b => b.disabled = disabled);
 }
 
-function editSet(i) {
-  const s = pendingSets[i];
-  if (!s) return;
-  inputWeight.value = String(snapWeight(s.weight));
-  inputReps.value = s.reps;
-  currentRPE = s.rpe || null;
+function editGroup(gi) {
+  const groups = computeGroups(pendingSets);
+  const g = groups[gi];
+  if (!g) return;
+  inputWeight.value = String(snapWeight(g.weight));
+  inputReps.value = g.reps;
+  inputSets.value = g.count;
+  currentRPE = g.rpe || null;
   document.querySelectorAll('#rpeRow .rpe-chip').forEach(b => {
     b.classList.toggle('active', currentRPE !== null && +b.dataset.rpe === currentRPE);
   });
-  editingIndex = i;
-  document.getElementById('addSetLabel').textContent = `セット ${i + 1} を更新`;
+  editingGroupIdx = gi;
+  editingGroupIndices = [...g.indices];
+  document.getElementById('addSetLabel').textContent = `${g.count}セットを上書き`;
   document.getElementById('cancelEditBtn').style.display = 'block';
-  setSetsInputDisabled(true);
+  setSetsInputDisabled(false);
   renderPending();
   document.getElementById('addSetBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function cancelEdit() {
-  editingIndex = null;
+  editingGroupIdx = null;
+  editingGroupIndices = null;
   setSetsInputDisabled(false);
   resetAddBtnLabel();
   document.getElementById('cancelEditBtn').style.display = 'none';
@@ -1379,7 +1515,7 @@ function commitCurrentExercise(showToast = true) {
     state.sessions = state.sessions.filter(s => s !== sess);
   }
   saveState();
-  renderTodaySummary();
+  renderTodaySummary(); renderEquipGrid();
   refreshHeader();
   if (showToast) toast('保存しました');
 }
@@ -1427,10 +1563,9 @@ const exPickerModal = document.getElementById('exPickerModal');
 const exPickerList = document.getElementById('exPickerList');
 const exSearchInput = document.getElementById('exSearchInput');
 
-document.getElementById('openExercisePicker').addEventListener('click', () => {
-  exSearchInput.value = '';
-  renderPickerList('');
-  exPickerModal.classList.add('show');
+document.getElementById('openExercisePicker').addEventListener('click', (e) => {
+  e.preventDefault();
+  openExercisePickerModal();
 });
 document.getElementById('closeExPicker').addEventListener('click', () => exPickerModal.classList.remove('show'));
 exPickerModal.addEventListener('click', (e) => { if (e.target === exPickerModal) exPickerModal.classList.remove('show'); });
@@ -1611,6 +1746,194 @@ function buildSparkline(values) {
       <circle cx="${last[0]}" cy="${last[1]}" r="2.8" fill="${lineColor}"/>
     </svg>
   `;
+}
+
+// ====================================================================
+// Equipment grid (record tab)
+// ====================================================================
+const ICON_DUMBBELL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h2M20 12h2"/><rect x="4" y="8" width="3" height="8" rx="1"/><rect x="17" y="8" width="3" height="8" rx="1"/><line x1="7" y1="12" x2="17" y2="12" stroke-width="2.5"/></svg>';
+const ICON_BENCH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="10" x2="21" y2="10"/><line x1="5" y1="10" x2="5" y2="18"/><line x1="19" y1="10" x2="19" y2="18"/><line x1="2" y1="14" x2="2" y2="6"/><line x1="22" y1="14" x2="22" y2="6"/></svg>';
+const ICON_PULLDOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="14"/><line x1="6" y1="14" x2="18" y2="14"/><line x1="8" y1="14" x2="8" y2="18"/><line x1="16" y1="14" x2="16" y2="18"/><circle cx="12" cy="3" r="1"/></svg>';
+const ICON_LEG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4v8l4 8M19 4v8l-4 8"/><line x1="3" y1="20" x2="11" y2="20"/><line x1="13" y1="20" x2="21" y2="20"/></svg>';
+const ICON_SHOULDER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2"/><path d="M6 13l3-4h6l3 4M9 13v8M15 13v8M5 21h6M13 21h6"/></svg>';
+const ICON_BIKE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M6 17l4-9h5l3 9M10 8l-1-3h-2"/></svg>';
+const ICON_RUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="M5 22l4-7 3-3-1-4 4 3 3 5M9 13l-2 3M14 9l3 1"/></svg>';
+const ICON_CABLE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v18M4 7h12a3 3 0 0 1 3 3v6"/><line x1="19" y1="20" x2="19" y2="14"/><line x1="16" y1="20" x2="22" y2="20"/></svg>';
+const ICON_PULLUP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="5" x2="21" y2="5"/><line x1="6" y1="5" x2="6" y2="2"/><line x1="18" y1="5" x2="18" y2="2"/><path d="M9 8v6a3 3 0 0 0 3 3 3 3 0 0 0 3-3V8"/></svg>';
+const ICON_CORE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6" r="2"/><path d="M9 11v6h6v-6M7 13l-3 2M17 13l3 2"/></svg>';
+const ICON_GENERIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><line x1="7" y1="10" x2="7" y2="14"/><line x1="17" y1="10" x2="17" y2="14"/></svg>';
+
+function iconForExercise(name) {
+  const n = name || '';
+  if (/チェスト|ベンチ|ペク|プレス（マシン）|マルチプレス/.test(n)) return ICON_BENCH;
+  if (/ラットプル|ロー|懸垂/.test(n)) return ICON_PULLDOWN;
+  if (/レッグプレス|スクワット|レッグエクス|レッグカール|アダク|アブダク|ヒップ|カーフ/.test(n)) return ICON_LEG;
+  if (/サイドレイズ|ショルダープレス|リアレイズ|フロントレイズ/.test(n)) return ICON_SHOULDER;
+  if (/カール|トライ/.test(n)) return ICON_DUMBBELL;
+  if (/バイク|エアロバイク/.test(n)) return ICON_BIKE;
+  if (/トレッドミル|ランニング|ジョグ/.test(n)) return ICON_RUN;
+  if (/ケーブル/.test(n)) return ICON_CABLE;
+  if (/プランク|アブ|ロータリー|バックエクス/.test(n)) return ICON_CORE;
+  if (/なわ|スキップ/.test(n)) return ICON_RUN;
+  if (/ダンベル/.test(n)) return ICON_DUMBBELL;
+  return ICON_GENERIC;
+}
+
+function repsThisWeek(exName) {
+  const today = new Date();
+  const cut = new Date(today);
+  cut.setDate(today.getDate() - 6);
+  const cutISO = toISO(cut);
+  let total = 0;
+  for (const s of state.sessions) {
+    if (s.date < cutISO) continue;
+    for (const ex of s.exercises) {
+      if (ex.name === exName) {
+        for (const set of ex.sets) total += set.reps || 0;
+      }
+    }
+  }
+  return total;
+}
+
+function lastUsedLabel(exName) {
+  const sessions = state.sessions
+    .filter(s => s.exercises.some(e => e.name === exName))
+    .sort((a, b) => b.date.localeCompare(a.date));
+  if (!sessions.length) return null;
+  const last = sessions[0];
+  // Try to use updatedAt minute precision for "今日" relative
+  const today = new Date();
+  if (last.date === toISO(today)) {
+    const ua = state.updatedAt || 0;
+    if (ua > 0) {
+      const ago = Date.now() - ua;
+      const min = Math.floor(ago / 60000);
+      if (min < 1) return '今';
+      if (min < 60) return `${min}分前`;
+      const hr = Math.floor(min / 60);
+      if (hr < 24) return `${hr}時間前`;
+    }
+    return '今日';
+  }
+  const dt = parseISO(last.date);
+  const days = Math.floor((parseISO(toISO(today)) - dt) / 86400000);
+  if (days === 1) return '昨日';
+  return `${days}日前`;
+}
+
+function exerciseEnglish(name) {
+  const map = {
+    'チェストプレス': 'Chest Press', 'チェストプレス（マシン）': 'Chest Press',
+    'マルチプレス': 'Multi Press', 'ペクトラルフライ': 'Pec Fly',
+    'ショルダープレス': 'Shoulder Press', 'サイドレイズ': 'Side Raise',
+    'リアレイズ': 'Rear Raise', 'ラットプルダウン': 'Lat Pulldown',
+    'シーテッドロー': 'Seated Row', 'バックエクステンション': 'Back Ext.',
+    'レッグプレス': 'Leg Press', 'レッグエクステンション': 'Leg Ext.',
+    'レッグカール': 'Leg Curl', 'アダクション/アブダクション': 'Adduction',
+    'ヒップアブダクション': 'Hip Abd.', 'ヒップアダクション': 'Hip Add.',
+    'バイセップスカール': 'Bicep Curl', 'ダンベルカール': 'Dumbbell Curl',
+    'バーベルカール': 'Barbell Curl', 'トライセップスエクステンション': 'Tricep Ext.',
+    'トライセプスエクステンション': 'Tricep Ext.', 'ケーブルプレスダウン': 'Cable Pushdown',
+    'ケーブルマシン': 'Cable Machine', 'ダンベル': 'Dumbbell',
+    'バイク': 'Bike', 'トレッドミル': 'Treadmill',
+    'インクラインダンベルプレス': 'Incline DB Press', 'ダンベルフライ': 'DB Fly',
+    'デッドリフト': 'Deadlift', '懸垂': 'Pull-up', 'スクワット': 'Squat',
+    'カーフレイズ': 'Calf Raise', 'プランク': 'Plank', 'アブドミナル': 'Abdominal',
+    'ロータリートーソ': 'Rotary Torso', 'アブローラー': 'Ab Roller',
+  };
+  return map[name] || name;
+}
+
+function weekDots(exName) {
+  const today = new Date();
+  const out = [];
+  const counts = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const iso = toISO(d);
+    let setsCount = 0;
+    for (const s of state.sessions) {
+      if (s.date !== iso) continue;
+      for (const ex of s.exercises) {
+        if (ex.name === exName) setsCount += ex.sets.length;
+      }
+    }
+    counts.push(setsCount);
+  }
+  const max = Math.max(...counts, 1);
+  return counts.map(c => {
+    if (c === 0) return 'empty';
+    const ratio = c / max;
+    if (ratio > 0.66) return 'has-3';
+    if (ratio > 0.33) return 'has-2';
+    return 'has-1';
+  });
+}
+
+function getUsedExercises() {
+  const used = new Set();
+  for (const s of state.sessions) {
+    for (const ex of s.exercises) used.add(ex.name);
+  }
+  // Order by most recent first
+  const lastDate = new Map();
+  const sortedSess = state.sessions.slice().sort((a, b) => b.date.localeCompare(a.date));
+  for (const s of sortedSess) {
+    for (const ex of s.exercises) {
+      if (!lastDate.has(ex.name)) lastDate.set(ex.name, s.date);
+    }
+  }
+  return [...used].sort((a, b) => (lastDate.get(b) || '').localeCompare(lastDate.get(a) || ''));
+}
+
+function renderEquipGrid() {
+  const grid = document.getElementById('equipGrid');
+  if (!grid) return;
+  const used = getUsedExercises();
+  const countEl = document.getElementById('equipCount');
+  if (countEl) countEl.textContent = used.length ? `${used.length} ITEMS` : '';
+
+  if (!used.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px 0; color:var(--muted); font-size:13px;">まだ機材を使っていません<br><a href="#" id="emptyOpenPicker" style="color:var(--accent); margin-top:10px; display:inline-block;">機材から選ぶ</a></div>`;
+    const link = document.getElementById('emptyOpenPicker');
+    if (link) link.addEventListener('click', (e) => { e.preventDefault(); openExercisePickerModal(); });
+    return;
+  }
+
+  grid.innerHTML = '';
+  for (const name of used) {
+    const card = document.createElement('div');
+    card.className = 'equip-card' + (currentExercise === name ? ' active' : '');
+    const reps = repsThisWeek(name);
+    const last = lastUsedLabel(name) || '—';
+    const en = exerciseEnglish(name);
+    const dots = weekDots(name);
+    card.innerHTML = `
+      <div class="ec-icon">${iconForExercise(name)}</div>
+      <div class="ec-name">${escapeHTML(name)}</div>
+      <div class="ec-meta">
+        <span class="en">${escapeHTML(en)}</span>
+        <span>${escapeHTML(last)}</span>
+      </div>
+      <div class="ec-stat"><span class="num">${reps}</span><span class="unit">回 / 週</span></div>
+      <div class="ec-sparkline">
+        ${dots.map(c => `<div class="seg ${c}"></div>`).join('')}
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      selectExercise(name);
+      setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    });
+    grid.appendChild(card);
+  }
+}
+
+function openExercisePickerModal() {
+  exSearchInput.value = '';
+  renderPickerList('');
+  exPickerModal.classList.add('show');
 }
 
 function exerciseGroup(exName) {
@@ -2661,7 +2984,7 @@ function renderHistory() {
       state.sessions = state.sessions.filter(x => x.id !== s.id);
       saveState();
       renderHistory();
-      renderTodaySummary();
+      renderTodaySummary(); renderEquipGrid();
       refreshHeader();
     });
     list.appendChild(card);
@@ -2903,7 +3226,7 @@ function applyRemoteIfNewer(remote, opts = {}) {
     if (!Array.isArray(state.sessions)) state.sessions = [];
     if (!state.profile) state.profile = null;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    renderTodaySummary();
+    renderTodaySummary(); renderEquipGrid();
     renderExerciseList();
     renderHistory();
     loadProfileForm();
@@ -3009,7 +3332,7 @@ document.getElementById('importFile').addEventListener('change', (e) => {
       if (!confirm('現在のデータを上書きしますか？')) return;
       state = data;
       saveState();
-      renderTodaySummary();
+      renderTodaySummary(); renderEquipGrid();
       renderExerciseList();
       renderHistory();
       refreshHeader();
@@ -3027,7 +3350,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   if (!confirm('本当によろしいですか？')) return;
   state = initialState();
   saveState();
-  renderTodaySummary();
+  renderTodaySummary(); renderEquipGrid();
   renderExerciseList();
   renderHistory();
   refreshHeader();
@@ -3045,7 +3368,7 @@ dateInput.value = todayStr();
 populateWeightSelect();
 refreshDateHeading();
 refreshHeader();
-renderTodaySummary();
+renderTodaySummary(); renderEquipGrid();
 refreshAddBtnLabel();
 updateSyncStatus();
 loadProfileForm();
