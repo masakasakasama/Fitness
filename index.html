@@ -617,10 +617,7 @@
     <div class="logo-mark">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
     </div>
-    <div>
-      <div class="brand-name">REPS</div>
-      <div class="brand-sub">東上野</div>
-    </div>
+    <div class="brand-name">REPS</div>
   </div>
   <div class="header-right">
     <span id="headerDate"></span>
@@ -1145,8 +1142,32 @@ function saveState() {
 // Helpers
 // ====================================================================
 function todayStr() {
-  const d = new Date();
-  return toISO(d);
+  // Always use Asia/Tokyo so the "today" is consistent regardless of device timezone.
+  const fmt = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  return fmt.format(new Date()); // YYYY-MM-DD
+}
+function tokyoNow() {
+  // Returns the parts (y/m/d/h/min/wday) of "now" in Asia/Tokyo.
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', weekday: 'short', hour12: false,
+  });
+  const parts = fmt.formatToParts(new Date());
+  const get = (t) => parts.find(p => p.type === t)?.value;
+  return {
+    year: +get('year'),
+    month: +get('month'),
+    day: +get('day'),
+    hour: +get('hour'),
+    minute: +get('minute'),
+    weekday: get('weekday'),
+  };
 }
 function toISO(d) {
   const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -1264,14 +1285,11 @@ function refreshHeader() {
     pill.style.display = 'none';
   }
 
-  const now = new Date();
-  const m = now.getMonth() + 1;
-  const d = now.getDate();
-  const wk = ['SUN','MON','TUE','WED','THU','FRI','SAT'][now.getDay()];
+  const tk = tokyoNow();
   const dateEl = document.getElementById('headerDate');
-  if (dateEl) dateEl.textContent = `${m}/${d} ${wk}`;
+  if (dateEl) dateEl.textContent = `${tk.month}/${tk.day} ${tk.weekday.toUpperCase()}`;
 
-  const h = now.getHours();
+  const h = tk.hour;
   let g = '';
   if (h < 5) g = '深夜の追い込み';
   else if (h < 11) g = 'おはよう';
@@ -3505,7 +3523,15 @@ loadProfileForm();
 performInitialSync();
 
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') performInitialSync();
+  if (document.visibilityState !== 'visible') return;
+  // Reset date to today (Asia/Tokyo) when app becomes visible again
+  const today = todayStr();
+  if (dateInput.value !== today) {
+    dateInput.value = today;
+    onDateChange();
+  }
+  refreshHeader();
+  performInitialSync();
 });
 
 if ('serviceWorker' in navigator) {
