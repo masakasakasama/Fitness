@@ -3,495 +3,1179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0b1220">
+<meta name="theme-color" content="#0a0d14">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ジム記録">
+<meta name="apple-mobile-web-app-title" content="REPS">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Ctext x='50%25' y='54%25' font-size='38' text-anchor='middle' fill='%2360a5fa' font-family='system-ui' font-weight='800'%3E%F0%9F%92%AA%3C/text%3E%3C/svg%3E">
-<title>ジム記録</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f97316'/%3E%3Ctext x='50%25' y='62%25' font-size='34' text-anchor='middle' fill='white' font-family='-apple-system,Helvetica' font-weight='900'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap">
+<title>REPS — ワークアウト記録</title>
 <style>
   :root {
-    --bg: #0b1220;
-    --bg-2: #111a2e;
-    --card: #16213a;
-    --card-2: #1c2a47;
-    --border: #243355;
-    --text: #e6edf7;
-    --muted: #8aa0c4;
-    --accent: #60a5fa;
-    --accent-2: #3b82f6;
-    --danger: #f87171;
-    --success: #34d399;
-    --warn: #fbbf24;
+    --bg: #0a0d14;
+    --bg-elev: #0f131c;
+    --surface: #141925;
+    --surface-2: #1b2030;
+    --surface-3: #232a3d;
+    --border: #2a3145;
+    --border-soft: #1f2536;
+    --border-strong: #3a4360;
+    --text: #f0f3fa;
+    --text-soft: #c8d0e2;
+    --muted: #7c8499;
+    --muted-soft: #5a6278;
+    --accent: #f97316;
+    --accent-hi: #fb923c;
+    --accent-dim: #c2410c;
+    --accent-glow: rgba(249, 115, 22, 0.18);
+    --success: #22c55e;
+    --success-glow: rgba(34, 197, 94, 0.15);
+    --warn: #eab308;
+    --warn-glow: rgba(234, 179, 8, 0.15);
+    --danger: #ef4444;
+    --danger-glow: rgba(239, 68, 68, 0.15);
+    --cyan: #22d3ee;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --tab-h: 64px;
+    --hd-h: 56px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow: 0 8px 24px rgba(0,0,0,0.35), 0 2px 4px rgba(0,0,0,0.2);
+    --shadow-lg: 0 20px 60px rgba(0,0,0,0.5);
+    --radius: 14px;
+    --radius-sm: 10px;
+    --radius-lg: 20px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+
   html, body {
     margin: 0;
     padding: 0;
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
-    font-size: 16px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-size: 15px;
     line-height: 1.5;
     overscroll-behavior-y: contain;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.005em;
   }
+
   body {
     min-height: 100vh;
     min-height: 100dvh;
-    padding-top: var(--safe-top);
-    padding-bottom: calc(var(--safe-bottom) + 72px);
+    padding-top: calc(var(--safe-top) + var(--hd-h));
+    padding-bottom: calc(var(--safe-bottom) + var(--tab-h) + 16px);
+    background:
+      radial-gradient(1200px 600px at 0% -10%, rgba(249, 115, 22, 0.06), transparent 60%),
+      radial-gradient(900px 500px at 100% 5%, rgba(34, 211, 238, 0.04), transparent 50%),
+      var(--bg);
+    background-attachment: fixed;
   }
+
+  .num { font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace; font-variant-numeric: tabular-nums; }
+
   header {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 10;
-    background: linear-gradient(180deg, var(--bg) 80%, transparent);
-    padding: 12px 16px 8px;
+    left: 0;
+    right: 0;
+    height: calc(var(--safe-top) + var(--hd-h));
+    padding: var(--safe-top) 18px 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: rgba(10, 13, 20, 0.78);
+    backdrop-filter: saturate(140%) blur(16px);
+    -webkit-backdrop-filter: saturate(140%) blur(16px);
+    border-bottom: 1px solid var(--border-soft);
   }
-  header h1 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+  }
+
+  .logo-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hi) 100%);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 12px var(--accent-glow);
+  }
+  .logo-mark svg { color: white; }
+
+  .brand-name {
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    font-size: 16px;
+    line-height: 1;
+  }
+  .brand-name .accent { color: var(--accent); }
+  .brand-sub {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-top: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .header-right {
     display: flex;
     align-items: center;
     gap: 8px;
   }
-  header h1 .badge {
+
+  .pill-mini {
     font-size: 11px;
-    color: var(--muted);
-    background: var(--card);
+    color: var(--text-soft);
+    background: var(--surface-2);
     border: 1px solid var(--border);
-    padding: 2px 8px;
+    padding: 5px 10px;
     border-radius: 999px;
     font-weight: 500;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
-  main { padding: 0 16px 24px; }
-  section { display: none; }
-  section.active { display: block; animation: fade .2s ease; }
-  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .pill-mini .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success-glow);
+  }
+  .pill-mini .dot.gray { background: var(--muted-soft); box-shadow: none; }
 
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 12px;
+  main { padding: 16px 14px 12px; max-width: 640px; margin: 0 auto; }
+  section { display: none; animation: fadeUp .3s var(--ease); }
+  section.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
   }
-  .row { display: flex; gap: 8px; }
-  .row > * { flex: 1; min-width: 0; }
-  label {
-    display: block;
+
+  /* Section headings */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 4px 4px 12px;
+  }
+  .section-head h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .section-head .greeting {
     font-size: 12px;
     color: var(--muted);
-    margin-bottom: 4px;
+    font-weight: 500;
   }
-  input[type="text"], input[type="number"], input[type="date"], select, textarea {
+
+  /* Cards */
+  .card {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elev) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: -2px 0 12px;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+  }
+  .card-title svg { width: 14px; height: 14px; color: var(--accent); }
+
+  /* Form elements */
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; min-width: 0; }
+  .col { display: flex; flex-direction: column; gap: 6px; }
+
+  label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  input[type="text"], input[type="number"], input[type="date"], input[type="password"], select, textarea {
     width: 100%;
-    background: var(--bg-2);
+    background: var(--surface-2);
     color: var(--text);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px 12px;
-    font-size: 16px;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 15px;
     font-family: inherit;
     -webkit-appearance: none;
     appearance: none;
+    transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
   }
   input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+    background: var(--surface-3);
+    box-shadow: 0 0 0 3px var(--accent-glow);
   }
-  textarea { min-height: 64px; resize: vertical; }
+  textarea { min-height: 60px; resize: vertical; }
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
 
+  select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237c8499' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  /* Buttons */
   button {
-    background: var(--accent-2);
+    background: var(--accent);
     color: white;
     border: none;
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 15px;
+    border-radius: var(--radius-sm);
+    padding: 13px 16px;
+    font-size: 14px;
     font-weight: 600;
     font-family: inherit;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    transition: transform .05s ease, background .15s ease;
+    transition: transform 0.06s var(--ease), background 0.15s var(--ease), box-shadow 0.15s var(--ease);
+    box-shadow: 0 2px 8px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.1);
   }
   button:active { transform: scale(0.97); }
+  button:hover:not(:active) { background: var(--accent-hi); }
+  button:disabled { opacity: 0.5; cursor: default; }
+
   button.secondary {
-    background: var(--card-2);
+    background: var(--surface-2);
     color: var(--text);
     border: 1px solid var(--border);
+    box-shadow: none;
   }
-  button.danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
-  button.ghost { background: transparent; color: var(--muted); padding: 8px 10px; }
-  button.small { padding: 8px 12px; font-size: 14px; }
+  button.secondary:hover:not(:active) { background: var(--surface-3); border-color: var(--border-strong); }
+
+  button.ghost {
+    background: transparent;
+    color: var(--text-soft);
+    box-shadow: none;
+    padding: 10px 12px;
+  }
+  button.ghost:hover:not(:active) { background: var(--surface-2); }
+
+  button.danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent);
+    box-shadow: none;
+  }
+  button.danger:hover:not(:active) { background: var(--danger-glow); }
+
   button.icon {
     background: transparent;
     color: var(--muted);
     padding: 8px;
-    font-size: 18px;
-    line-height: 1;
+    box-shadow: none;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-sm);
   }
-  .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .btn-grid.three { grid-template-columns: repeat(3, 1fr); }
+  button.icon:hover:not(:active) { background: var(--surface-2); color: var(--text); }
+  button.icon svg { width: 16px; height: 16px; }
 
+  button.small { padding: 10px 14px; font-size: 13px; }
+
+  .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  /* Big weight display */
+  .weight-display {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+    position: relative;
+    user-select: none;
+  }
+  .weight-display:hover { border-color: var(--border-strong); }
+  .weight-display.active { border-color: var(--accent); background: var(--surface-3); }
+  .weight-display .v {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--text);
+    letter-spacing: -0.03em;
+  }
+  .weight-display .v.empty { color: var(--muted-soft); }
+  .weight-display .u {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* Reps stepper */
   .stepper {
     display: grid;
-    grid-template-columns: 44px 1fr 44px;
+    grid-template-columns: 48px 1fr 48px;
     align-items: stretch;
-    gap: 0;
-    border-radius: 10px;
+    border-radius: var(--radius);
     overflow: hidden;
     border: 1px solid var(--border);
+    background: var(--surface-2);
+    height: 80px;
   }
   .stepper button {
-    background: var(--bg-2);
-    color: var(--text);
+    background: transparent;
+    color: var(--text-soft);
     border-radius: 0;
     padding: 0;
     font-size: 22px;
     font-weight: 400;
+    box-shadow: none;
   }
+  .stepper button:hover:not(:active) { background: var(--surface-3); }
   .stepper input {
     border: none;
     border-radius: 0;
     text-align: center;
-    background: var(--bg-2);
-    font-size: 17px;
-    font-weight: 600;
-    padding: 12px 4px;
+    background: transparent;
+    font-size: 32px;
+    font-weight: 800;
+    padding: 0;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    font-family: inherit;
   }
-  .stepper input:focus { box-shadow: none; }
+  .stepper input:focus { box-shadow: none; background: transparent; }
 
-  .weight-select {
-    height: 48px;
-    text-align: center;
-    text-align-last: center;
-    font-size: 17px;
-    font-weight: 600;
-    background-position: right 12px center;
-  }
-
+  /* RPE chips */
   .rpe-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
+    gap: 8px;
   }
   .rpe-chip {
-    background: var(--bg-2);
-    color: var(--text);
+    background: var(--surface-2);
+    color: var(--text-soft);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 6px 4px 8px;
+    border-radius: var(--radius-sm);
+    padding: 11px 4px 12px;
     font-size: 12px;
     line-height: 1.2;
     text-align: center;
-    font-weight: 500;
+    font-weight: 600;
+    box-shadow: none;
+    transition: all 0.15s var(--ease);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
   }
-  .rpe-chip .emoji {
-    display: block;
-    font-size: 22px;
-    margin-bottom: 2px;
-    line-height: 1;
+  .rpe-chip .rpe-bars {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 14px;
   }
-  .rpe-chip.active {
-    background: var(--accent-2);
-    border-color: var(--accent-2);
-    color: white;
+  .rpe-chip .rpe-bars span {
+    width: 4px;
+    background: var(--muted-soft);
+    border-radius: 1px;
+    transition: background 0.15s var(--ease);
   }
+  .rpe-chip .rpe-bars span:nth-child(1) { height: 6px; }
+  .rpe-chip .rpe-bars span:nth-child(2) { height: 10px; }
+  .rpe-chip .rpe-bars span:nth-child(3) { height: 14px; }
+  .rpe-chip[data-rpe="1"].active { border-color: var(--success); color: var(--success); background: var(--success-glow); }
+  .rpe-chip[data-rpe="1"].active .rpe-bars span:nth-child(1) { background: var(--success); }
+  .rpe-chip[data-rpe="2"].active { border-color: var(--warn); color: var(--warn); background: var(--warn-glow); }
+  .rpe-chip[data-rpe="2"].active .rpe-bars span:nth-child(-n+2) { background: var(--warn); }
+  .rpe-chip[data-rpe="3"].active { border-color: var(--danger); color: var(--danger); background: var(--danger-glow); }
+  .rpe-chip[data-rpe="3"].active .rpe-bars span { background: var(--danger); }
 
+  /* RPE dot for set display */
+  .rpe-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .rpe-dot.r1 { background: var(--success); }
+  .rpe-dot.r2 { background: var(--warn); }
+  .rpe-dot.r3 { background: var(--danger); }
+
+  /* Filter chips */
   .chip-row {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     overflow-x: auto;
     padding-bottom: 4px;
-    margin: 0 -16px 12px;
-    padding-left: 16px;
-    padding-right: 16px;
+    margin: 0 -14px 14px;
+    padding-left: 14px;
+    padding-right: 14px;
     scrollbar-width: none;
   }
   .chip-row::-webkit-scrollbar { display: none; }
   .chip {
     flex-shrink: 0;
-    background: var(--card);
+    background: var(--surface-2);
     border: 1px solid var(--border);
-    color: var(--text);
-    padding: 8px 14px;
+    color: var(--text-soft);
+    padding: 7px 14px;
     border-radius: 999px;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
+    transition: all 0.15s var(--ease);
   }
-  .chip.active { background: var(--accent-2); border-color: var(--accent-2); color: white; }
+  .chip:hover { background: var(--surface-3); }
+  .chip.active { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
 
+  /* Bottom nav */
   nav.tabbar {
     position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--bg-2);
-    border-top: 1px solid var(--border);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(var(--tab-h) + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
+    background: rgba(10, 13, 20, 0.85);
+    backdrop-filter: saturate(140%) blur(20px);
+    -webkit-backdrop-filter: saturate(140%) blur(20px);
+    border-top: 1px solid var(--border-soft);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    padding-bottom: var(--safe-bottom);
-    z-index: 20;
+    z-index: 40;
   }
   nav.tabbar button {
     background: transparent;
     color: var(--muted);
     border-radius: 0;
     padding: 10px 4px 8px;
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    box-shadow: none;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
+    position: relative;
+    transition: color 0.15s var(--ease);
   }
+  nav.tabbar button svg { width: 22px; height: 22px; transition: transform 0.2s var(--ease); }
   nav.tabbar button.active { color: var(--accent); }
-  nav.tabbar button .ic { font-size: 22px; line-height: 1; }
+  nav.tabbar button.active svg { transform: translateY(-1px); }
+  nav.tabbar button.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 0 0 2px 2px;
+    box-shadow: 0 0 8px var(--accent);
+  }
 
+  /* Stats grid */
   .stat-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
   .stat {
-    background: var(--card);
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 10px 8px;
-    text-align: center;
+    border-radius: var(--radius);
+    padding: 14px 10px 12px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
   }
-  .stat .v { font-size: 18px; font-weight: 700; color: var(--accent); }
-  .stat .l { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .stat::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0.6;
+  }
+  .stat .stat-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .stat .stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  .stat .stat-unit {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-left: 3px;
+  }
+  .stat:nth-child(2)::before { background: linear-gradient(90deg, var(--cyan), transparent); }
+  .stat:nth-child(3)::before { background: linear-gradient(90deg, var(--success), transparent); }
 
-  .session {
-    background: var(--card);
+  /* Bar chart */
+  .chart-card {
+    background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 10px;
+    border-radius: var(--radius);
+    padding: 16px 14px 14px;
+    margin-bottom: 14px;
   }
-  .session h3 {
-    margin: 0 0 8px;
-    font-size: 15px;
+  .chart-card h3 {
+    margin: 0 0 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .chart-card .chart-sub {
+    font-size: 11px;
+    color: var(--muted-soft);
+    margin-bottom: 14px;
+  }
+  .bars {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 4px;
+    align-items: end;
+    height: 64px;
+  }
+  .bar {
+    background: var(--surface-3);
+    border-radius: 3px 3px 0 0;
+    min-height: 2px;
+    position: relative;
+    transition: background 0.2s var(--ease);
+  }
+  .bar.has-data {
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dim) 100%);
+  }
+  .bar.today.has-data { background: linear-gradient(180deg, var(--accent-hi), var(--accent)); box-shadow: 0 0 12px var(--accent-glow); }
+  .bar-labels {
+    display: grid;
+    grid-template-columns: repeat(14, 1fr);
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .bar-label {
+    font-size: 9px;
+    color: var(--muted-soft);
+    text-align: center;
+    font-weight: 600;
+  }
+  .bar-label.weekend { color: var(--muted); }
+  .bar-label.today { color: var(--accent); }
+
+  /* Session card */
+  .session {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .session-head {
+    padding: 14px 14px 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .session-head .day {
+    display: flex;
+    align-items: baseline;
     gap: 8px;
   }
-  .session h3 .date { color: var(--muted); font-weight: 500; font-size: 13px; }
-  .ex-block { padding: 8px 0; border-top: 1px dashed var(--border); }
-  .ex-block:first-of-type { border-top: none; padding-top: 0; }
+  .session-head .day .d {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .session-head .day .m {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .session-head .day .w {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface-2);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+  .session-head .day .w.weekend { color: var(--accent-hi); background: var(--accent-glow); }
+  .session-meta {
+    text-align: right;
+    line-height: 1.3;
+  }
+  .session-meta .v {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .session-meta .l {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+  .session-body { padding: 8px 14px 14px; }
+  .session-actions {
+    display: flex;
+    gap: 6px;
+    padding: 0 10px 10px;
+  }
+  .session-actions button { flex: 1; }
+
+  .ex-block {
+    padding: 10px 0;
+    border-top: 1px dashed var(--border);
+  }
+  .ex-block:first-of-type { border-top: none; padding-top: 4px; }
   .ex-name {
     font-weight: 600;
     font-size: 14px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 4px;
+    gap: 8px;
+    margin-bottom: 6px;
   }
-  .ex-name .vol { font-size: 11px; color: var(--muted); font-weight: 500; }
-  .set-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ex-name .vol {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .set-list { display: flex; flex-wrap: wrap; gap: 5px; }
   .set-pill {
-    background: var(--bg-2);
+    background: var(--surface-2);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 4px 8px;
     font-size: 12px;
+    font-weight: 500;
     font-variant-numeric: tabular-nums;
+    color: var(--text-soft);
+    line-height: 1.3;
   }
-  .set-pill .w { color: var(--accent); font-weight: 600; }
-  .set-pill .x { color: var(--muted); margin: 0 2px; }
+  .set-pill .w { color: var(--accent); font-weight: 700; }
+  .set-pill .x { color: var(--muted); margin: 0 3px; }
 
+  /* Empty state */
   .empty {
     text-align: center;
-    padding: 40px 20px;
+    padding: 56px 20px;
     color: var(--muted);
   }
-  .empty .ic { font-size: 40px; opacity: 0.4; margin-bottom: 8px; }
+  .empty .empty-ic {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+  }
+  .empty .empty-ic svg { width: 28px; height: 28px; }
+  .empty .empty-title { color: var(--text-soft); font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .empty .empty-sub { font-size: 12px; }
 
+  /* Pending sets */
   .pending-set {
     display: grid;
     grid-template-columns: 1fr 1fr auto;
-    gap: 6px;
+    gap: 10px;
     align-items: center;
-    background: var(--bg-2);
+    background: var(--surface-2);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 8px;
+    border-radius: var(--radius-sm);
+    padding: 10px 8px 10px 12px;
     margin-bottom: 6px;
     font-variant-numeric: tabular-nums;
   }
-  .pending-set .label-mini { font-size: 11px; color: var(--muted); margin-right: 4px; }
+  .pending-set .ps-w, .pending-set .ps-r {
+    line-height: 1.1;
+  }
+  .pending-set .ps-num {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .pending-set .ps-unit {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 3px;
+    font-weight: 500;
+  }
+  .pending-set .ps-actions {
+    display: flex;
+    gap: 2px;
+  }
+  .pending-set .ps-actions button { width: 32px; height: 32px; }
+  .pending-set .ps-actions .del { color: var(--danger); }
 
+  /* Today summary */
+  .today-card {
+    background: linear-gradient(160deg, var(--surface) 0%, var(--bg-elev) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 14px;
+    margin-bottom: 12px;
+  }
+  .today-card .today-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+  .today-card h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-soft);
+  }
+  .today-card .today-vol {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* Toast */
   .toast {
     position: fixed;
-    bottom: calc(var(--safe-bottom) + 84px);
+    bottom: calc(var(--safe-bottom) + var(--tab-h) + 16px);
     left: 50%;
     transform: translateX(-50%);
-    background: var(--card-2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 18px;
+    background: var(--text);
+    color: var(--bg);
+    padding: 11px 18px;
     border-radius: 999px;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
     z-index: 100;
     opacity: 0;
     pointer-events: none;
-    transition: opacity .25s ease, transform .25s ease;
+    transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
+    box-shadow: var(--shadow-lg);
+    white-space: nowrap;
+    max-width: 92%;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
-  .toast.show { opacity: 1; transform: translate(-50%, -8px); }
+  .toast.show { opacity: 1; transform: translate(-50%, -10px); }
 
+  /* Modal */
   .modal-bg {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.6);
-    z-index: 50;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: 80;
     display: none;
     align-items: flex-end;
     justify-content: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    animation: bgIn 0.2s var(--ease);
   }
   .modal-bg.show { display: flex; }
+  @keyframes bgIn { from { opacity: 0; } to { opacity: 1; } }
+
   .modal {
-    background: var(--card);
-    border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
+    background: var(--surface);
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
     width: 100%;
-    max-width: 600px;
-    padding: 18px 16px calc(20px + var(--safe-bottom));
-    border-top: 1px solid var(--border);
-    max-height: 85vh;
+    max-width: 640px;
+    padding: 8px 14px calc(20px + var(--safe-bottom));
+    border-top: 1px solid var(--border-strong);
+    max-height: 88vh;
     overflow-y: auto;
+    animation: sheetIn 0.3s var(--ease);
   }
-  .modal h2 { margin: 0 0 12px; font-size: 17px; }
+  @keyframes sheetIn { from { transform: translateY(40%); } to { transform: none; } }
+  .modal-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border-strong);
+    border-radius: 999px;
+    margin: 8px auto 14px;
+  }
+  .modal h2 {
+    margin: 0 0 14px;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
 
   .ex-pick {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 8px;
-    border-bottom: 1px solid var(--border);
+    padding: 13px 8px;
+    border-bottom: 1px solid var(--border-soft);
     cursor: pointer;
+    border-radius: 8px;
+    margin: 0 -8px;
+    padding-left: 12px;
+    padding-right: 12px;
+    transition: background 0.12s var(--ease);
   }
-  .ex-pick:active { background: var(--card-2); }
-  .ex-pick .group { font-size: 11px; color: var(--muted); }
-
-  .group-tag {
-    display: inline-block;
+  .ex-pick:hover, .ex-pick:active { background: var(--surface-2); }
+  .ex-pick .ex-pick-name { font-weight: 500; }
+  .ex-pick .group-tag {
     font-size: 10px;
     color: var(--muted);
-    background: var(--bg-2);
+    background: var(--surface-2);
     border: 1px solid var(--border);
-    padding: 1px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
-    vertical-align: middle;
-  }
-
-  hr.sep { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
-
-  .mini-link {
-    color: var(--accent);
-    background: none;
-    border: none;
-    font-size: 13px;
-    padding: 0;
-    cursor: pointer;
-    font-family: inherit;
-  }
-
-  details.exercise-day {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 8px 12px;
-    margin-bottom: 8px;
-  }
-  details.exercise-day[open] summary { margin-bottom: 8px; }
-  details summary {
-    cursor: pointer;
+    padding: 3px 8px;
+    border-radius: 999px;
     font-weight: 600;
-    font-size: 14px;
-    list-style: none;
+    letter-spacing: 0.04em;
+  }
+
+  /* Group sections in equipment list */
+  .equip-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .equip-group h4 {
+    margin: 0 0 10px;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+  }
+  .equip-group h4 .count {
+    color: var(--muted-soft);
+    font-weight: 500;
+  }
+  .equip-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 9px 0;
+    border-top: 1px dashed var(--border-soft);
+  }
+  .equip-row:first-of-type { border-top: none; }
+  .equip-row .equip-name { font-size: 14px; font-weight: 500; }
+
+  /* Status text */
+  .sync-status {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sync-status .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--muted-soft);
+    flex-shrink: 0;
+  }
+  .sync-status.ok .status-dot { background: var(--success); box-shadow: 0 0 8px var(--success-glow); }
+  .sync-status.err .status-dot { background: var(--danger); }
+  .sync-status.busy .status-dot {
+    background: var(--accent);
+    animation: pulse 1.2s var(--ease) infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  details summary {
+    cursor: pointer;
+    list-style: none;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 0;
   }
   details summary::-webkit-details-marker { display: none; }
-  details summary .meta { font-size: 12px; color: var(--muted); font-weight: 500; }
+  details[open] summary { color: var(--accent-hi); }
+
+  hr.sep { border: none; border-top: 1px solid var(--border-soft); margin: 14px 0; }
+
+  /* Date selector */
+  .date-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .date-bar input[type="date"] {
+    flex: 1;
+    background: var(--surface);
+    text-align: center;
+    font-weight: 600;
+    height: 44px;
+    padding: 0 14px;
+  }
+  .date-nav {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-soft);
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: none;
+  }
+  .date-nav:hover { background: var(--surface-2); }
+  .date-nav svg { width: 18px; height: 18px; }
+
+  /* Exercise selector card */
+  .ex-selector {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    color: var(--text-soft);
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.15s var(--ease);
+  }
+  .ex-selector:hover { border-color: var(--border-strong); background: var(--surface-3); }
+  .ex-selector .ex-selector-label {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .ex-selector .ex-selector-value {
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 600;
+  }
+  .ex-selector .ex-selector-value.empty { color: var(--muted-soft); font-weight: 500; }
+  .ex-selector svg { color: var(--muted); }
+
+  /* Misc */
+  .grow { flex: 1; }
+  .center { text-align: center; }
+  code.inline {
+    background: var(--surface-2);
+    color: var(--accent-hi);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid var(--border);
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Last set hint */
+  .hint-last {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+  }
+  .hint-last .dot { width: 4px; height: 4px; border-radius: 999px; background: var(--muted-soft); }
+
+  /* Volume badge */
+  .vol-badge {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    background: var(--accent-glow);
+    color: var(--accent-hi);
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  }
 </style>
 </head>
 <body>
 
 <header>
-  <h1 id="appTitle">💪 ジム記録 <span class="badge" id="todayBadge"></span></h1>
+  <div class="brand">
+    <div class="logo-mark">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12 L3 12 M5 9 L5 15 M7 7 L7 17 M9 10 L9 14 M15 10 L15 14 M17 7 L17 17 M19 9 L19 15 M21 12 L21 12 M9 12 L15 12"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand-name">REPS<span class="accent">.</span></div>
+      <div class="brand-sub">Workout Log</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="pill-mini" id="streakPill" style="display:none;">
+      <span class="dot"></span>
+      <span id="streakNum" class="num">0</span>日連続
+    </div>
+  </div>
 </header>
 
 <main>
   <!-- =========== 記録タブ =========== -->
   <section id="tab-record" class="active">
-    <div class="card">
-      <label for="recordDate">日付</label>
+    <div class="section-head">
+      <h2 id="recordHeading">今日のワークアウト</h2>
+      <span class="greeting" id="greetingText"></span>
+    </div>
+
+    <div class="date-bar">
+      <button class="date-nav" id="datePrev" aria-label="前日">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
       <input type="date" id="recordDate">
+      <button class="date-nav" id="dateNext" aria-label="翌日">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
     </div>
 
-    <div class="card">
-      <label>機材</label>
-      <div class="row" style="margin-bottom: 8px;">
-        <select id="exerciseSelect">
-          <option value="">— 選択 —</option>
-        </select>
-        <button class="secondary small" id="openExercisePicker" style="flex: 0 0 auto;">一覧</button>
+    <button class="ex-selector" id="openExercisePicker">
+      <div>
+        <span class="ex-selector-label">機材</span>
+        <span class="ex-selector-value empty" id="currentExLabel">選択してください</span>
       </div>
-      <button class="ghost small" id="addCustomExercise">＋ 新しい機材を追加</button>
-    </div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
 
-    <div class="card" id="setEntryCard" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <strong id="currentExName" style="font-size:15px;"></strong>
-        <span id="lastTimeHint" style="font-size:11px; color:var(--muted);"></span>
-      </div>
-
-      <div class="row" style="margin-bottom:10px;">
-        <div>
-          <label>重量 (kg)</label>
-          <select id="inputWeight" class="weight-select"></select>
+    <div id="setEntryCard" style="display:none; margin-top:12px;">
+      <div class="card">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+          セット入力
         </div>
-        <div>
-          <label>回数</label>
-          <div class="stepper">
-            <button type="button" data-step="reps" data-d="-1">−</button>
-            <input type="number" id="inputReps" inputmode="numeric" step="1" placeholder="0">
-            <button type="button" data-step="reps" data-d="1">＋</button>
+
+        <div class="row" style="margin-bottom:12px;">
+          <div>
+            <label>重量</label>
+            <select id="inputWeight" class="weight-select" style="height:80px; font-size:24px; font-weight:800; text-align:center; text-align-last:center; padding-right:30px;"></select>
+          </div>
+          <div>
+            <label>回数</label>
+            <div class="stepper">
+              <button type="button" data-step="reps" data-d="-1">−</button>
+              <input type="number" id="inputReps" inputmode="numeric" step="1" placeholder="0">
+              <button type="button" data-step="reps" data-d="1">＋</button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div style="margin-bottom:10px;">
-        <label>きつさ（任意）</label>
-        <div class="rpe-row" id="rpeRow">
-          <button type="button" class="rpe-chip" data-rpe="1"><span class="emoji">😌</span>余裕</button>
-          <button type="button" class="rpe-chip" data-rpe="2"><span class="emoji">😐</span>普通</button>
-          <button type="button" class="rpe-chip" data-rpe="3"><span class="emoji">😣</span>限界</button>
+        <div style="margin-bottom:12px;">
+          <label>きつさ <span style="text-transform:none; letter-spacing:0; font-weight:400; color:var(--muted-soft);">（任意）</span></label>
+          <div class="rpe-row" id="rpeRow">
+            <button type="button" class="rpe-chip" data-rpe="1">
+              <span class="rpe-bars"><span></span><span></span><span></span></span>
+              余裕
+            </button>
+            <button type="button" class="rpe-chip" data-rpe="2">
+              <span class="rpe-bars"><span></span><span></span><span></span></span>
+              普通
+            </button>
+            <button type="button" class="rpe-chip" data-rpe="3">
+              <span class="rpe-bars"><span></span><span></span><span></span></span>
+              限界
+            </button>
+          </div>
         </div>
+
+        <button id="addSetBtn" style="width:100%;">
+          <span id="addSetLabel">＋ セットを追加</span>
+        </button>
+
+        <div id="lastTimeHint" class="hint-last" style="display:none;"></div>
+
+        <div id="pendingSets" style="margin-top:12px;"></div>
       </div>
-
-      <button id="addSetBtn" style="width:100%; margin-bottom:10px;">＋ セットを追加</button>
-
-      <div id="pendingSets"></div>
-
-      <button id="saveSessionBtn" class="secondary" style="width:100%; display:none;">この機材を保存</button>
     </div>
 
-    <div class="card" id="todaySummary" style="display:none;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <strong style="font-size:14px;">今日の記録</strong>
-        <span id="todayVolume" style="font-size:12px; color:var(--muted);"></span>
+    <div class="today-card" id="todaySummary" style="display:none;">
+      <div class="today-head">
+        <h3>このセッション</h3>
+        <span class="today-vol" id="todayVolume"></span>
       </div>
       <div id="todayList"></div>
     </div>
@@ -499,13 +1183,33 @@
 
   <!-- =========== 履歴タブ =========== -->
   <section id="tab-history">
-    <div class="stat-grid">
-      <div class="stat"><div class="v" id="statSessions">0</div><div class="l">セッション</div></div>
-      <div class="stat"><div class="v" id="statVolume">0</div><div class="l">総ボリューム kg</div></div>
-      <div class="stat"><div class="v" id="statStreak">0</div><div class="l">連続日数</div></div>
+    <div class="section-head">
+      <h2>記録の履歴</h2>
     </div>
 
-    <div class="chip-row" id="historyFilter">
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">セッション</div>
+        <div class="stat-value"><span class="num" id="statSessions">0</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">総ボリューム</div>
+        <div class="stat-value"><span class="num" id="statVolume">0</span><span class="stat-unit">kg</span></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">連続日数</div>
+        <div class="stat-value"><span class="num" id="statStreak">0</span><span class="stat-unit">日</span></div>
+      </div>
+    </div>
+
+    <div class="chart-card" id="chartCard" style="display:none;">
+      <h3>直近14日のボリューム</h3>
+      <div class="chart-sub" id="chartSub"></div>
+      <div class="bars" id="chartBars"></div>
+      <div class="bar-labels" id="chartLabels"></div>
+    </div>
+
+    <div class="chip-row">
       <div class="chip active" data-filter="all">すべて</div>
       <div class="chip" data-filter="week">今週</div>
       <div class="chip" data-filter="month">今月</div>
@@ -516,11 +1220,18 @@
 
   <!-- =========== 機材タブ =========== -->
   <section id="tab-exercises">
+    <div class="section-head">
+      <h2>機材リスト</h2>
+    </div>
+
     <div class="card">
-      <label for="newExName">新しい機材を追加</label>
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        機材を追加
+      </div>
       <div class="row">
-        <input type="text" id="newExName" placeholder="例：インクラインダンベルプレス">
-        <select id="newExGroup" style="flex:0 0 110px;">
+        <input type="text" id="newExName" placeholder="例：サイドレイズ" style="flex:2;">
+        <select id="newExGroup" style="flex:1;">
           <option value="胸">胸</option>
           <option value="背中">背中</option>
           <option value="肩">肩</option>
@@ -539,69 +1250,98 @@
     <hr class="sep">
 
     <div class="card">
-      <strong style="font-size:14px;">東上野店の機材構成にする</strong>
-      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">機材リストをチョコザップ東上野店の実機材（10種）に置き換えます。過去の記録は残ります。</p>
-      <button class="secondary small" id="restoreDefaultsBtn" style="width:100%;">機材リストを置き換え</button>
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        東上野店の構成にする
+      </div>
+      <p style="color:var(--muted); font-size:12px; margin:0 0 12px;">機材リストをチョコザップ東上野店の構成に置き換えます。過去の記録は残ります。</p>
+      <button class="secondary" id="restoreDefaultsBtn" style="width:100%;">機材リストを置き換え</button>
     </div>
   </section>
 
   <!-- =========== 設定タブ =========== -->
   <section id="tab-settings">
+    <div class="section-head">
+      <h2>設定</h2>
+    </div>
+
     <div class="card">
-      <strong style="font-size:14px;">☁️ GitHub自動保存</strong>
-      <p style="color:var(--muted); font-size:12px; margin:6px 0 10px; line-height:1.6;">
-        Personal Access Token を設定すると、記録が自動で <code style="color:var(--accent); font-size:11px;">masakasakasama/Fitness</code> リポジトリに保存され、別の端末からも同じデータを使えるようになります。
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+        GitHub自動保存
+      </div>
+      <p style="color:var(--muted); font-size:12px; margin:0 0 12px; line-height:1.6;">
+        Personal Access Token を設定すると、記録が自動で <code class="inline">masakasakasama/Fitness</code> に保存されます。複数端末で同じデータを共有できます。
       </p>
       <details style="margin-bottom:12px;">
-        <summary style="cursor:pointer; color:var(--accent); font-size:13px;">トークンの作り方</summary>
-        <ol style="font-size:12px; color:var(--muted); padding-left:18px; margin:8px 0; line-height:1.7;">
-          <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color:var(--accent);">Fine-grained PAT 作成画面</a> を開く</li>
-          <li>Repository access → Only select repositories → <strong>Fitness</strong> を選択</li>
+        <summary>トークンの作り方</summary>
+        <ol style="font-size:12px; color:var(--muted); padding-left:20px; margin:10px 0; line-height:1.7;">
+          <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank">Fine-grained PAT 作成画面</a> を開く</li>
+          <li>Repository access → Only select repositories → <strong>Fitness</strong></li>
           <li>Repository permissions → Contents → <strong>Read and write</strong></li>
-          <li>Generate token して <code>github_pat_…</code> をコピー、下に貼り付け</li>
+          <li>Generate token → 下に貼り付け</li>
         </ol>
-        <p style="font-size:11px; color:var(--muted); margin:0;">⚠️ トークンはこの端末のブラウザにのみ保存されます。リポジトリが Public のままだと記録は誰でも閲覧可能です。非公開にしたい場合は GitHub の Settings → General → Change visibility → Private に変更してください。</p>
+        <p style="font-size:11px; color:var(--muted); margin:0;">トークンはこの端末にのみ保存されます。Public リポジトリだと記録は誰でも閲覧可能です（Settings → Change visibility で Private に）。</p>
       </details>
-      <input type="password" id="ghToken" placeholder="github_pat_... を貼り付け" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <input type="password" id="ghToken" placeholder="github_pat_..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       <div class="btn-grid" style="margin-top:8px;">
         <button class="small" id="saveTokenBtn">保存して同期</button>
         <button class="ghost small" id="clearTokenBtn">トークン削除</button>
       </div>
-      <div id="syncStatus" style="font-size:12px; color:var(--muted); margin-top:10px; line-height:1.5;"></div>
-      <button class="secondary small" id="syncNowBtn" style="width:100%; margin-top:8px; display:none;">🔄 今すぐ同期</button>
+      <div class="sync-status" id="syncStatus"><span class="status-dot"></span><span id="syncStatusText">未設定</span></div>
+      <button class="secondary small" id="syncNowBtn" style="width:100%; margin-top:8px; display:none;">今すぐ同期</button>
     </div>
 
     <div class="card">
-      <strong style="font-size:14px;">手動バックアップ</strong>
-      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">JSONファイルとして書き出し／読み込みできます。</p>
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        手動バックアップ
+      </div>
+      <p style="color:var(--muted); font-size:12px; margin:0 0 12px;">JSONファイルで書き出し／読み込み。</p>
       <div class="btn-grid">
-        <button class="secondary small" id="exportBtn">📤 エクスポート</button>
-        <button class="secondary small" id="importBtn">📥 インポート</button>
+        <button class="secondary small" id="exportBtn">エクスポート</button>
+        <button class="secondary small" id="importBtn">インポート</button>
       </div>
       <input type="file" id="importFile" accept="application/json" style="display:none;">
     </div>
 
     <div class="card">
-      <strong style="font-size:14px; color:var(--danger);">データの削除</strong>
-      <p style="color:var(--muted); font-size:12px; margin:6px 0 12px;">この端末の記録を全て削除します。GitHub自動保存が有効な場合、リモートも空になります。</p>
+      <div class="card-title" style="color:var(--danger);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        データの削除
+      </div>
+      <p style="color:var(--muted); font-size:12px; margin:0 0 12px;">この端末の記録を全て削除します。GitHub自動保存が有効ならリモートも空になります。</p>
       <button class="danger small" id="resetBtn" style="width:100%;">全データを削除</button>
     </div>
   </section>
 </main>
 
 <nav class="tabbar">
-  <button data-tab="record" class="active"><span class="ic">📝</span><span>記録</span></button>
-  <button data-tab="history"><span class="ic">📊</span><span>履歴</span></button>
-  <button data-tab="exercises"><span class="ic">🏋️</span><span>機材</span></button>
-  <button data-tab="settings"><span class="ic">⚙️</span><span>設定</span></button>
+  <button data-tab="record" class="active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+    記録
+  </button>
+  <button data-tab="history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+    履歴
+  </button>
+  <button data-tab="exercises">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11"/><path d="M21 21l-1-1"/><path d="M3 3l1 1"/><path d="M18 22l4-4"/><path d="M2 6l4-4"/><path d="M3 10l7-7"/><path d="M14 21l7-7"/></svg>
+    機材
+  </button>
+  <button data-tab="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    設定
+  </button>
 </nav>
 
 <div class="modal-bg" id="exPickerModal">
   <div class="modal">
+    <div class="modal-handle"></div>
     <h2>機材を選択</h2>
-    <input type="text" id="exSearchInput" placeholder="検索..." style="margin-bottom:10px;">
+    <input type="text" id="exSearchInput" placeholder="検索..." style="margin-bottom:12px;">
     <div id="exPickerList"></div>
-    <button class="ghost" id="closeExPicker" style="width:100%; margin-top:10px;">閉じる</button>
+    <button class="ghost" id="closeExPicker" style="width:100%; margin-top:12px;">閉じる</button>
   </div>
 </div>
 
@@ -610,6 +1350,9 @@
 <script>
 'use strict';
 
+// ====================================================================
+// Config & defaults
+// ====================================================================
 const STORAGE_KEY = 'gym-tracker-v1';
 const TOKEN_KEY = 'gym-tracker-gh-token';
 const REPO_OWNER = 'masakasakasama';
@@ -617,10 +1360,11 @@ const REPO_NAME = 'Fitness';
 const REPO_BRANCH = 'claude/gym-tracking-app-SVUkz';
 const DATA_PATH = 'data.json';
 
-// チョコザップ東上野店の実機材リスト
+// チョコザップ東上野店 + よく使うフリーウェイト種目
 const DEFAULT_EXERCISES = [
   { name: 'チェストプレス', group: '胸' },
   { name: 'ショルダープレス', group: '肩' },
+  { name: 'サイドレイズ', group: '肩' },
   { name: 'マルチプレス', group: '胸' },
   { name: 'ラットプルダウン', group: '背中' },
   { name: 'レッグプレス', group: '脚' },
@@ -631,31 +1375,33 @@ const DEFAULT_EXERCISES = [
   { name: 'バイク', group: '有酸素' },
 ];
 
-// ========== State ==========
+const RPE_LABEL = { 1: '余裕', 2: '普通', 3: '限界' };
+
+// ====================================================================
+// State
+// ====================================================================
 let state = loadState();
 let pendingSets = [];
 let currentExercise = null;
 let currentRPE = null;
+let editingIndex = null;
 let historyFilter = 'all';
-
-const RPE_EMOJI = { 1: '😌', 2: '😐', 3: '😣' };
-const RPE_LABEL = { 1: '余裕', 2: '普通', 3: '限界' };
 
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return initialState();
     const parsed = JSON.parse(raw);
-    if (!parsed.exercises) parsed.exercises = DEFAULT_EXERCISES.slice();
-    if (!parsed.sessions) parsed.sessions = [];
+    if (!Array.isArray(parsed.exercises)) parsed.exercises = DEFAULT_EXERCISES.slice();
+    if (!Array.isArray(parsed.sessions)) parsed.sessions = [];
     if (!parsed.updatedAt) parsed.updatedAt = 0;
     return parsed;
-  } catch (e) {
+  } catch {
     return initialState();
   }
 }
 function initialState() {
-  return { exercises: DEFAULT_EXERCISES.slice(), sessions: [], updatedAt: 0 };
+  return { exercises: DEFAULT_EXERCISES.map(e => ({ ...e })), sessions: [], updatedAt: 0 };
 }
 function saveState() {
   state.updatedAt = Date.now();
@@ -663,31 +1409,49 @@ function saveState() {
   scheduleSync();
 }
 
-// ========== Utilities ==========
+// ====================================================================
+// Helpers
+// ====================================================================
 function todayStr() {
   const d = new Date();
+  return toISO(d);
+}
+function toISO(d) {
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${d.getFullYear()}-${m}-${day}`;
 }
-function fmtDate(s) {
-  const [y, m, d] = s.split('-');
-  const dt = new Date(+y, +m - 1, +d);
-  const wk = ['日','月','火','水','木','金','土'][dt.getDay()];
-  return `${+m}/${+d}（${wk}）`;
+function parseISO(s) {
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+const WEEKDAYS_JP = ['日', '月', '火', '水', '木', '金', '土'];
+function fmtDateLong(s) {
+  const dt = parseISO(s);
+  return `${dt.getMonth() + 1}/${dt.getDate()}（${WEEKDAYS_JP[dt.getDay()]}）`;
 }
 function fmtNum(n) {
   if (n === Math.floor(n)) return String(n);
   return n.toFixed(1);
 }
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function fmtKg(n) {
+  return Math.round(n).toLocaleString();
+}
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+}
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+function sessionVolume(session) {
+  let v = 0;
+  for (const ex of session.exercises) {
+    for (const set of ex.sets) v += (set.weight || 0) * (set.reps || 0);
+  }
+  return v;
 }
 
 function getOrCreateSession(date) {
@@ -697,16 +1461,6 @@ function getOrCreateSession(date) {
     state.sessions.push(s);
   }
   return s;
-}
-
-function sessionVolume(session) {
-  let v = 0;
-  for (const ex of session.exercises) {
-    for (const set of ex.sets) {
-      v += (set.weight || 0) * (set.reps || 0);
-    }
-  }
-  return v;
 }
 
 function lastSetForExercise(exerciseName, beforeDate) {
@@ -723,134 +1477,198 @@ function lastSetForExercise(exerciseName, beforeDate) {
   return null;
 }
 
-// ========== Tabs ==========
+function computeStreak() {
+  if (!state.sessions.length) return 0;
+  const dates = new Set(state.sessions.map(s => s.date));
+  let streak = 0;
+  const d = new Date();
+  if (!dates.has(toISO(d))) d.setDate(d.getDate() - 1);
+  while (dates.has(toISO(d))) {
+    streak++;
+    d.setDate(d.getDate() - 1);
+  }
+  return streak;
+}
+
+// ====================================================================
+// Toast
+// ====================================================================
+let toastTimer = null;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ====================================================================
+// Tabs
+// ====================================================================
 function showTab(name) {
   document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   document.querySelectorAll('nav.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
   if (name === 'history') renderHistory();
   if (name === 'exercises') renderExerciseList();
+  if (name === 'settings') updateSyncStatus();
   window.scrollTo(0, 0);
 }
 document.querySelectorAll('nav.tabbar button').forEach(b => {
   b.addEventListener('click', () => showTab(b.dataset.tab));
 });
 
-// ========== Record tab ==========
+// ====================================================================
+// Header / streak pill
+// ====================================================================
+function refreshHeader() {
+  const streak = computeStreak();
+  const pill = document.getElementById('streakPill');
+  if (streak >= 2) {
+    pill.style.display = 'inline-flex';
+    document.getElementById('streakNum').textContent = streak;
+  } else {
+    pill.style.display = 'none';
+  }
+
+  const h = new Date().getHours();
+  let g = '';
+  if (h < 5) g = '深夜の追い込み';
+  else if (h < 11) g = 'おはよう';
+  else if (h < 17) g = '今日も鍛えていく';
+  else if (h < 21) g = '夜のセッション';
+  else g = 'お疲れさま';
+  document.getElementById('greetingText').textContent = g;
+}
+
+// ====================================================================
+// Record tab — date / exercise selection
+// ====================================================================
 const dateInput = document.getElementById('recordDate');
-const exerciseSelect = document.getElementById('exerciseSelect');
 const setEntryCard = document.getElementById('setEntryCard');
 const inputWeight = document.getElementById('inputWeight');
 const inputReps = document.getElementById('inputReps');
 const pendingSetsEl = document.getElementById('pendingSets');
-const saveSessionBtn = document.getElementById('saveSessionBtn');
-const currentExName = document.getElementById('currentExName');
-const lastTimeHint = document.getElementById('lastTimeHint');
 const todaySummary = document.getElementById('todaySummary');
 const todayList = document.getElementById('todayList');
 const todayVolume = document.getElementById('todayVolume');
-const todayBadge = document.getElementById('todayBadge');
+const currentExLabel = document.getElementById('currentExLabel');
+const lastTimeHint = document.getElementById('lastTimeHint');
+const recordHeading = document.getElementById('recordHeading');
 
-function refreshDateBadge() {
-  todayBadge.textContent = fmtDate(dateInput.value);
+document.getElementById('datePrev').addEventListener('click', () => {
+  const d = parseISO(dateInput.value);
+  d.setDate(d.getDate() - 1);
+  dateInput.value = toISO(d);
+  onDateChange();
+});
+document.getElementById('dateNext').addEventListener('click', () => {
+  const d = parseISO(dateInput.value);
+  d.setDate(d.getDate() + 1);
+  dateInput.value = toISO(d);
+  onDateChange();
+});
+dateInput.addEventListener('change', onDateChange);
+
+function onDateChange() {
+  refreshDateHeading();
+  if (currentExercise) selectExercise(currentExercise);
+  renderTodaySummary();
 }
 
-function refreshExerciseSelect() {
-  const cur = exerciseSelect.value;
-  exerciseSelect.innerHTML = '<option value="">— 選択 —</option>';
-  const groups = {};
-  state.exercises.forEach(ex => {
-    if (!groups[ex.group]) groups[ex.group] = [];
-    groups[ex.group].push(ex);
+function refreshDateHeading() {
+  const today = todayStr();
+  if (dateInput.value === today) recordHeading.textContent = '今日のワークアウト';
+  else recordHeading.textContent = fmtDateLong(dateInput.value) + 'の記録';
+}
+
+// 4〜14kg は2kg刻み（ダンベル）、それ以外は5kg刻み（マシン）
+const WEIGHT_OPTIONS = (() => {
+  const arr = [0, 2, 4, 6, 8, 10, 12, 14];
+  for (let w = 15; w <= 200; w += 5) arr.push(w);
+  return arr;
+})();
+
+function populateWeightSelect() {
+  inputWeight.innerHTML = '<option value="">—</option>';
+  WEIGHT_OPTIONS.forEach(w => {
+    const opt = document.createElement('option');
+    opt.value = w;
+    opt.textContent = w + ' kg';
+    inputWeight.appendChild(opt);
   });
-  for (const g of Object.keys(groups)) {
-    const og = document.createElement('optgroup');
-    og.label = g;
-    for (const ex of groups[g]) {
-      const opt = document.createElement('option');
-      opt.value = ex.name;
-      opt.textContent = ex.name;
-      og.appendChild(opt);
-    }
-    exerciseSelect.appendChild(og);
-  }
-  if (cur && state.exercises.some(e => e.name === cur)) exerciseSelect.value = cur;
+}
+
+function snapWeight(w) {
+  if (w == null || isNaN(w)) return '';
+  return WEIGHT_OPTIONS.reduce((p, c) => Math.abs(c - w) < Math.abs(p - w) ? c : p, WEIGHT_OPTIONS[0]);
 }
 
 function selectExercise(name) {
   if (!name) {
     currentExercise = null;
     setEntryCard.style.display = 'none';
+    currentExLabel.textContent = '選択してください';
+    currentExLabel.classList.add('empty');
     return;
   }
   currentExercise = name;
-  exerciseSelect.value = name;
-  currentExName.textContent = name;
+  currentExLabel.textContent = name;
+  currentExLabel.classList.remove('empty');
   setEntryCard.style.display = 'block';
   pendingSets = [];
+  editingIndex = null;
   resetRPE();
-  renderPending();
-  // Prefill from last set (round weight to nearest 5kg)
+  resetAddBtnLabel();
+
   const last = lastSetForExercise(name, dateInput.value);
   if (last) {
-    inputWeight.value = String(Math.round(last.weight / 5) * 5);
+    inputWeight.value = String(snapWeight(last.weight));
     inputReps.value = last.reps;
-    lastTimeHint.textContent = `前回 ${fmtDate(last.date)}: ${fmtNum(last.weight)}kg × ${last.reps}`;
+    lastTimeHint.style.display = 'flex';
+    lastTimeHint.innerHTML = `<span class="dot"></span>前回 ${fmtDateLong(last.date)} · <strong style="color:var(--text-soft);">${fmtNum(last.weight)}kg × ${last.reps}</strong>`;
   } else {
     inputWeight.value = '';
     inputReps.value = '';
-    lastTimeHint.textContent = '初回記録';
+    lastTimeHint.style.display = 'none';
   }
-  // Existing sets today (if any)
+
   const sess = state.sessions.find(s => s.date === dateInput.value);
   const ex = sess?.exercises.find(e => e.name === name);
   if (ex) pendingSets = ex.sets.map(s => ({ ...s }));
   renderPending();
 }
 
-function populateWeightSelect() {
-  const sel = document.getElementById('inputWeight');
-  sel.innerHTML = '<option value="">—</option>';
-  for (let w = 0; w <= 150; w += 5) {
-    const opt = document.createElement('option');
-    opt.value = w;
-    opt.textContent = w + ' kg';
-    sel.appendChild(opt);
-  }
-}
+// Stepper buttons (reps only)
+document.querySelectorAll('button[data-step]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = inputReps;
+    const d = parseInt(btn.dataset.d, 10);
+    const cur = parseInt(target.value, 10) || 0;
+    const next = Math.max(0, cur + d);
+    target.value = next;
+  });
+});
 
+// RPE selector
 function resetRPE() {
   currentRPE = null;
   document.querySelectorAll('#rpeRow .rpe-chip').forEach(b => b.classList.remove('active'));
 }
-
 document.querySelectorAll('#rpeRow .rpe-chip').forEach(btn => {
   btn.addEventListener('click', () => {
     const v = +btn.dataset.rpe;
-    if (currentRPE === v) {
-      currentRPE = null;
-    } else {
-      currentRPE = v;
-    }
+    currentRPE = currentRPE === v ? null : v;
     document.querySelectorAll('#rpeRow .rpe-chip').forEach(b => {
       b.classList.toggle('active', currentRPE !== null && +b.dataset.rpe === currentRPE);
     });
   });
 });
 
-exerciseSelect.addEventListener('change', () => selectExercise(exerciseSelect.value));
-
-document.querySelectorAll('button[data-step]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const target = btn.dataset.step === 'weight' ? inputWeight : inputReps;
-    const d = parseFloat(btn.dataset.d);
-    const cur = parseFloat(target.value) || 0;
-    let next = cur + d;
-    if (next < 0) next = 0;
-    target.value = btn.dataset.step === 'weight' ? next : Math.round(next);
-  });
-});
-
+// Add / update set
+function resetAddBtnLabel() {
+  document.getElementById('addSetLabel').textContent = '＋ セットを追加';
+}
 document.getElementById('addSetBtn').addEventListener('click', () => {
   const w = parseFloat(inputWeight.value);
   const r = parseInt(inputReps.value, 10);
@@ -860,37 +1678,67 @@ document.getElementById('addSetBtn').addEventListener('click', () => {
   }
   const set = { weight: w, reps: r };
   if (currentRPE) set.rpe = currentRPE;
-  pendingSets.push(set);
-  renderPending();
+  if (editingIndex !== null) {
+    pendingSets[editingIndex] = set;
+    editingIndex = null;
+    resetAddBtnLabel();
+    toast('セットを更新しました');
+  } else {
+    pendingSets.push(set);
+    toast(`セット ${pendingSets.length} を追加`);
+  }
   resetRPE();
-  // Auto-save into session
+  renderPending();
   commitCurrentExercise(false);
-  toast(`セット${pendingSets.length} 追加`);
 });
 
 function renderPending() {
   pendingSetsEl.innerHTML = '';
-  if (!pendingSets.length) {
-    saveSessionBtn.style.display = 'none';
-    return;
-  }
+  if (!pendingSets.length) return;
   pendingSets.forEach((s, i) => {
     const row = document.createElement('div');
     row.className = 'pending-set';
-    const rpeIc = s.rpe ? RPE_EMOJI[s.rpe] : '';
+    const rpeHtml = s.rpe ? `<span class="rpe-dot r${s.rpe}"></span>` : '';
     row.innerHTML = `
-      <div><span class="label-mini">重量</span><strong>${fmtNum(s.weight)}</strong> kg</div>
-      <div><span class="label-mini">回数</span><strong>${s.reps}</strong> 回 ${rpeIc}</div>
-      <button class="icon" title="削除" data-i="${i}">✕</button>
+      <div class="ps-w">
+        <span class="ps-num num">${fmtNum(s.weight)}</span><span class="ps-unit">kg</span>
+      </div>
+      <div class="ps-r">
+        <span class="ps-num num">${s.reps}</span><span class="ps-unit">回${rpeHtml}</span>
+      </div>
+      <div class="ps-actions">
+        <button class="icon edit" title="編集">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="icon del" title="削除">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </div>
     `;
-    row.querySelector('button').addEventListener('click', () => {
+    row.querySelector('.edit').addEventListener('click', () => editSet(i));
+    row.querySelector('.del').addEventListener('click', () => {
       pendingSets.splice(i, 1);
+      if (editingIndex === i) { editingIndex = null; resetAddBtnLabel(); }
+      else if (editingIndex !== null && editingIndex > i) editingIndex--;
       renderPending();
       commitCurrentExercise(false);
     });
     pendingSetsEl.appendChild(row);
   });
-  saveSessionBtn.style.display = 'none'; // auto-saved already
+}
+
+function editSet(i) {
+  const s = pendingSets[i];
+  if (!s) return;
+  inputWeight.value = String(snapWeight(s.weight));
+  inputReps.value = s.reps;
+  currentRPE = s.rpe || null;
+  document.querySelectorAll('#rpeRow .rpe-chip').forEach(b => {
+    b.classList.toggle('active', currentRPE !== null && +b.dataset.rpe === currentRPE);
+  });
+  editingIndex = i;
+  document.getElementById('addSetLabel').textContent = `セット ${i + 1} を更新`;
+  document.getElementById('addSetBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function commitCurrentExercise(showToast = true) {
@@ -904,16 +1752,14 @@ function commitCurrentExercise(showToast = true) {
     if (idx >= 0) sess.exercises[idx].sets = pendingSets.map(s => ({ ...s }));
     else sess.exercises.push({ name: currentExercise, sets: pendingSets.map(s => ({ ...s })) });
   }
-  // Cleanup empty session
   if (sess.exercises.length === 0) {
     state.sessions = state.sessions.filter(s => s !== sess);
   }
   saveState();
   renderTodaySummary();
+  refreshHeader();
   if (showToast) toast('保存しました');
 }
-
-saveSessionBtn.addEventListener('click', () => commitCurrentExercise(true));
 
 function renderTodaySummary() {
   const sess = state.sessions.find(s => s.date === dateInput.value);
@@ -922,54 +1768,39 @@ function renderTodaySummary() {
     return;
   }
   todaySummary.style.display = 'block';
-  todayVolume.textContent = `合計 ${Math.round(sessionVolume(sess)).toLocaleString()} kg`;
+  const v = sessionVolume(sess);
+  todayVolume.innerHTML = `<span class="num">${fmtKg(v)}</span> kg`;
   todayList.innerHTML = '';
   sess.exercises.forEach(ex => {
     const block = document.createElement('div');
     block.className = 'ex-block';
-    const vol = ex.sets.reduce((a, s) => a + s.weight * s.reps, 0);
+    const exVol = ex.sets.reduce((a, s) => a + s.weight * s.reps, 0);
     block.innerHTML = `
       <div class="ex-name">
         <span>${escapeHTML(ex.name)}</span>
-        <span class="vol">${ex.sets.length}セット / ${Math.round(vol).toLocaleString()}kg</span>
+        <span class="vol">${ex.sets.length}set · <span class="num">${fmtKg(exVol)}</span>kg</span>
       </div>
       <div class="set-list">
-        ${ex.sets.map(s => `<span class="set-pill"><span class="w">${fmtNum(s.weight)}</span>kg<span class="x">×</span>${s.reps}${s.rpe ? ' ' + RPE_EMOJI[s.rpe] : ''}</span>`).join('')}
+        ${ex.sets.map(s => setPillHTML(s)).join('')}
       </div>
     `;
     block.style.cursor = 'pointer';
     block.addEventListener('click', () => {
       selectExercise(ex.name);
-      window.scrollTo({ top: setEntryCard.offsetTop - 16, behavior: 'smooth' });
+      setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
     });
     todayList.appendChild(block);
   });
 }
 
-dateInput.addEventListener('change', () => {
-  refreshDateBadge();
-  if (currentExercise) selectExercise(currentExercise);
-  renderTodaySummary();
-});
+function setPillHTML(s) {
+  const rpe = s.rpe ? `<span class="rpe-dot r${s.rpe}"></span>` : '';
+  return `<span class="set-pill"><span class="w num">${fmtNum(s.weight)}</span>kg<span class="x">×</span><span class="num">${s.reps}</span>${rpe}</span>`;
+}
 
-// Add custom exercise quickly from record tab
-document.getElementById('addCustomExercise').addEventListener('click', () => {
-  const name = prompt('機材名を入力');
-  if (!name) return;
-  const trimmed = name.trim();
-  if (!trimmed) return;
-  if (state.exercises.some(e => e.name === trimmed)) {
-    toast('既に存在します');
-    selectExercise(trimmed);
-    return;
-  }
-  state.exercises.push({ name: trimmed, group: 'その他' });
-  saveState();
-  refreshExerciseSelect();
-  selectExercise(trimmed);
-});
-
-// ========== Exercise picker modal ==========
+// ====================================================================
+// Exercise picker modal
+// ====================================================================
 const exPickerModal = document.getElementById('exPickerModal');
 const exPickerList = document.getElementById('exPickerList');
 const exSearchInput = document.getElementById('exSearchInput');
@@ -978,7 +1809,6 @@ document.getElementById('openExercisePicker').addEventListener('click', () => {
   exSearchInput.value = '';
   renderPickerList('');
   exPickerModal.classList.add('show');
-  setTimeout(() => exSearchInput.focus(), 100);
 });
 document.getElementById('closeExPicker').addEventListener('click', () => exPickerModal.classList.remove('show'));
 exPickerModal.addEventListener('click', (e) => { if (e.target === exPickerModal) exPickerModal.classList.remove('show'); });
@@ -991,25 +1821,44 @@ function renderPickerList(q) {
   );
   exPickerList.innerHTML = '';
   if (!filtered.length) {
-    exPickerList.innerHTML = '<div class="empty">該当する機材なし</div>';
+    exPickerList.innerHTML = '<div class="empty"><div class="empty-title">該当する機材なし</div></div>';
     return;
   }
+  // Group order matches DEFAULT_EXERCISES groups + others
+  const order = ['胸', '肩', '背中', '腕', '脚', '体幹', '有酸素', 'その他'];
+  const groups = {};
   filtered.forEach(ex => {
-    const row = document.createElement('div');
-    row.className = 'ex-pick';
-    row.innerHTML = `<div>${escapeHTML(ex.name)}</div><div class="group">${escapeHTML(ex.group)}</div>`;
-    row.addEventListener('click', () => {
-      exPickerModal.classList.remove('show');
-      selectExercise(ex.name);
+    if (!groups[ex.group]) groups[ex.group] = [];
+    groups[ex.group].push(ex);
+  });
+  const sortedGroups = Object.keys(groups).sort((a, b) => {
+    const ai = order.indexOf(a), bi = order.indexOf(b);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+  sortedGroups.forEach(g => {
+    const head = document.createElement('div');
+    head.style.cssText = 'font-size:10px;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;font-weight:700;margin:14px 0 4px;';
+    head.textContent = g;
+    exPickerList.appendChild(head);
+    groups[g].forEach(ex => {
+      const row = document.createElement('div');
+      row.className = 'ex-pick';
+      row.innerHTML = `<div class="ex-pick-name">${escapeHTML(ex.name)}</div><div class="group-tag">${escapeHTML(ex.group)}</div>`;
+      row.addEventListener('click', () => {
+        exPickerModal.classList.remove('show');
+        selectExercise(ex.name);
+      });
+      exPickerList.appendChild(row);
     });
-    exPickerList.appendChild(row);
   });
 }
 
-// ========== History tab ==========
-document.querySelectorAll('#historyFilter .chip').forEach(c => {
+// ====================================================================
+// History tab
+// ====================================================================
+document.querySelectorAll('.chip[data-filter]').forEach(c => {
   c.addEventListener('click', () => {
-    document.querySelectorAll('#historyFilter .chip').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.chip[data-filter]').forEach(x => x.classList.remove('active'));
     c.classList.add('active');
     historyFilter = c.dataset.filter;
     renderHistory();
@@ -1020,60 +1869,106 @@ function filteredSessions() {
   const sorted = state.sessions.slice().sort((a, b) => b.date.localeCompare(a.date));
   if (historyFilter === 'all') return sorted;
   const now = new Date();
-  let cutoff;
-  if (historyFilter === 'week') {
-    cutoff = new Date(now);
-    cutoff.setDate(now.getDate() - 7);
-  } else if (historyFilter === 'month') {
-    cutoff = new Date(now);
-    cutoff.setMonth(now.getMonth() - 1);
-  }
-  const cutStr = cutoff.toISOString().slice(0, 10);
+  let cutoff = new Date(now);
+  if (historyFilter === 'week') cutoff.setDate(now.getDate() - 7);
+  else if (historyFilter === 'month') cutoff.setMonth(now.getMonth() - 1);
+  const cutStr = toISO(cutoff);
   return sorted.filter(s => s.date >= cutStr);
 }
 
-function computeStreak() {
-  if (!state.sessions.length) return 0;
-  const dates = new Set(state.sessions.map(s => s.date));
-  let streak = 0;
-  const d = new Date();
-  // Allow today to be missing; start from yesterday if today empty
-  if (!dates.has(toISO(d))) d.setDate(d.getDate() - 1);
-  while (dates.has(toISO(d))) {
-    streak++;
-    d.setDate(d.getDate() - 1);
+function renderVolumeChart() {
+  const wrap = document.getElementById('chartCard');
+  const bars = document.getElementById('chartBars');
+  const labels = document.getElementById('chartLabels');
+  const sub = document.getElementById('chartSub');
+  if (!state.sessions.length) {
+    wrap.style.display = 'none';
+    return;
   }
-  return streak;
-}
-function toISO(d) {
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${m}-${day}`;
+  wrap.style.display = 'block';
+  const days = 14;
+  const today = new Date();
+  const data = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const iso = toISO(d);
+    const sess = state.sessions.find(s => s.date === iso);
+    data.push({ date: iso, dt: d, volume: sess ? sessionVolume(sess) : 0 });
+  }
+  const max = Math.max(...data.map(d => d.volume), 1);
+  const total = data.reduce((a, d) => a + d.volume, 0);
+  const todayIso = toISO(today);
+  sub.textContent = `合計 ${fmtKg(total)} kg`;
+  bars.innerHTML = '';
+  labels.innerHTML = '';
+  data.forEach(d => {
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    if (d.volume > 0) bar.classList.add('has-data');
+    if (d.date === todayIso) bar.classList.add('today');
+    const h = d.volume > 0 ? Math.max(4, Math.round((d.volume / max) * 60)) : 0;
+    bar.style.height = h + 'px';
+    bar.title = `${d.date}: ${fmtKg(d.volume)} kg`;
+    bars.appendChild(bar);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'bar-label';
+    if (d.dt.getDay() === 0 || d.dt.getDay() === 6) lbl.classList.add('weekend');
+    if (d.date === todayIso) lbl.classList.add('today');
+    lbl.textContent = d.dt.getDate();
+    labels.appendChild(lbl);
+  });
 }
 
 function renderHistory() {
   const sessions = filteredSessions();
   const totalVol = sessions.reduce((a, s) => a + sessionVolume(s), 0);
   document.getElementById('statSessions').textContent = sessions.length;
-  document.getElementById('statVolume').textContent = Math.round(totalVol).toLocaleString();
+  document.getElementById('statVolume').textContent = fmtKg(totalVol);
   document.getElementById('statStreak').textContent = computeStreak();
+
+  renderVolumeChart();
 
   const list = document.getElementById('historyList');
   list.innerHTML = '';
   if (!sessions.length) {
-    list.innerHTML = '<div class="empty"><div class="ic">📭</div>記録がまだありません</div>';
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-7"/></svg>
+        </div>
+        <div class="empty-title">記録がまだありません</div>
+        <div class="empty-sub">「記録」タブからセットを追加しましょう</div>
+      </div>`;
     return;
   }
   sessions.forEach(s => {
     const card = document.createElement('div');
     card.className = 'session';
     const vol = sessionVolume(s);
+    const dt = parseISO(s.date);
+    const isWeekend = dt.getDay() === 0 || dt.getDay() === 6;
+
     card.innerHTML = `
-      <h3>
-        <span>${fmtDate(s.date)}</span>
-        <span class="date">${s.exercises.length}機材 / ${Math.round(vol).toLocaleString()}kg</span>
-      </h3>
+      <div class="session-head">
+        <div class="day">
+          <span class="d num">${dt.getDate()}</span>
+          <span class="m">${dt.getMonth() + 1}月</span>
+          <span class="w ${isWeekend ? 'weekend' : ''}">${WEEKDAYS_JP[dt.getDay()]}</span>
+        </div>
+        <div class="session-meta">
+          <div class="v"><span class="num">${fmtKg(vol)}</span> kg</div>
+          <div class="l">${s.exercises.length} 機材 · ${s.exercises.reduce((a, e) => a + e.sets.length, 0)} セット</div>
+        </div>
+      </div>
+      <div class="session-body" data-body></div>
+      <div class="session-actions">
+        <button class="ghost small" data-edit>編集</button>
+        <button class="ghost small" data-del style="color:var(--danger);">削除</button>
+      </div>
     `;
+    const body = card.querySelector('[data-body]');
     s.exercises.forEach(ex => {
       const block = document.createElement('div');
       block.className = 'ex-block';
@@ -1081,54 +1976,51 @@ function renderHistory() {
       block.innerHTML = `
         <div class="ex-name">
           <span>${escapeHTML(ex.name)}</span>
-          <span class="vol">${ex.sets.length}セット / ${Math.round(exVol).toLocaleString()}kg</span>
+          <span class="vol">${ex.sets.length}set · <span class="num">${fmtKg(exVol)}</span>kg</span>
         </div>
         <div class="set-list">
-          ${ex.sets.map(x => `<span class="set-pill"><span class="w">${fmtNum(x.weight)}</span>kg<span class="x">×</span>${x.reps}${x.rpe ? ' ' + RPE_EMOJI[x.rpe] : ''}</span>`).join('')}
+          ${ex.sets.map(x => setPillHTML(x)).join('')}
         </div>
       `;
-      card.appendChild(block);
+      body.appendChild(block);
     });
-    const actions = document.createElement('div');
-    actions.style.cssText = 'display:flex; gap:8px; margin-top:10px;';
-    const editBtn = document.createElement('button');
-    editBtn.className = 'ghost small';
-    editBtn.textContent = '✏️ 編集';
-    editBtn.addEventListener('click', () => {
+
+    card.querySelector('[data-edit]').addEventListener('click', () => {
       dateInput.value = s.date;
-      refreshDateBadge();
-      renderTodaySummary();
+      currentExercise = null;
+      setEntryCard.style.display = 'none';
+      currentExLabel.textContent = '選択してください';
+      currentExLabel.classList.add('empty');
+      onDateChange();
       showTab('record');
     });
-    const delBtn = document.createElement('button');
-    delBtn.className = 'ghost small';
-    delBtn.style.color = 'var(--danger)';
-    delBtn.textContent = '🗑 削除';
-    delBtn.addEventListener('click', () => {
-      if (confirm(`${fmtDate(s.date)}の記録を削除しますか？`)) {
-        state.sessions = state.sessions.filter(x => x.id !== s.id);
-        saveState();
-        renderHistory();
-        renderTodaySummary();
-      }
+    card.querySelector('[data-del]').addEventListener('click', () => {
+      if (!confirm(`${fmtDateLong(s.date)} の記録を削除しますか？`)) return;
+      state.sessions = state.sessions.filter(x => x.id !== s.id);
+      saveState();
+      renderHistory();
+      renderTodaySummary();
+      refreshHeader();
     });
-    actions.appendChild(editBtn);
-    actions.appendChild(delBtn);
-    card.appendChild(actions);
     list.appendChild(card);
   });
 }
 
-// ========== Exercises tab ==========
+// ====================================================================
+// Equipment tab
+// ====================================================================
+function refreshExerciseList() {
+  // (no-op now; kept for symmetry — picker reads state.exercises directly)
+}
+
 document.getElementById('addExBtn').addEventListener('click', () => {
   const name = document.getElementById('newExName').value.trim();
   const group = document.getElementById('newExGroup').value;
-  if (!name) { toast('機材名を入力'); return; }
-  if (state.exercises.some(e => e.name === name)) { toast('既に存在します'); return; }
+  if (!name) { toast('機材名を入力してください'); return; }
+  if (state.exercises.some(e => e.name === name)) { toast('既に登録されています'); return; }
   state.exercises.push({ name, group });
   saveState();
   document.getElementById('newExName').value = '';
-  refreshExerciseSelect();
   renderExerciseList();
   toast('追加しました');
 });
@@ -1136,104 +2028,61 @@ document.getElementById('addExBtn').addEventListener('click', () => {
 function renderExerciseList() {
   const list = document.getElementById('exerciseList');
   list.innerHTML = '';
+  const order = ['胸', '肩', '背中', '腕', '脚', '体幹', '有酸素', 'その他'];
   const groups = {};
   state.exercises.forEach(ex => {
     if (!groups[ex.group]) groups[ex.group] = [];
     groups[ex.group].push(ex);
   });
-  for (const g of Object.keys(groups)) {
+  const sorted = Object.keys(groups).sort((a, b) => {
+    const ai = order.indexOf(a), bi = order.indexOf(b);
+    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+  });
+  if (!sorted.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-title">機材がまだありません</div>
+        <div class="empty-sub">上から追加してください</div>
+      </div>`;
+    return;
+  }
+  sorted.forEach(g => {
     const card = document.createElement('div');
-    card.className = 'card';
-    card.innerHTML = `<strong style="font-size:14px;">${escapeHTML(g)}</strong>`;
+    card.className = 'equip-group';
+    card.innerHTML = `<h4><span>${escapeHTML(g)}</span><span class="count">${groups[g].length}</span></h4>`;
     groups[g].forEach(ex => {
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-top:1px dashed var(--border);';
       const used = state.sessions.some(s => s.exercises.some(e => e.name === ex.name));
-      row.innerHTML = `<span>${escapeHTML(ex.name)}</span>`;
-      const del = document.createElement('button');
-      del.className = 'icon';
-      del.style.color = 'var(--danger)';
-      del.textContent = '✕';
-      del.title = '削除';
-      del.addEventListener('click', () => {
-        if (used) {
-          if (!confirm(`${ex.name} は記録に使われています。機材リストから削除しますか？\n（過去の記録は残ります）`)) return;
-        }
+      const row = document.createElement('div');
+      row.className = 'equip-row';
+      row.innerHTML = `
+        <span class="equip-name">${escapeHTML(ex.name)}</span>
+        <button class="icon" title="削除" style="color:var(--danger);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      `;
+      row.querySelector('button').addEventListener('click', () => {
+        if (used && !confirm(`${ex.name} は記録に使われています。リストから削除しますか？\n（過去の記録は残ります）`)) return;
         state.exercises = state.exercises.filter(e => e.name !== ex.name);
         saveState();
-        refreshExerciseSelect();
         renderExerciseList();
       });
-      row.appendChild(del);
       card.appendChild(row);
     });
     list.appendChild(card);
-  }
+  });
 }
 
-// ========== Data management ==========
-document.getElementById('exportBtn').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `gym-tracker-${todayStr()}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-});
-
-document.getElementById('importBtn').addEventListener('click', () => {
-  document.getElementById('importFile').click();
-});
-document.getElementById('importFile').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-      if (!data.exercises || !data.sessions) throw new Error('invalid');
-      if (!confirm('現在のデータを上書きしますか？')) return;
-      state = data;
-      saveState();
-      refreshExerciseSelect();
-      renderExerciseList();
-      renderHistory();
-      renderTodaySummary();
-      toast('インポートしました');
-    } catch (err) {
-      toast('読み込みに失敗しました');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-});
-
-document.getElementById('resetBtn').addEventListener('click', () => {
-  if (!confirm('全ての記録と機材を削除しますか？\nこの操作は取り消せません。')) return;
-  if (!confirm('本当によろしいですか？')) return;
-  state = initialState();
-  saveState();
-  refreshExerciseSelect();
-  renderExerciseList();
-  renderHistory();
-  renderTodaySummary();
-  toast('削除しました');
-});
-
-// ========== Restore default exercises ==========
 document.getElementById('restoreDefaultsBtn').addEventListener('click', () => {
-  if (!confirm('機材リストを東上野店の構成（10種）に置き換えますか？\n\n過去の記録は残ります。\n手動で追加した機材は消えます。')) return;
+  if (!confirm('機材リストを東上野店の構成に置き換えますか？\n\n過去の記録は残ります。\n手動で追加した機材は消えます。')) return;
   state.exercises = DEFAULT_EXERCISES.map(e => ({ ...e }));
   saveState();
-  refreshExerciseSelect();
   renderExerciseList();
   toast('機材リストを置き換えました');
 });
 
-// ========== GitHub sync ==========
+// ====================================================================
+// GitHub sync
+// ====================================================================
 let syncTimer = null;
 let remoteSha = null;
 let syncing = false;
@@ -1244,12 +2093,8 @@ function setToken(t) {
   else localStorage.removeItem(TOKEN_KEY);
 }
 
-function b64encode(str) {
-  return btoa(unescape(encodeURIComponent(str)));
-}
-function b64decode(str) {
-  return decodeURIComponent(escape(atob(str.replace(/\s/g, ''))));
-}
+function b64encode(str) { return btoa(unescape(encodeURIComponent(str))); }
+function b64decode(str) { return decodeURIComponent(escape(atob(str.replace(/\s/g, '')))); }
 
 async function ghFetchRemote() {
   const token = getToken();
@@ -1263,20 +2108,14 @@ async function ghFetchRemote() {
     },
     cache: 'no-store',
   });
-  if (res.status === 404) {
-    remoteSha = null;
-    return null;
-  }
+  if (res.status === 404) { remoteSha = null; return null; }
   if (res.status === 401) throw new Error('トークンが無効です');
-  if (res.status === 403) throw new Error('権限不足（Contents: Read and write が必要）');
+  if (res.status === 403) throw new Error('権限不足（Contents R/W が必要）');
   if (!res.ok) throw new Error(`取得失敗 (HTTP ${res.status})`);
   const json = await res.json();
   remoteSha = json.sha;
-  try {
-    return JSON.parse(b64decode(json.content));
-  } catch (e) {
-    throw new Error('リモートデータが壊れています');
-  }
+  try { return JSON.parse(b64decode(json.content)); }
+  catch { throw new Error('リモートデータが壊れています'); }
 }
 
 async function ghPushRemote() {
@@ -1300,7 +2139,6 @@ async function ghPushRemote() {
     body: JSON.stringify(body),
   });
   if (res.status === 409 || res.status === 422) {
-    // SHA conflict — refetch and retry once
     await ghFetchRemote();
     if (remoteSha) body.sha = remoteSha; else delete body.sha;
     res = await fetch(url, {
@@ -1314,10 +2152,7 @@ async function ghPushRemote() {
       body: JSON.stringify(body),
     });
   }
-  if (!res.ok) {
-    const txt = await res.text().catch(() => '');
-    throw new Error(`保存失敗 (HTTP ${res.status}) ${txt.slice(0, 100)}`);
-  }
+  if (!res.ok) throw new Error(`保存失敗 (HTTP ${res.status})`);
   const json = await res.json();
   remoteSha = json.content?.sha || remoteSha;
   localStorage.setItem('gym-tracker-last-sync', String(Date.now()));
@@ -1327,7 +2162,7 @@ async function ghPushRemote() {
 function scheduleSync() {
   if (!getToken()) return;
   clearTimeout(syncTimer);
-  updateSyncStatus('保存待ち...');
+  setSyncStatus('busy', '保存待ち...');
   syncTimer = setTimeout(async () => {
     if (syncing) return;
     syncing = true;
@@ -1335,40 +2170,42 @@ function scheduleSync() {
       await ghPushRemote();
       updateSyncStatus();
     } catch (e) {
-      updateSyncStatus(`❌ ${e.message}`);
+      setSyncStatus('err', e.message);
     } finally {
       syncing = false;
     }
   }, 2500);
 }
 
-function updateSyncStatus(override) {
+function setSyncStatus(kind, text) {
   const el = document.getElementById('syncStatus');
-  const btn = document.getElementById('syncNowBtn');
   if (!el) return;
+  el.classList.remove('ok', 'err', 'busy');
+  if (kind) el.classList.add(kind);
+  document.getElementById('syncStatusText').textContent = text;
+}
+
+function updateSyncStatus() {
+  const btn = document.getElementById('syncNowBtn');
   const hasToken = !!getToken();
-  btn.style.display = hasToken ? 'block' : 'none';
-  if (override) { el.innerHTML = override; return; }
+  if (btn) btn.style.display = hasToken ? 'block' : 'none';
   if (!hasToken) {
-    el.innerHTML = '<span style="color:var(--muted);">未設定</span>';
+    setSyncStatus('', '未設定');
     return;
   }
   const last = +localStorage.getItem('gym-tracker-last-sync') || 0;
   if (last) {
     const date = new Date(last);
     const m = String(date.getMinutes()).padStart(2, '0');
-    el.innerHTML = `<span style="color:var(--success);">✓ 自動保存中</span> · 最終 ${date.getHours()}:${m}`;
+    setSyncStatus('ok', `自動保存中 · 最終 ${date.getHours()}:${m}`);
   } else {
-    el.innerHTML = '<span style="color:var(--success);">✓ 接続済み</span>';
+    setSyncStatus('ok', '接続済み');
   }
 }
 
 async function performInitialSync() {
-  if (!getToken()) {
-    updateSyncStatus();
-    return;
-  }
-  updateSyncStatus('接続中...');
+  if (!getToken()) { updateSyncStatus(); return; }
+  setSyncStatus('busy', '接続中...');
   try {
     const remote = await ghFetchRemote();
     if (remote) {
@@ -1378,15 +2215,14 @@ async function performInitialSync() {
       const localHasData = state.sessions.length > 0;
       if (remoteUpdated > localUpdated || (!localHasData && remoteHasData)) {
         state = remote;
-        if (!state.exercises) state.exercises = DEFAULT_EXERCISES.slice();
-        if (!state.sessions) state.sessions = [];
+        if (!Array.isArray(state.exercises)) state.exercises = DEFAULT_EXERCISES.map(e => ({ ...e }));
+        if (!Array.isArray(state.sessions)) state.sessions = [];
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        refreshExerciseSelect();
         renderTodaySummary();
         renderExerciseList();
         renderHistory();
+        refreshHeader();
         updateSyncStatus();
-        toast('GitHubから読み込みました');
       } else if (localUpdated > remoteUpdated) {
         await ghPushRemote();
         updateSyncStatus();
@@ -1394,12 +2230,11 @@ async function performInitialSync() {
         updateSyncStatus();
       }
     } else {
-      // Remote is empty — push current
       await ghPushRemote();
       updateSyncStatus();
     }
   } catch (e) {
-    updateSyncStatus(`❌ ${e.message}`);
+    setSyncStatus('err', e.message);
   }
 }
 
@@ -1409,6 +2244,7 @@ document.getElementById('saveTokenBtn').addEventListener('click', async () => {
   setToken(t);
   document.getElementById('ghToken').value = '';
   await performInitialSync();
+  toast('接続しました');
 });
 
 document.getElementById('clearTokenBtn').addEventListener('click', () => {
@@ -1423,42 +2259,87 @@ document.getElementById('clearTokenBtn').addEventListener('click', () => {
 document.getElementById('syncNowBtn').addEventListener('click', async () => {
   if (syncing) return;
   syncing = true;
-  updateSyncStatus('同期中...');
+  setSyncStatus('busy', '同期中...');
   try {
     await ghPushRemote();
     updateSyncStatus();
     toast('同期しました');
   } catch (e) {
-    updateSyncStatus(`❌ ${e.message}`);
+    setSyncStatus('err', e.message);
   } finally {
     syncing = false;
   }
 });
 
-// ========== Helpers ==========
-function escapeHTML(s) {
-  return String(s).replace(/[&<>"']/g, c => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[c]));
-}
+// ====================================================================
+// Backup / reset
+// ====================================================================
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `reps-${todayStr()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
 
-// ========== Init ==========
+document.getElementById('importBtn').addEventListener('click', () => {
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data.exercises) || !Array.isArray(data.sessions)) throw new Error('invalid');
+      if (!confirm('現在のデータを上書きしますか？')) return;
+      state = data;
+      saveState();
+      renderTodaySummary();
+      renderExerciseList();
+      renderHistory();
+      refreshHeader();
+      toast('インポートしました');
+    } catch {
+      toast('読み込みに失敗しました');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm('全ての記録と機材を削除しますか？\nこの操作は取り消せません。')) return;
+  if (!confirm('本当によろしいですか？')) return;
+  state = initialState();
+  saveState();
+  renderTodaySummary();
+  renderExerciseList();
+  renderHistory();
+  refreshHeader();
+  toast('削除しました');
+});
+
+// ====================================================================
+// Init
+// ====================================================================
 dateInput.value = todayStr();
-refreshDateBadge();
 populateWeightSelect();
-refreshExerciseSelect();
+refreshDateHeading();
+refreshHeader();
 renderTodaySummary();
 updateSyncStatus();
 performInitialSync();
 
-// Re-sync when app becomes visible again
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && getToken()) {
-    performInitialSync();
-  }
+  if (document.visibilityState === 'visible' && getToken()) performInitialSync();
 });
 
-// Service worker (offline support)
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
