@@ -743,7 +743,7 @@
   /* Pending sets */
   .pending-set {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 28px 1fr 1fr auto;
     gap: 10px;
     align-items: center;
     background: var(--surface-2);
@@ -752,6 +752,30 @@
     padding: 10px 8px 10px 12px;
     margin-bottom: 6px;
     font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: all 0.15s var(--ease);
+  }
+  .pending-set:hover { border-color: var(--border-strong); background: var(--surface-3); }
+  .pending-set.editing {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+  }
+  .pending-set .ps-idx {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 0;
+    line-height: 1;
+  }
+  .pending-set.editing .ps-idx {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
   }
   .pending-set .ps-w, .pending-set .ps-r {
     line-height: 1.1;
@@ -926,6 +950,174 @@
   }
   .equip-row:first-of-type { border-top: none; }
   .equip-row .equip-name { font-size: 14px; font-weight: 500; }
+
+  /* Insights */
+  .insight-card {
+    background: linear-gradient(160deg, var(--surface-2) 0%, var(--surface) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .insight-card .card-title { margin-bottom: 12px; }
+  .insight-list { display: flex; flex-direction: column; gap: 8px; }
+  .insight {
+    display: flex;
+    gap: 12px;
+    padding: 11px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent);
+  }
+  .insight.good { border-left-color: var(--success); }
+  .insight.warn { border-left-color: var(--warn); }
+  .insight.info { border-left-color: var(--cyan); }
+  .insight.up { border-left-color: var(--accent); }
+  .insight-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--accent);
+    width: 18px;
+    height: 18px;
+  }
+  .insight.good .insight-icon { color: var(--success); }
+  .insight.warn .insight-icon { color: var(--warn); }
+  .insight.info .insight-icon { color: var(--cyan); }
+  .insight-text { flex: 1; min-width: 0; }
+  .insight-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+  }
+  .insight-body {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* Per-exercise progress */
+  .subhead {
+    margin: 22px 4px 10px;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .subhead::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-soft);
+  }
+
+  .progress-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 14px 12px;
+    margin-bottom: 10px;
+    transition: border-color 0.15s var(--ease);
+  }
+  .progress-card:hover { border-color: var(--border-strong); }
+  .progress-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .progress-name { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+  .progress-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .progress-sub .group-tag {
+    font-size: 9px;
+    color: var(--muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .progress-stats {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 12px;
+    align-items: baseline;
+  }
+  .progress-stats .ps-label {
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  .progress-stats .ps-value {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .progress-stats .ps-unit {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    margin-left: 2px;
+  }
+  .change-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    letter-spacing: 0.01em;
+  }
+  .change-pill.up { background: var(--success-glow); color: var(--success); border: 1px solid color-mix(in srgb, var(--success) 30%, transparent); }
+  .change-pill.down { background: var(--danger-glow); color: var(--danger); border: 1px solid color-mix(in srgb, var(--danger) 30%, transparent); }
+  .change-pill.flat { background: var(--surface-2); color: var(--muted); border: 1px solid var(--border); }
+  .sparkline-wrap {
+    height: 36px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 6px 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .sparkline {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .progress-tip {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-soft);
+    font-size: 12px;
+    color: var(--text-soft);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .progress-tip .tip-icon { flex-shrink: 0; color: var(--accent); margin-top: 1px; width: 14px; height: 14px; }
 
   /* Status text */
   .sync-status {
@@ -1162,9 +1354,12 @@
           </div>
         </div>
 
-        <button id="addSetBtn" style="width:100%;">
-          <span id="addSetLabel">＋ セットを追加</span>
-        </button>
+        <div style="display:flex; gap:8px;">
+          <button id="addSetBtn" style="flex:1;">
+            <span id="addSetLabel">＋ セットを追加</span>
+          </button>
+          <button id="cancelEditBtn" class="secondary" style="display:none; flex:0 0 auto;">キャンセル</button>
+        </div>
 
         <div id="lastTimeHint" class="hint-last" style="display:none;"></div>
 
@@ -1215,6 +1410,18 @@
       <div class="chip" data-filter="month">今月</div>
     </div>
 
+    <div class="card insight-card" id="insightCard" style="display:none;">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>
+        提案 / インサイト
+      </div>
+      <div class="insight-list" id="insightList"></div>
+    </div>
+
+    <div class="subhead" id="progressHead" style="display:none;">機材別の進捗</div>
+    <div id="exerciseProgress"></div>
+
+    <div class="subhead" id="historyHead" style="display:none;">セッション履歴</div>
     <div id="historyList"></div>
   </section>
 
@@ -1620,6 +1827,8 @@ function selectExercise(name) {
   editingIndex = null;
   resetRPE();
   resetAddBtnLabel();
+  const cancelBtn = document.getElementById('cancelEditBtn');
+  if (cancelBtn) cancelBtn.style.display = 'none';
 
   const last = lastSetForExercise(name, dateInput.value);
   if (last) {
@@ -1682,6 +1891,7 @@ document.getElementById('addSetBtn').addEventListener('click', () => {
     pendingSets[editingIndex] = set;
     editingIndex = null;
     resetAddBtnLabel();
+    document.getElementById('cancelEditBtn').style.display = 'none';
     toast('セットを更新しました');
   } else {
     pendingSets.push(set);
@@ -1697,9 +1907,11 @@ function renderPending() {
   if (!pendingSets.length) return;
   pendingSets.forEach((s, i) => {
     const row = document.createElement('div');
-    row.className = 'pending-set';
+    row.className = 'pending-set' + (editingIndex === i ? ' editing' : '');
+    row.title = 'タップして編集';
     const rpeHtml = s.rpe ? `<span class="rpe-dot r${s.rpe}"></span>` : '';
     row.innerHTML = `
+      <div class="ps-idx num">${i + 1}</div>
       <div class="ps-w">
         <span class="ps-num num">${fmtNum(s.weight)}</span><span class="ps-unit">kg</span>
       </div>
@@ -1707,24 +1919,29 @@ function renderPending() {
         <span class="ps-num num">${s.reps}</span><span class="ps-unit">回${rpeHtml}</span>
       </div>
       <div class="ps-actions">
-        <button class="icon edit" title="編集">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>
         <button class="icon del" title="削除">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         </button>
       </div>
     `;
-    row.querySelector('.edit').addEventListener('click', () => editSet(i));
-    row.querySelector('.del').addEventListener('click', () => {
+    row.addEventListener('click', (e) => {
+      if (e.target.closest('.del')) return;
+      editSet(i);
+    });
+    row.querySelector('.del').addEventListener('click', (e) => {
+      e.stopPropagation();
       pendingSets.splice(i, 1);
-      if (editingIndex === i) { editingIndex = null; resetAddBtnLabel(); }
+      if (editingIndex === i) { editingIndex = null; resetAddBtnLabel(); cancelEditBtn().style.display = 'none'; }
       else if (editingIndex !== null && editingIndex > i) editingIndex--;
       renderPending();
       commitCurrentExercise(false);
     });
     pendingSetsEl.appendChild(row);
   });
+}
+
+function cancelEditBtn() {
+  return document.getElementById('cancelEditBtn');
 }
 
 function editSet(i) {
@@ -1738,8 +1955,19 @@ function editSet(i) {
   });
   editingIndex = i;
   document.getElementById('addSetLabel').textContent = `セット ${i + 1} を更新`;
+  document.getElementById('cancelEditBtn').style.display = 'block';
+  renderPending();
   document.getElementById('addSetBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
+
+function cancelEdit() {
+  editingIndex = null;
+  resetAddBtnLabel();
+  document.getElementById('cancelEditBtn').style.display = 'none';
+  resetRPE();
+  renderPending();
+}
+document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
 
 function commitCurrentExercise(showToast = true) {
   if (!currentExercise) return;
@@ -1921,6 +2149,365 @@ function renderVolumeChart() {
   });
 }
 
+function getRangeDays() {
+  if (historyFilter === 'week') return 7;
+  if (historyFilter === 'month') return 30;
+  return null; // all
+}
+
+function nextWeightStep(w) {
+  if (w >= 14) return Math.round((w + 5) / 5) * 5;
+  if (w >= 4) return w + 2;
+  return w + 2;
+}
+
+function exerciseStats(exName, sessionsAsc) {
+  const points = [];
+  for (const s of sessionsAsc) {
+    const ex = s.exercises.find(e => e.name === exName);
+    if (!ex || !ex.sets.length) continue;
+    const maxW = Math.max(...ex.sets.map(set => set.weight));
+    const bestVol = Math.max(...ex.sets.map(set => set.weight * set.reps));
+    const totalVol = ex.sets.reduce((a, set) => a + set.weight * set.reps, 0);
+    const rpes = ex.sets.map(s => s.rpe).filter(Boolean);
+    const avgRpe = rpes.length ? rpes.reduce((a, b) => a + b, 0) / rpes.length : null;
+    points.push({ date: s.date, maxW, bestVol, totalVol, sets: ex.sets.length, avgRpe });
+  }
+  return points;
+}
+
+function buildSparkline(values) {
+  if (!values.length) return '';
+  if (values.length === 1) {
+    return `<svg viewBox="0 0 100 30" preserveAspectRatio="none" class="sparkline">
+      <circle cx="50" cy="15" r="3" fill="var(--accent)"/>
+    </svg>`;
+  }
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || 1;
+  const w = 100, h = 30;
+  const pts = values.map((v, i) => {
+    const x = (i / (values.length - 1)) * w;
+    const y = h - ((v - min) / range) * (h - 6) - 3;
+    return [x, y];
+  });
+  const polyPoints = pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  const areaPoints = `0,${h} ${polyPoints} ${w},${h}`;
+  const last = pts[pts.length - 1];
+  const first = pts[0];
+  const trend = values[values.length - 1] - values[0];
+  const lineColor = trend > 0 ? 'var(--success)' : trend < 0 ? 'var(--danger)' : 'var(--accent)';
+  return `
+    <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" class="sparkline">
+      <defs>
+        <linearGradient id="spark-grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${lineColor}" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="${lineColor}" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <polygon points="${areaPoints}" fill="url(#spark-grad)" />
+      <polyline points="${polyPoints}" stroke="${lineColor}" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      <circle cx="${first[0]}" cy="${first[1]}" r="2" fill="${lineColor}" opacity="0.5"/>
+      <circle cx="${last[0]}" cy="${last[1]}" r="2.8" fill="${lineColor}"/>
+    </svg>
+  `;
+}
+
+function exerciseGroup(exName) {
+  const found = state.exercises.find(e => e.name === exName);
+  return found ? found.group : '—';
+}
+
+function progressTipFor(points) {
+  if (!points.length) return null;
+  const last = points[points.length - 1];
+  const lastN = points.slice(-3);
+  if (lastN.length >= 3) {
+    const sameW = lastN.every(p => p.maxW === lastN[0].maxW);
+    const easyAvg = lastN.every(p => p.avgRpe !== null && p.avgRpe <= 1.5);
+    if (sameW && easyAvg) {
+      return { kind: 'up', text: `直近3回すべて${fmtNum(lastN[0].maxW)}kgで「余裕」。次は ${nextWeightStep(lastN[0].maxW)}kg に挑戦` };
+    }
+    const allHard = lastN.every(p => p.avgRpe !== null && p.avgRpe >= 2.5);
+    if (allHard) {
+      return { kind: 'warn', text: '直近は限界続き。1段下げてレップ数を増やすのも◎' };
+    }
+  }
+  if (points.length >= 2) {
+    const trend = last.maxW - points[points.length - 2].maxW;
+    if (trend > 0) return { kind: 'good', text: `前回より +${fmtNum(trend)}kg。順調に伸びてる` };
+  }
+  // Days since last session
+  const today = new Date();
+  const lastDate = parseISO(last.date);
+  const days = Math.floor((today - lastDate) / 86400000);
+  if (days >= 14) return { kind: 'info', text: `最終 ${days}日前。そろそろ再開を` };
+  return null;
+}
+
+function renderExerciseProgress() {
+  const container = document.getElementById('exerciseProgress');
+  const head = document.getElementById('progressHead');
+  const rangeDays = getRangeDays();
+  const today = new Date();
+
+  let scoped = state.sessions.slice().sort((a, b) => a.date.localeCompare(b.date));
+  if (rangeDays) {
+    const cutoff = new Date(today);
+    cutoff.setDate(today.getDate() - rangeDays);
+    const cutISO = toISO(cutoff);
+    scoped = scoped.filter(s => s.date >= cutISO);
+  }
+
+  const exNames = new Set();
+  for (const s of scoped) for (const ex of s.exercises) exNames.add(ex.name);
+
+  const cards = [];
+  for (const name of exNames) {
+    const points = exerciseStats(name, scoped);
+    if (!points.length) continue;
+    cards.push({ name, points });
+  }
+  cards.sort((a, b) => b.points[b.points.length - 1].date.localeCompare(a.points[a.points.length - 1].date));
+
+  container.innerHTML = '';
+  if (!cards.length) {
+    head.style.display = 'none';
+    return;
+  }
+  head.style.display = 'flex';
+
+  for (const { name, points } of cards) {
+    const card = document.createElement('div');
+    card.className = 'progress-card';
+    const maxW = Math.max(...points.map(p => p.maxW));
+    const lastP = points[points.length - 1];
+    const firstP = points[0];
+    const change = points.length >= 2 ? lastP.maxW - firstP.maxW : 0;
+    let changeHtml = '';
+    if (points.length >= 2) {
+      if (change > 0) changeHtml = `<span class="change-pill up">+${fmtNum(change)} kg</span>`;
+      else if (change < 0) changeHtml = `<span class="change-pill down">${fmtNum(change)} kg</span>`;
+      else changeHtml = `<span class="change-pill flat">→ 同じ</span>`;
+    }
+    const sparkValues = points.map(p => p.bestVol);
+    const tip = progressTipFor(points);
+    const tipHtml = tip ? `
+      <div class="progress-tip">
+        <svg class="tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span>${escapeHTML(tip.text)}</span>
+      </div>` : '';
+
+    const lastSession = scoped.filter(s => s.exercises.some(e => e.name === name)).pop();
+    const lastEx = lastSession?.exercises.find(e => e.name === name);
+    const lastSet = lastEx ? lastEx.sets[lastEx.sets.length - 1] : null;
+    const lastUnit = lastSet ? `kg × ${lastSet.reps}` : 'kg';
+
+    card.innerHTML = `
+      <div class="progress-head">
+        <div>
+          <div class="progress-name">${escapeHTML(name)}</div>
+          <div class="progress-sub">
+            <span class="group-tag">${escapeHTML(exerciseGroup(name))}</span>
+            <span>${points.length}セッション</span>
+          </div>
+        </div>
+        ${changeHtml}
+      </div>
+      <div class="progress-stats">
+        <div><span class="ps-label">最大</span><span class="ps-value num">${fmtNum(maxW)}</span><span class="ps-unit">kg</span></div>
+        <div><span class="ps-label">最終</span><span class="ps-value num">${fmtNum(lastP.maxW)}</span><span class="ps-unit">${lastUnit}</span></div>
+      </div>
+      <div class="sparkline-wrap">${buildSparkline(sparkValues)}</div>
+      ${tipHtml}
+    `;
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => {
+      if (lastSession) {
+        dateInput.value = lastSession.date;
+        onDateChange();
+      }
+      showTab('record');
+      setTimeout(() => {
+        selectExercise(name);
+        setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      }, 50);
+    });
+    container.appendChild(card);
+  }
+}
+
+function generateInsights() {
+  const list = document.getElementById('insightList');
+  const card = document.getElementById('insightCard');
+  const rangeDays = getRangeDays() || 30;
+  const today = new Date();
+  const cutoff = new Date(today);
+  cutoff.setDate(today.getDate() - rangeDays);
+  const cutISO = toISO(cutoff);
+  const priorCutoff = new Date(cutoff);
+  priorCutoff.setDate(cutoff.getDate() - rangeDays);
+  const priorCutISO = toISO(priorCutoff);
+
+  const inRange = state.sessions.filter(s => s.date >= cutISO);
+  const priorRange = state.sessions.filter(s => s.date >= priorCutISO && s.date < cutISO);
+
+  const insights = [];
+  const word = historyFilter === 'week' ? '今週' : historyFilter === 'month' ? '今月' : '直近30日';
+  const priorWord = historyFilter === 'week' ? '先週' : historyFilter === 'month' ? '先月' : '前30日';
+
+  // Frequency
+  if (inRange.length || priorRange.length) {
+    const diff = inRange.length - priorRange.length;
+    if (priorRange.length === 0 && inRange.length > 0) {
+      insights.push({
+        kind: 'good',
+        title: `${word}は ${inRange.length}回 トレーニング`,
+        body: 'いいスタート。',
+      });
+    } else if (diff > 0) {
+      insights.push({
+        kind: 'good',
+        title: `頻度アップ ${word} ${inRange.length}回`,
+        body: `${priorWord} ${priorRange.length}回 → +${diff}回。`,
+      });
+    } else if (diff < 0) {
+      insights.push({
+        kind: 'warn',
+        title: `${word}のペースが落ちています`,
+        body: `${word} ${inRange.length}回 / ${priorWord} ${priorRange.length}回。`,
+      });
+    } else if (diff === 0 && inRange.length > 0) {
+      insights.push({
+        kind: 'info',
+        title: `${word}も ${inRange.length}回 維持`,
+        body: '安定したペース。',
+      });
+    }
+  }
+
+  // Volume comparison
+  const volNow = inRange.reduce((a, s) => a + sessionVolume(s), 0);
+  const volPrior = priorRange.reduce((a, s) => a + sessionVolume(s), 0);
+  if (volPrior > 0 && volNow > 0) {
+    const pct = Math.round((volNow / volPrior - 1) * 100);
+    if (Math.abs(pct) >= 10) {
+      insights.push({
+        kind: pct > 0 ? 'good' : 'info',
+        title: `総ボリューム ${pct > 0 ? '+' : ''}${pct}%`,
+        body: `${word} ${fmtKg(volNow)}kg ・ ${priorWord} ${fmtKg(volPrior)}kg`,
+      });
+    }
+  }
+
+  // Per-exercise: progression and intensity
+  const sorted = state.sessions.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const exNames = new Set();
+  for (const s of inRange) for (const ex of s.exercises) exNames.add(ex.name);
+
+  for (const exName of exNames) {
+    const exSessions = sorted.filter(s => s.exercises.some(e => e.name === exName));
+    if (exSessions.length < 2) continue;
+    const recent = exSessions.slice(-3);
+    if (recent.length < 2) continue;
+    const points = exerciseStats(exName, recent);
+    if (points.length < 2) continue;
+    const sameW = points.every(p => p.maxW === points[0].maxW);
+    const avgRpe = points.map(p => p.avgRpe).filter(x => x !== null);
+    const meanRpe = avgRpe.length ? avgRpe.reduce((a, b) => a + b, 0) / avgRpe.length : null;
+    if (sameW && points.length >= 3 && meanRpe !== null && meanRpe <= 1.5) {
+      const next = nextWeightStep(points[0].maxW);
+      insights.push({
+        kind: 'up',
+        title: `${exName} は ${next}kg にチャレンジ`,
+        body: `直近3回すべて${fmtNum(points[0].maxW)}kgで「余裕」。重量アップのサイン。`,
+      });
+    } else if (meanRpe !== null && meanRpe >= 2.6 && points.length >= 2) {
+      insights.push({
+        kind: 'warn',
+        title: `${exName} は限界が続いています`,
+        body: '1段下げてレップ数を増やす日を入れるのも◎',
+      });
+    }
+  }
+
+  // Inactive exercises (only when range is broad enough)
+  if (!getRangeDays() || getRangeDays() >= 14) {
+    const allTime = new Map();
+    for (const s of sorted) {
+      for (const ex of s.exercises) {
+        const prev = allTime.get(ex.name);
+        if (!prev || s.date > prev) allTime.set(ex.name, s.date);
+      }
+    }
+    const recentCutoff = new Date(today);
+    recentCutoff.setDate(today.getDate() - 14);
+    const recentCutISO = toISO(recentCutoff);
+    const inactive = [];
+    for (const [name, lastDate] of allTime) {
+      if (lastDate < recentCutISO) {
+        const dt = parseISO(lastDate);
+        const days = Math.floor((today - dt) / 86400000);
+        inactive.push({ name, days });
+      }
+    }
+    inactive.sort((a, b) => a.days - b.days);
+    inactive.slice(0, 2).forEach(({ name, days }) => {
+      insights.push({
+        kind: 'info',
+        title: `${name} を再開しましょう`,
+        body: `最終 ${days}日前。`,
+      });
+    });
+  }
+
+  // Streak achievement
+  const streak = computeStreak();
+  if (streak >= 3 && historyFilter !== 'all') {
+    insights.push({
+      kind: 'good',
+      title: `${streak}日連続トレ`,
+      body: '継続は最強の筋肥大要因。',
+    });
+  }
+
+  // Dedupe and limit
+  const seen = new Set();
+  const unique = [];
+  for (const it of insights) {
+    if (seen.has(it.title)) continue;
+    seen.add(it.title);
+    unique.push(it);
+  }
+
+  if (!unique.length) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+
+  const limit = 6;
+  list.innerHTML = unique.slice(0, limit).map(it => `
+    <div class="insight ${escapeHTML(it.kind)}">
+      <svg class="insight-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        ${insightIconPath(it.kind)}
+      </svg>
+      <div class="insight-text">
+        <div class="insight-title">${escapeHTML(it.title)}</div>
+        <div class="insight-body">${escapeHTML(it.body)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function insightIconPath(kind) {
+  if (kind === 'good') return '<polyline points="20 6 9 17 4 12"/>';
+  if (kind === 'warn') return '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>';
+  if (kind === 'up') return '<polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/>';
+  return '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>';
+}
+
 function renderHistory() {
   const sessions = filteredSessions();
   const totalVol = sessions.reduce((a, s) => a + sessionVolume(s), 0);
@@ -1929,6 +2516,9 @@ function renderHistory() {
   document.getElementById('statStreak').textContent = computeStreak();
 
   renderVolumeChart();
+  generateInsights();
+  renderExerciseProgress();
+  document.getElementById('historyHead').style.display = sessions.length ? 'flex' : 'none';
 
   const list = document.getElementById('historyList');
   list.innerHTML = '';
@@ -1972,6 +2562,7 @@ function renderHistory() {
     s.exercises.forEach(ex => {
       const block = document.createElement('div');
       block.className = 'ex-block';
+      block.style.cursor = 'pointer';
       const exVol = ex.sets.reduce((a, x) => a + x.weight * x.reps, 0);
       block.innerHTML = `
         <div class="ex-name">
@@ -1982,6 +2573,15 @@ function renderHistory() {
           ${ex.sets.map(x => setPillHTML(x)).join('')}
         </div>
       `;
+      block.addEventListener('click', () => {
+        dateInput.value = s.date;
+        onDateChange();
+        showTab('record');
+        setTimeout(() => {
+          selectExercise(ex.name);
+          setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        }, 50);
+      });
       body.appendChild(block);
     });
 
