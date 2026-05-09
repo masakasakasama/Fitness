@@ -2587,15 +2587,41 @@ function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSess
     : 999;
 
   if (daysSinceLast === 1) {
-    // Yesterday trained
+    // Yesterday trained — analyze intensity to recommend recovery
+    const yesterdayMachines = lastSession.exercises.length;
+    const yesterdaySets = sessionSetCount(lastSession);
     const yesterdayGroups = new Set();
+    const limitMachines = [];
+    const allRpes = [];
     for (const ex of lastSession.exercises) {
       const grp = exerciseGroup(ex.name);
       if (grp && grp !== '—' && grp !== '有酸素') yesterdayGroups.add(grp);
+      const exRpes = ex.sets.map(s => s.rpe).filter(Boolean);
+      exRpes.forEach(r => allRpes.push(r));
+      if (exRpes.length && exRpes.every(r => r === 3)) limitMachines.push(ex.name);
     }
-    if (yesterdayGroups.size >= 3 || sessionSetCount(lastSession) >= 12) {
+    const avgRpe = allRpes.length ? allRpes.reduce((a, b) => a + b, 0) / allRpes.length : 0;
+    const heavySession = yesterdayMachines >= 4 && yesterdaySets >= 12;
+    const intenseSession = avgRpe >= 2.0 || limitMachines.length >= 2;
+
+    if (heavySession && intenseSession) {
+      focusValue.textContent = '今日は休息推奨';
+      focusTags.innerHTML = '<span class="focus-tag">回復優先</span>';
+      const limitTxt = limitMachines.length
+        ? `${limitMachines.slice(0, 2).join('・')}が「限界」。`
+        : '';
+      focusReason.textContent = `昨日 ${yesterdayMachines}機材 ${yesterdaySets}セット ・ 強度高め (平均RPE ${avgRpe.toFixed(1)})。${limitTxt}筋肥大は休息中に起きるので、今日休めば次回の重量UPが狙える。行くなら有酸素20分+ストレッチのみで。`;
+      return;
+    }
+    if (heavySession) {
+      focusValue.textContent = '違う部位 or 軽め';
+      focusTags.innerHTML = '<span class="focus-tag">回復配慮</span>';
+      focusReason.textContent = `昨日 ${yesterdayMachines}機材 ${yesterdaySets}セット 完了。同じ部位は避けて軽め or 違うグループに。`;
+      return;
+    }
+    if (yesterdayGroups.size >= 3 || yesterdaySets >= 12) {
       focusValue.textContent = '休息も◎';
-      focusTags.innerHTML = `<span class="focus-tag">回復日</span>`;
+      focusTags.innerHTML = '<span class="focus-tag">回復日</span>';
       focusReason.textContent = '昨日しっかりトレ済み。完全休息か軽め有酸素で回復させると次が伸びる。';
       return;
     }
