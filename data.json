@@ -198,8 +198,8 @@
     "weight": 65,
     "goalWeight": 70,
     "age": null,
-    "sex": null,
+    "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1778294940798
+  "updatedAt": 1778294947572
 }
