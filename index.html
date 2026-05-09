@@ -365,6 +365,29 @@
   }
 
   /* REPS STEPPER */
+  .reps-sets {
+    display: grid;
+    grid-template-columns: 1fr 14px 1fr;
+    align-items: center;
+    gap: 6px;
+  }
+  .reps-sets-x {
+    text-align: center;
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .stepper.compact {
+    grid-template-columns: 36px 1fr 36px;
+    height: 64px;
+  }
+  .stepper.compact button {
+    font-size: 20px;
+  }
+  .stepper.compact input {
+    font-size: 20px;
+  }
+
   .stepper {
     display: grid;
     grid-template-columns: 44px 1fr 44px;
@@ -1606,11 +1629,19 @@
             <select id="inputWeight" class="weight-select" style="height:80px; font-size:24px; font-weight:800; text-align:center; text-align-last:center; padding-right:30px;"></select>
           </div>
           <div>
-            <label>回数</label>
-            <div class="stepper">
-              <button type="button" data-step="reps" data-d="-1">−</button>
-              <input type="number" id="inputReps" inputmode="numeric" step="1" placeholder="0">
-              <button type="button" data-step="reps" data-d="1">＋</button>
+            <label>回数 × セット</label>
+            <div class="reps-sets">
+              <div class="stepper compact">
+                <button type="button" data-step="reps" data-d="-1">−</button>
+                <input type="number" id="inputReps" inputmode="numeric" step="1" placeholder="回">
+                <button type="button" data-step="reps" data-d="1">＋</button>
+              </div>
+              <span class="reps-sets-x">×</span>
+              <div class="stepper compact">
+                <button type="button" data-step="sets" data-d="-1">−</button>
+                <input type="number" id="inputSets" inputmode="numeric" step="1" min="1" max="10" value="3">
+                <button type="button" data-step="sets" data-d="1">＋</button>
+              </div>
             </div>
           </div>
         </div>
@@ -2292,16 +2323,28 @@ function selectExercise(name) {
   renderPending();
 }
 
-// Stepper buttons (reps only)
+// Stepper buttons (reps + sets)
+const inputSets = document.getElementById('inputSets');
 document.querySelectorAll('button[data-step]').forEach(btn => {
   btn.addEventListener('click', () => {
-    const target = inputReps;
+    const which = btn.dataset.step;
+    const target = which === 'sets' ? inputSets : inputReps;
     const d = parseInt(btn.dataset.d, 10);
     const cur = parseInt(target.value, 10) || 0;
-    const next = Math.max(0, cur + d);
+    const min = which === 'sets' ? 1 : 0;
+    const max = which === 'sets' ? 10 : 99;
+    const next = Math.max(min, Math.min(max, cur + d));
     target.value = next;
+    if (which === 'sets') refreshAddBtnLabel();
   });
 });
+inputSets.addEventListener('input', () => refreshAddBtnLabel());
+
+function refreshAddBtnLabel() {
+  if (editingIndex !== null) return;
+  const sets = parseInt(inputSets.value, 10) || 1;
+  document.getElementById('addSetLabel').textContent = sets > 1 ? `＋ ${sets}セット追加` : '＋ セット追加';
+}
 
 // RPE selector
 function resetRPE() {
@@ -2320,7 +2363,7 @@ document.querySelectorAll('#rpeRow .rpe-chip').forEach(btn => {
 
 // Add / update set
 function resetAddBtnLabel() {
-  document.getElementById('addSetLabel').textContent = '＋ セットを追加';
+  refreshAddBtnLabel();
 }
 document.getElementById('addSetBtn').addEventListener('click', () => {
   const w = parseFloat(inputWeight.value);
@@ -2329,17 +2372,21 @@ document.getElementById('addSetBtn').addEventListener('click', () => {
     toast('重量と回数を入力してください');
     return;
   }
-  const set = { weight: w, reps: r };
-  if (currentRPE) set.rpe = currentRPE;
+  const baseSet = { weight: w, reps: r };
+  if (currentRPE) baseSet.rpe = currentRPE;
   if (editingIndex !== null) {
-    pendingSets[editingIndex] = set;
+    pendingSets[editingIndex] = { ...baseSet };
     editingIndex = null;
-    resetAddBtnLabel();
     document.getElementById('cancelEditBtn').style.display = 'none';
+    setSetsInputDisabled(false);
+    refreshAddBtnLabel();
     toast('セットを更新しました');
   } else {
-    pendingSets.push(set);
-    toast(`セット ${pendingSets.length} を追加`);
+    const setsCount = Math.max(1, Math.min(10, parseInt(inputSets.value, 10) || 1));
+    for (let i = 0; i < setsCount; i++) {
+      pendingSets.push({ ...baseSet });
+    }
+    toast(setsCount > 1 ? `${setsCount}セット追加` : `セット追加`);
   }
   resetRPE();
   renderPending();
@@ -2388,6 +2435,11 @@ function cancelEditBtn() {
   return document.getElementById('cancelEditBtn');
 }
 
+function setSetsInputDisabled(disabled) {
+  inputSets.disabled = disabled;
+  document.querySelectorAll('button[data-step="sets"]').forEach(b => b.disabled = disabled);
+}
+
 function editSet(i) {
   const s = pendingSets[i];
   if (!s) return;
@@ -2400,12 +2452,14 @@ function editSet(i) {
   editingIndex = i;
   document.getElementById('addSetLabel').textContent = `セット ${i + 1} を更新`;
   document.getElementById('cancelEditBtn').style.display = 'block';
+  setSetsInputDisabled(true);
   renderPending();
   document.getElementById('addSetBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function cancelEdit() {
   editingIndex = null;
+  setSetsInputDisabled(false);
   resetAddBtnLabel();
   document.getElementById('cancelEditBtn').style.display = 'none';
   resetRPE();
@@ -4095,6 +4149,7 @@ populateWeightSelect();
 refreshDateHeading();
 refreshHeader();
 renderTodaySummary();
+refreshAddBtnLabel();
 updateSyncStatus();
 loadProfileForm();
 performInitialSync();
