@@ -3807,6 +3807,26 @@ function setToken(t) {
 function b64encode(str) { return btoa(unescape(encodeURIComponent(str))); }
 function b64decode(str) { return decodeURIComponent(escape(atob(str.replace(/\s/g, '')))); }
 
+async function ghFetchPublic() {
+  // No-auth fetch — works because the repo is public.
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_PATH}?ref=${encodeURIComponent(REPO_BRANCH)}`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    try { return JSON.parse(b64decode(json.content)); }
+    catch { return null; }
+  } catch {
+    return null;
+  }
+}
+
 async function ghFetchRemote() {
   const token = getToken();
   if (!token) return null;
@@ -3888,6 +3908,8 @@ function scheduleSync() {
   }, 2500);
 }
 
+let lastInitMode = ''; // '', 'readonly', 'auth'
+
 function setSyncStatus(kind, text) {
   const el = document.getElementById('syncStatus');
   if (!el) return;
@@ -3901,7 +3923,11 @@ function updateSyncStatus() {
   const hasToken = !!getToken();
   if (btn) btn.style.display = hasToken ? 'block' : 'none';
   if (!hasToken) {
-    setSyncStatus('', '未設定');
+    if (lastInitMode === 'readonly') {
+      setSyncStatus('ok', '読み取り専用（編集にはトークンが必要）');
+    } else {
+      setSyncStatus('', '未設定');
+    }
     return;
   }
   const last = +localStorage.getItem('gym-tracker-last-sync') || 0;
@@ -3914,41 +3940,60 @@ function updateSyncStatus() {
   }
 }
 
-async function performInitialSync() {
-  if (!getToken()) { updateSyncStatus(); return; }
-  setSyncStatus('busy', '接続中...');
-  try {
-    const remote = await ghFetchRemote();
-    if (remote) {
-      const remoteUpdated = remote.updatedAt || 0;
-      const localUpdated = state.updatedAt || 0;
-      const remoteHasData = (remote.sessions || []).length > 0;
-      const localHasData = state.sessions.length > 0;
-      if (remoteUpdated > localUpdated || (!localHasData && remoteHasData)) {
-        state = remote;
-        if (!Array.isArray(state.exercises)) state.exercises = DEFAULT_EXERCISES.map(e => ({ ...e }));
-        if (!Array.isArray(state.sessions)) state.sessions = [];
-        if (!state.profile) state.profile = null;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        renderTodaySummary();
-        renderExerciseList();
-        renderHistory();
-        loadProfileForm();
-        refreshHeader();
-        updateSyncStatus();
-      } else if (localUpdated > remoteUpdated) {
-        await ghPushRemote();
-        updateSyncStatus();
-      } else {
-        updateSyncStatus();
-      }
-    } else {
-      await ghPushRemote();
-      updateSyncStatus();
-    }
-  } catch (e) {
-    setSyncStatus('err', e.message);
+function applyRemoteIfNewer(remote, opts = {}) {
+  if (!remote) return false;
+  const remoteUpdated = remote.updatedAt || 0;
+  const localUpdated = state.updatedAt || 0;
+  const remoteHasData = (remote.sessions || []).length > 0;
+  const localHasData = state.sessions.length > 0;
+  if (remoteUpdated > localUpdated || (!localHasData && remoteHasData)) {
+    state = remote;
+    if (!Array.isArray(state.exercises)) state.exercises = DEFAULT_EXERCISES.map(e => ({ ...e }));
+    if (!Array.isArray(state.sessions)) state.sessions = [];
+    if (!state.profile) state.profile = null;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    renderTodaySummary();
+    renderExerciseList();
+    renderHistory();
+    loadProfileForm();
+    refreshHeader();
+    return true;
   }
+  return false;
+}
+
+async function performInitialSync() {
+  if (getToken()) {
+    lastInitMode = 'auth';
+    setSyncStatus('busy', '接続中...');
+    try {
+      const remote = await ghFetchRemote();
+      if (remote) {
+        const localUpdated = state.updatedAt || 0;
+        const remoteUpdated = remote.updatedAt || 0;
+        if (!applyRemoteIfNewer(remote) && localUpdated > remoteUpdated) {
+          await ghPushRemote();
+        }
+      } else {
+        await ghPushRemote();
+      }
+      updateSyncStatus();
+    } catch (e) {
+      setSyncStatus('err', e.message);
+    }
+    return;
+  }
+
+  // No token — try a no-auth public read so PCs / fresh devices can view
+  setSyncStatus('busy', '読み込み中...');
+  const remote = await ghFetchPublic();
+  if (remote) {
+    lastInitMode = 'readonly';
+    applyRemoteIfNewer(remote);
+  } else {
+    lastInitMode = '';
+  }
+  updateSyncStatus();
 }
 
 document.getElementById('saveTokenBtn').addEventListener('click', async () => {
@@ -4055,7 +4100,7 @@ loadProfileForm();
 performInitialSync();
 
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible' && getToken()) performInitialSync();
+  if (document.visibilityState === 'visible') performInitialSync();
 });
 
 if ('serviceWorker' in navigator) {
