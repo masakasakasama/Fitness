@@ -1,137 +1,43 @@
 {
   "exercises": [
-    {
-      "name": "インクラインダンベルプレス",
-      "group": "胸"
-    },
-    {
-      "name": "ダンベルフライ",
-      "group": "胸"
-    },
-    {
-      "name": "チェストプレス（マシン）",
-      "group": "胸"
-    },
-    {
-      "name": "デッドリフト",
-      "group": "背中"
-    },
-    {
-      "name": "ラットプルダウン",
-      "group": "背中"
-    },
-    {
-      "name": "シーテッドロー",
-      "group": "背中"
-    },
-    {
-      "name": "懸垂",
-      "group": "背中"
-    },
-    {
-      "name": "ショルダープレス",
-      "group": "肩"
-    },
-    {
-      "name": "サイドレイズ",
-      "group": "肩"
-    },
-    {
-      "name": "リアレイズ",
-      "group": "肩"
-    },
-    {
-      "name": "バーベルカール",
-      "group": "腕"
-    },
-    {
-      "name": "ダンベルカール",
-      "group": "腕"
-    },
-    {
-      "name": "トライセプスエクステンション",
-      "group": "腕"
-    },
-    {
-      "name": "ケーブルプレスダウン",
-      "group": "腕"
-    },
-    {
-      "name": "レッグプレス",
-      "group": "脚"
-    },
-    {
-      "name": "マルチプレス",
-      "group": "胸"
-    }
+    { "name": "インクラインダンベルプレス", "group": "胸" },
+    { "name": "ダンベルフライ", "group": "胸" },
+    { "name": "チェストプレス（マシン）", "group": "胸" },
+    { "name": "デッドリフト", "group": "背中" },
+    { "name": "ラットプルダウン", "group": "背中" },
+    { "name": "シーテッドロー", "group": "背中" },
+    { "name": "懸垂", "group": "背中" },
+    { "name": "ショルダープレス", "group": "肩" },
+    { "name": "サイドレイズ", "group": "肩" },
+    { "name": "リアレイズ", "group": "肩" },
+    { "name": "バーベルカール", "group": "腕" },
+    { "name": "ダンベルカール", "group": "腕" },
+    { "name": "トライセプスエクステンション", "group": "腕" },
+    { "name": "ケーブルプレスダウン", "group": "腕" },
+    { "name": "レッグプレス", "group": "脚" },
+    { "name": "マルチプレス", "group": "胸" }
   ],
   "sessions": [
     {
       "id": "moxkqs3wkivg",
       "date": "2026-05-09",
       "exercises": [
-        {
-          "name": "チェストプレス（マシン）",
-          "sets": [
-            {
-              "weight": 35,
-              "reps": 3,
-              "rpe": 3
-            }
-          ]
-        },
-        {
-          "name": "サイドレイズ",
-          "sets": [
-            {
-              "weight": 6,
-              "reps": 3,
-              "rpe": 2
-            }
-          ]
-        },
-        {
-          "name": "レッグプレス",
-          "sets": [
-            {
-              "weight": 60,
-              "reps": 3,
-              "rpe": 1
-            }
-          ]
-        },
-        {
-          "name": "ショルダープレス",
-          "sets": [
-            {
-              "weight": 25,
-              "reps": 3,
-              "rpe": 3
-            }
-          ]
-        },
-        {
-          "name": "ダンベルカール",
-          "sets": [
-            {
-              "weight": 12,
-              "reps": 3,
-              "rpe": 2
-            }
-          ]
-        },
-        {
-          "name": "マルチプレス",
-          "sets": [
-            {
-              "weight": 20,
-              "reps": 3,
-              "rpe": 2
-            }
-          ]
-        }
+        { "name": "チェストプレス（マシン）", "sets": [{ "weight": 35, "reps": 3, "rpe": 3 }] },
+        { "name": "サイドレイズ", "sets": [{ "weight": 6, "reps": 3, "rpe": 2 }] },
+        { "name": "レッグプレス", "sets": [{ "weight": 60, "reps": 3, "rpe": 1 }] },
+        { "name": "ショルダープレス", "sets": [{ "weight": 25, "reps": 3, "rpe": 3 }] },
+        { "name": "ダンベルカール", "sets": [{ "weight": 12, "reps": 3, "rpe": 2 }] },
+        { "name": "マルチプレス", "sets": [{ "weight": 20, "reps": 3, "rpe": 2 }] }
       ]
     }
   ],
-  "updatedAt": 1778286636428
+  "profile": {
+    "height": 183,
+    "weight": 65,
+    "goalWeight": 70,
+    "age": null,
+    "sex": null,
+    "activity": 1.55
+  },
+  "updatedAt": 9999999999999
 }
