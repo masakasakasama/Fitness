@@ -991,49 +991,29 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
         GitHub自動保存
       </div>
-      <p style="color:var(--muted); font-size:12px; margin:0 0 12px; line-height:1.6;">
-        Personal Access Token を設定すると、記録が自動で <code class="inline">masakasakasama/Fitness</code> に保存されます。複数端末で同じデータを共有できます。
-      </p>
-      <details style="margin-bottom:12px;">
-        <summary>トークンの作り方</summary>
-        <ol style="font-size:12px; color:var(--muted); padding-left:20px; margin:10px 0; line-height:1.7;">
-          <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank">Fine-grained PAT 作成画面</a> を開く</li>
-          <li>Repository access → Only select repositories → <strong>Fitness</strong></li>
-          <li>Repository permissions → Contents → <strong>Read and write</strong></li>
-          <li>Generate token → 下に貼り付け</li>
-        </ol>
-        <p style="font-size:11px; color:var(--muted); margin:0;">トークンはこの端末にのみ保存されます。Public リポジトリだと記録は誰でも閲覧可能です（Settings → Change visibility で Private に）。</p>
-      </details>
-      <input type="password" id="ghToken" placeholder="github_pat_..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
-      <div class="btn-grid" style="margin-top:8px;">
-        <button class="small" id="saveTokenBtn">保存して同期</button>
-        <button class="ghost small" id="clearTokenBtn">トークン削除</button>
+      <div id="tokenSetup">
+        <p style="color:var(--muted); font-size:12px; margin:0 0 12px; line-height:1.6;">
+          Personal Access Token を設定すると、記録が自動で <code class="inline">masakasakasama/Fitness</code> に保存されます。複数端末で同じデータを共有できます。
+        </p>
+        <details id="tokenHowto" style="margin-bottom:12px;">
+          <summary>トークンの作り方</summary>
+          <ol style="font-size:12px; color:var(--muted); padding-left:20px; margin:10px 0; line-height:1.7;">
+            <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank">Fine-grained PAT 作成画面</a> を開く</li>
+            <li>Repository access → Only select repositories → <strong>Fitness</strong></li>
+            <li>Repository permissions → Contents → <strong>Read and write</strong></li>
+            <li>Generate token → 下に貼り付け</li>
+          </ol>
+        </details>
+        <input type="password" id="ghToken" placeholder="github_pat_..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <button class="small" id="saveTokenBtn" style="width:100%; margin-top:8px;">保存して同期</button>
       </div>
       <div class="sync-status" id="syncStatus"><span class="status-dot"></span><span id="syncStatusText">未設定</span></div>
+      <div id="tokenManageRow" style="display:none; margin-top:8px; gap:16px; justify-content:flex-end; font-size:12px;">
+        <button class="ghost small" id="clearTokenBtn" style="padding:0; color:var(--muted);">トークン削除</button>
+      </div>
       <button class="secondary small" id="syncNowBtn" style="width:100%; margin-top:8px; display:none;">今すぐ同期</button>
     </div>
 
-    <div class="card">
-      <div class="card-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        手動バックアップ
-      </div>
-      <p style="color:var(--muted); font-size:12px; margin:0 0 12px;">JSONファイルで書き出し／読み込み。</p>
-      <div class="btn-grid">
-        <button class="secondary small" id="exportBtn">エクスポート</button>
-        <button class="secondary small" id="importBtn">インポート</button>
-      </div>
-      <input type="file" id="importFile" accept="application/json" style="display:none;">
-    </div>
-
-    <div class="card">
-      <div class="card-title" style="color:var(--danger);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-        データの削除
-      </div>
-      <p style="color:var(--muted); font-size:12px; margin:0 0 12px;">この端末の記録を全て削除します。GitHub自動保存が有効ならリモートも空になります。</p>
-      <button class="danger small" id="resetBtn" style="width:100%;">全データを削除</button>
-    </div>
   </section>
 </main>
 
@@ -3406,8 +3386,12 @@ function setSyncStatus(kind, text) {
 
 function updateSyncStatus() {
   const btn = document.getElementById('syncNowBtn');
+  const setup = document.getElementById('tokenSetup');
+  const manage = document.getElementById('tokenManageRow');
   const hasToken = !!getToken();
   if (btn) btn.style.display = hasToken ? 'block' : 'none';
+  if (setup) setup.style.display = hasToken ? 'none' : 'block';
+  if (manage) manage.style.display = hasToken ? 'flex' : 'none';
   if (!hasToken) {
     if (lastInitMode === 'readonly') {
       setSyncStatus('ok', '読み取り専用（編集にはトークンが必要）');
@@ -3516,59 +3500,6 @@ document.getElementById('syncNowBtn').addEventListener('click', async () => {
 });
 
 // ====================================================================
-// Backup / reset
-// ====================================================================
-document.getElementById('exportBtn').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `reps-${todayStr()}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-});
-
-document.getElementById('importBtn').addEventListener('click', () => {
-  document.getElementById('importFile').click();
-});
-document.getElementById('importFile').addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-      if (!Array.isArray(data.exercises) || !Array.isArray(data.sessions)) throw new Error('invalid');
-      if (!confirm('現在のデータを上書きしますか？')) return;
-      state = data;
-      saveState();
-      renderTodaySummary(); renderEquipGrid();
-      renderExerciseList();
-      renderHistory();
-      refreshHeader();
-      toast('インポートしました');
-    } catch {
-      toast('読み込みに失敗しました');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value = '';
-});
-
-document.getElementById('resetBtn').addEventListener('click', () => {
-  if (!confirm('全ての記録と機材を削除しますか？\nこの操作は取り消せません。')) return;
-  if (!confirm('本当によろしいですか？')) return;
-  state = initialState();
-  saveState();
-  renderTodaySummary(); renderEquipGrid();
-  renderExerciseList();
-  renderHistory();
-  refreshHeader();
-  toast('削除しました');
-});
-
 // Profile button wiring
 document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
 document.getElementById('goToProfile').addEventListener('click', () => showTab('settings'));
