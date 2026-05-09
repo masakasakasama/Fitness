@@ -1623,25 +1623,26 @@
           セット入力
         </div>
 
+        <div style="margin-bottom:12px;">
+          <label>重量</label>
+          <select id="inputWeight" class="weight-select" style="height:64px; font-size:22px; font-weight:700; text-align:center; text-align-last:center; padding-right:30px;"></select>
+        </div>
+
         <div class="row" style="margin-bottom:12px;">
           <div>
-            <label>重量</label>
-            <select id="inputWeight" class="weight-select" style="height:80px; font-size:24px; font-weight:800; text-align:center; text-align-last:center; padding-right:30px;"></select>
+            <label>1セットの回数</label>
+            <div class="stepper">
+              <button type="button" data-step="reps" data-d="-1">−</button>
+              <input type="number" id="inputReps" inputmode="numeric" step="1" placeholder="0">
+              <button type="button" data-step="reps" data-d="1">＋</button>
+            </div>
           </div>
           <div>
-            <label>回数 × セット</label>
-            <div class="reps-sets">
-              <div class="stepper compact">
-                <button type="button" data-step="reps" data-d="-1">−</button>
-                <input type="number" id="inputReps" inputmode="numeric" step="1" placeholder="回">
-                <button type="button" data-step="reps" data-d="1">＋</button>
-              </div>
-              <span class="reps-sets-x">×</span>
-              <div class="stepper compact">
-                <button type="button" data-step="sets" data-d="-1">−</button>
-                <input type="number" id="inputSets" inputmode="numeric" step="1" min="1" max="10" value="3">
-                <button type="button" data-step="sets" data-d="1">＋</button>
-              </div>
+            <label>セット数</label>
+            <div class="stepper">
+              <button type="button" data-step="sets" data-d="-1">−</button>
+              <input type="number" id="inputSets" inputmode="numeric" step="1" min="1" max="10" value="3">
+              <button type="button" data-step="sets" data-d="1">＋</button>
             </div>
           </div>
         </div>
@@ -2230,6 +2231,7 @@ const dateInput = document.getElementById('recordDate');
 const setEntryCard = document.getElementById('setEntryCard');
 const inputWeight = document.getElementById('inputWeight');
 const inputReps = document.getElementById('inputReps');
+const inputSets = document.getElementById('inputSets');
 const pendingSetsEl = document.getElementById('pendingSets');
 const todaySummary = document.getElementById('todaySummary');
 const todayList = document.getElementById('todayList');
@@ -2302,6 +2304,7 @@ function selectExercise(name) {
   editingIndex = null;
   resetRPE();
   resetAddBtnLabel();
+  setSetsInputDisabled(false);
   const cancelBtn = document.getElementById('cancelEditBtn');
   if (cancelBtn) cancelBtn.style.display = 'none';
 
