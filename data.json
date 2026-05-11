@@ -1,71 +1,238 @@
 {
   "exercises": [
-    { "name": "インクラインダンベルプレス", "group": "胸" },
-    { "name": "ダンベルフライ", "group": "胸" },
-    { "name": "チェストプレス（マシン）", "group": "胸" },
-    { "name": "デッドリフト", "group": "背中" },
-    { "name": "ラットプルダウン", "group": "背中" },
-    { "name": "シーテッドロー", "group": "背中" },
-    { "name": "懸垂", "group": "背中" },
-    { "name": "ショルダープレス", "group": "肩" },
-    { "name": "サイドレイズ", "group": "肩" },
-    { "name": "リアレイズ", "group": "肩" },
-    { "name": "バーベルカール", "group": "腕" },
-    { "name": "ダンベルカール", "group": "腕" },
-    { "name": "トライセプスエクステンション", "group": "腕" },
-    { "name": "ケーブルプレスダウン", "group": "腕" },
-    { "name": "レッグプレス", "group": "脚" },
-    { "name": "マルチプレス", "group": "胸" }
+    {
+      "name": "インクラインダンベルプレス",
+      "group": "胸"
+    },
+    {
+      "name": "ダンベルフライ",
+      "group": "胸"
+    },
+    {
+      "name": "チェストプレス（マシン）",
+      "group": "胸"
+    },
+    {
+      "name": "デッドリフト",
+      "group": "背中"
+    },
+    {
+      "name": "ラットプルダウン",
+      "group": "背中"
+    },
+    {
+      "name": "シーテッドロー",
+      "group": "背中"
+    },
+    {
+      "name": "懸垂",
+      "group": "背中"
+    },
+    {
+      "name": "ショルダープレス",
+      "group": "肩"
+    },
+    {
+      "name": "サイドレイズ",
+      "group": "肩"
+    },
+    {
+      "name": "リアレイズ",
+      "group": "肩"
+    },
+    {
+      "name": "バーベルカール",
+      "group": "腕"
+    },
+    {
+      "name": "ダンベルカール",
+      "group": "腕"
+    },
+    {
+      "name": "トライセプスエクステンション",
+      "group": "腕"
+    },
+    {
+      "name": "ケーブルプレスダウン",
+      "group": "腕"
+    },
+    {
+      "name": "レッグプレス",
+      "group": "脚"
+    },
+    {
+      "name": "マルチプレス",
+      "group": "胸"
+    }
   ],
   "sessions": [
     {
       "id": "moxkqs3wkivg",
       "date": "2026-05-09",
       "exercises": [
-        { "name": "チェストプレス（マシン）", "sets": [
-          { "weight": 35, "reps": 10, "rpe": 3 },
-          { "weight": 35, "reps": 10, "rpe": 3 },
-          { "weight": 35, "reps": 10, "rpe": 3 }
-        ]},
-        { "name": "サイドレイズ", "sets": [
-          { "weight": 6, "reps": 10, "rpe": 2 },
-          { "weight": 6, "reps": 10, "rpe": 2 },
-          { "weight": 6, "reps": 10, "rpe": 2 }
-        ]},
-        { "name": "レッグプレス", "sets": [
-          { "weight": 60, "reps": 10, "rpe": 1 },
-          { "weight": 60, "reps": 10, "rpe": 1 },
-          { "weight": 60, "reps": 10, "rpe": 1 }
-        ]},
-        { "name": "ショルダープレス", "sets": [
-          { "weight": 25, "reps": 10, "rpe": 3 },
-          { "weight": 25, "reps": 10, "rpe": 3 },
-          { "weight": 25, "reps": 10, "rpe": 3 }
-        ]},
-        { "name": "ダンベルカール", "sets": [
-          { "weight": 12, "reps": 10, "rpe": 2 },
-          { "weight": 12, "reps": 10, "rpe": 2 },
-          { "weight": 12, "reps": 10, "rpe": 2 }
-        ]},
-        { "name": "マルチプレス", "sets": [
-          { "weight": 20, "reps": 10, "rpe": 2 },
-          { "weight": 20, "reps": 10, "rpe": 2 },
-          { "weight": 20, "reps": 10, "rpe": 2 }
-        ]}
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 3
+            },
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 3
+            },
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 3
+            }
+          ]
+        },
+        {
+          "name": "サイドレイズ",
+          "sets": [
+            {
+              "weight": 6,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "レッグプレス",
+          "sets": [
+            {
+              "weight": 60,
+              "reps": 10,
+              "rpe": 1
+            },
+            {
+              "weight": 60,
+              "reps": 10,
+              "rpe": 1
+            },
+            {
+              "weight": 60,
+              "reps": 10,
+              "rpe": 1
+            }
+          ]
+        },
+        {
+          "name": "ショルダープレス",
+          "sets": [
+            {
+              "weight": 25,
+              "reps": 10,
+              "rpe": 3
+            },
+            {
+              "weight": 25,
+              "reps": 10,
+              "rpe": 3
+            },
+            {
+              "weight": 25,
+              "reps": 10,
+              "rpe": 3
+            }
+          ]
+        },
+        {
+          "name": "ダンベルカール",
+          "sets": [
+            {
+              "weight": 12,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 12,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 12,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "マルチプレス",
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 20,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 20,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mp15qa9b3v9z",
+      "date": "2026-05-11",
+      "exercises": [
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 3
+            },
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 3
+            },
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 3
+            }
+          ]
+        }
       ]
     }
   ],
   "weights": [
-    { "date": "2026-04-12", "weight": 66.0, "source": "chocozap" }
+    {
+      "date": "2026-04-12",
+      "weight": 66,
+      "source": "chocozap"
+    }
   ],
   "profile": {
     "height": 183,
-    "weight": 66.0,
+    "weight": 66,
     "goalWeight": 70,
     "age": null,
     "sex": "male",
-    "activity": 1.55,
-    "trainingDays": "weekend"
+    "activity": 1.55
   },
-  "updatedAt": 9999999999999
+  "updatedAt": 1778501259119
 }
