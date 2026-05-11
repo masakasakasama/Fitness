@@ -255,6 +255,26 @@
               "rpe": 2
             }
           ]
+        },
+        {
+          "name": "ショルダープレス",
+          "sets": [
+            {
+              "weight": 25,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 25,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 25,
+              "reps": 8,
+              "rpe": 3
+            }
+          ]
         }
       ]
     }
@@ -274,5 +294,5 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1778501706106
+  "updatedAt": 1778502095813
 }
