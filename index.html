@@ -2461,10 +2461,7 @@ function renderCoach() {
 
   // ----- Frequency -----
   document.getElementById('freqTarget').textContent = freqTarget;
-  const cutoff7 = new Date(today);
-  cutoff7.setDate(today.getDate() - 7);
-  const cut7Iso = toISO(cutoff7);
-  const lastWeek = state.sessions.filter(s => s.date >= cut7Iso && s.date <= todayIso).length;
+  const lastWeek = last7.length;
   const pct = Math.min(100, Math.round((lastWeek / freqTarget) * 100));
   document.getElementById('freqCurrent').textContent = lastWeek;
   document.getElementById('freqFill').style.width = pct + '%';

@@ -1,4 +1,4 @@
-const CACHE = 'gym-tracker-v24';
+const CACHE = 'gym-tracker-v25';
 const ASSETS = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', (e) => {
