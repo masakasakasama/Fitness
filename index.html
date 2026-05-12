@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="REPS">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23facc15'/%3E%3Cg fill='none' stroke='%230a0a0c' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 19L45 45'/%3E%3Cpath d='M51 51L48 48'/%3E%3Cpath d='M13 13L16 16'/%3E%3Cpath d='M45 55L55 45'/%3E%3Cpath d='M9 19L19 9'/%3E%3Cpath d='M13 27L27 13'/%3E%3Cpath d='M37 55L55 37'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23161618'/%3E%3Cg fill='none' stroke='%23f5f5f7' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 19L45 45'/%3E%3Cpath d='M51 51L48 48'/%3E%3Cpath d='M13 13L16 16'/%3E%3Cpath d='M45 55L55 45'/%3E%3Cpath d='M9 19L19 9'/%3E%3Cpath d='M13 27L27 13'/%3E%3Cpath d='M37 55L55 37'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap">
@@ -88,8 +88,9 @@
   .logo-mark {
     width: 32px; height: 32px;
     border-radius: 9px;
-    background: var(--accent);
-    color: var(--bg);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
     display: grid;
     place-items: center;
     font-weight: 900;
@@ -2375,23 +2376,23 @@ function renderCoach() {
   document.getElementById('diagComposition').innerHTML =
     `<span class="num">${profile.height}</span><span class="sub">cm</span> / <span class="num">${profile.weight}</span><span class="sub">kg</span> ・ BMI <span class="num">${bmi.toFixed(1)}</span> <span class="sub">${cat}</span>`;
 
-  // Frequency diagnosis (based on last 30 days)
+  // Frequency diagnosis: 今週 (last 7d) + 今月 (last 30d)
+  const cutoff7 = new Date(today);
+  cutoff7.setDate(today.getDate() - 6);
+  const cut7Iso = toISO(cutoff7);
   const cutoff30 = new Date(today);
-  cutoff30.setDate(today.getDate() - 30);
+  cutoff30.setDate(today.getDate() - 29);
   const cut30Iso = toISO(cutoff30);
+  const last7 = state.sessions.filter(s => s.date >= cut7Iso && s.date <= todayIso);
   const last30 = state.sessions.filter(s => s.date >= cut30Iso && s.date <= todayIso);
+  const weekendOnlyDiag = detectWeekendOnly();
   const perWeek30 = (last30.length / 30) * 7;
+  const lowThreshold = weekendOnlyDiag ? 1.0 : 1.5;
+  const okThreshold = weekendOnlyDiag ? 1.8 : 2.5;
   let freqVerdict = 'good';
-  let freqText;
-  if (perWeek30 < 1.5) {
-    freqVerdict = 'bad';
-    freqText = `${last30.length}回 / 30日 (週${perWeek30.toFixed(1)}回)`;
-  } else if (perWeek30 < 2.5) {
-    freqVerdict = 'warn';
-    freqText = `${last30.length}回 / 30日 (週${perWeek30.toFixed(1)}回)`;
-  } else {
-    freqText = `${last30.length}回 / 30日 (週${perWeek30.toFixed(1)}回)`;
-  }
+  if (perWeek30 < lowThreshold) freqVerdict = 'bad';
+  else if (perWeek30 < okThreshold) freqVerdict = 'warn';
+  const freqText = `今週 <span class="num">${last7.length}</span>回 ・ 今月 <span class="num">${last30.length}</span>回`;
   document.getElementById('diagFreq').innerHTML = `${freqText}<span class="verdict ${freqVerdict}">${freqVerdict === 'bad' ? '不足' : freqVerdict === 'warn' ? 'もう少し' : '十分'}</span>`;
 
   // Quality diagnosis
