@@ -292,6 +292,32 @@
           ]
         }
       ]
+    },
+    {
+      "id": "mp5fcaikl4mx",
+      "date": "2026-05-14",
+      "exercises": [
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 3
+            }
+          ]
+        }
+      ]
     }
   ],
   "weights": [
@@ -309,5 +335,5 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1778502319168
+  "updatedAt": 1778759267132
 }
