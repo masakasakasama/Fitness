@@ -386,6 +386,21 @@
               "rpe": 3
             }
           ]
+        },
+        {
+          "name": "マルチプレス",
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 20,
+              "reps": 8,
+              "rpe": 3
+            }
+          ]
         }
       ]
     }
@@ -405,5 +420,5 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1778760090520
+  "updatedAt": 1778760361180
 }
