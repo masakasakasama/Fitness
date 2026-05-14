@@ -326,7 +326,7 @@
   .chip.active { color: var(--text); border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
 
   /* TAB BAR */
-  nav.tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: calc(var(--tab-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom); background: rgba(10, 10, 12, 0.92); backdrop-filter: saturate(160%) blur(20px); -webkit-backdrop-filter: saturate(160%) blur(20px); border-top: 1px solid var(--border-soft); display: grid; grid-template-columns: repeat(5, 1fr); z-index: 40; }
+  nav.tabbar { position: fixed; bottom: 0; left: 0; right: 0; height: calc(var(--tab-h) + var(--safe-bottom)); padding-bottom: var(--safe-bottom); background: rgba(10, 10, 12, 0.92); backdrop-filter: saturate(160%) blur(20px); -webkit-backdrop-filter: saturate(160%) blur(20px); border-top: 1px solid var(--border-soft); display: grid; grid-template-columns: repeat(4, 1fr); z-index: 40; }
   nav.tabbar button { background: transparent; color: var(--muted); border-radius: 0; padding: 8px 4px 6px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; transition: color 0.12s; text-transform: uppercase; border: none; }
   nav.tabbar button svg { width: 22px; height: 22px; }
   nav.tabbar button.active { color: var(--accent); background: transparent; }
@@ -456,6 +456,54 @@
   .insight-text { flex: 1; min-width: 0; }
   .insight-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; line-height: 1.4; letter-spacing: -0.005em; }
   .insight-body { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+
+  /* PROGRESS CARD — BIG (merged coach + history) */
+  .progress-card-big { padding: 16px; }
+  .next-target {
+    background: var(--surface-2);
+    border-radius: var(--r-sm);
+    padding: 12px 14px;
+    margin: 10px 0 14px;
+    border-left: 3px solid var(--accent);
+  }
+  .next-target-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .nt-label {
+    font-size: 10.5px;
+    color: var(--accent);
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .nt-value { font-size: 16px; font-weight: 800; color: var(--text); letter-spacing: -0.01em; }
+  .nt-value .num { font-size: 22px; color: var(--accent); }
+  .nt-unit { font-size: 11px; color: var(--muted); font-weight: 600; margin-left: 2px; margin-right: 4px; }
+  .nt-reason { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
+
+  .big-chart {
+    height: 90px;
+    background: var(--surface-2);
+    border-radius: var(--r-sm);
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .big-chart svg { width: 100%; height: 100%; overflow: visible; }
+
+  .progress-foot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 500;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+  .progress-foot strong { color: var(--text); font-weight: 700; }
 
   /* PROGRESS CARD */
   .progress-card { cursor: pointer; margin: 0 0 8px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--r); }
@@ -730,10 +778,10 @@
     </div>
   </section>
 
-  <!-- =========== 提案タブ =========== -->
-  <section id="tab-coach">
+  <!-- =========== コーチ + 履歴タブ (統合) =========== -->
+  <section id="tab-history">
     <div class="section-head">
-      <h2>あなたへの提案<span class="en">COACH</span></h2>
+      <h2>コーチ<span class="en">COACH</span></h2>
       <span class="greeting" id="coachGreeting"></span>
     </div>
 
@@ -744,6 +792,13 @@
     </div>
 
     <div id="coachWithProfile" style="display:none;">
+      <div class="focus-card" id="focusCard">
+        <div class="focus-label">本日のおすすめ</div>
+        <div class="focus-value" id="focusValue">—</div>
+        <div class="focus-tags" id="focusTags"></div>
+        <div class="focus-reason" id="focusReason"></div>
+      </div>
+
       <div class="diag-card">
         <div class="card-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -783,22 +838,6 @@
         <div class="weight-meta" id="weightMeta"></div>
       </div>
 
-      <div class="focus-card" id="focusCard">
-        <div class="focus-label">本日のおすすめ</div>
-        <div class="focus-value" id="focusValue">—</div>
-        <div class="focus-tags" id="focusTags"></div>
-        <div class="focus-reason" id="focusReason"></div>
-      </div>
-
-      <div class="card" id="routineCard" style="display:none;">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          推奨ルーティン
-        </div>
-        <div class="routine-list" id="routineList"></div>
-        <div class="routine-summary" id="routineSummary"></div>
-      </div>
-
       <div class="card">
         <div class="card-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -832,9 +871,6 @@
         <div class="nut-note" id="nutNote"></div>
       </div>
 
-      <div class="subhead" id="coachExHead" style="display:none;">機材別の次回目安</div>
-      <div id="coachExList"></div>
-
       <div class="card" id="untrainedCard" style="display:none;">
         <div class="card-title" style="color:var(--warn);">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -842,15 +878,9 @@
         </div>
         <div class="untrained-list" id="untrainedList"></div>
       </div>
-
     </div>
-  </section>
 
-  <!-- =========== 履歴タブ =========== -->
-  <section id="tab-history">
-    <div class="section-head">
-      <h2>履歴<span class="en">HISTORY</span></h2>
-    </div>
+    <div class="subhead">履歴 <span class="en">HISTORY</span></div>
 
     <div class="stat-grid">
       <div class="stat">
@@ -883,12 +913,12 @@
     <div class="card insight-card" id="insightCard" style="display:none;">
       <div class="card-title">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V18h6v-1.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>
-        提案 / インサイト
+        インサイト
       </div>
       <div class="insight-list" id="insightList"></div>
     </div>
 
-    <div class="subhead" id="progressHead" style="display:none;">機材別の進捗</div>
+    <div class="subhead" id="progressHead" style="display:none;">機材ごとの推移 + 次回目安</div>
     <div id="exerciseProgress"></div>
 
     <div class="subhead" id="historyHead" style="display:none;">セッション履歴</div>
@@ -1026,13 +1056,9 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
     記録
   </button>
-  <button data-tab="coach">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-    提案
-  </button>
   <button data-tab="history">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-    履歴
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    コーチ
   </button>
   <button data-tab="exercises">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11"/><path d="M21 21l-1-1"/><path d="M3 3l1 1"/><path d="M18 22l4-4"/><path d="M2 6l4-4"/><path d="M3 10l7-7"/><path d="M14 21l7-7"/></svg>
@@ -1246,10 +1272,9 @@ function showTab(name) {
   document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   document.querySelectorAll('nav.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
-  if (name === 'history') renderHistory();
+  if (name === 'history') { renderCoach(); renderHistory(); }
   if (name === 'exercises') renderExerciseList();
   if (name === 'settings') { updateSyncStatus(); loadProfileForm(); }
-  if (name === 'coach') renderCoach();
   window.scrollTo(0, 0);
 }
 document.querySelectorAll('nav.tabbar button').forEach(b => {
@@ -2030,13 +2055,111 @@ function progressTipFor(points) {
   return null;
 }
 
+function computeNextSuggestion(name, sessions, profile) {
+  const points = exerciseStats(name, sessions);
+  if (!points.length) return null;
+  const lastSess = sessions.filter(s => s.exercises.some(e => e.name === name)).pop();
+  const lastEx = lastSess.exercises.find(e => e.name === name);
+  const lastSet = lastEx.sets[lastEx.sets.length - 1];
+  const lastSetsCount = lastEx.sets.length;
+  const goal = profile ? getGoalKind(profile) : 'maintain';
+  const repRange = repRangeFor(goal);
+
+  const recent = points.slice(-3);
+  const rpes = [];
+  for (const s of sessions.slice(-3)) {
+    const ex = s.exercises.find(e => e.name === name);
+    if (ex) for (const set of ex.sets) if (set.rpe) rpes.push(set.rpe);
+  }
+  const avgRpe = rpes.length ? rpes.reduce((a, b) => a + b, 0) / rpes.length : null;
+
+  let nextW = lastSet.weight, nextR = lastSet.reps, nextSets = lastSetsCount, reason;
+
+  if (lastSet.reps < repRange[0]) {
+    nextW = snapWeight(lastSet.weight * 0.85);
+    nextR = repRange[0];
+    reason = `前回${lastSet.reps}回は強度高すぎ。${goal === 'bulk' ? '筋肥大目的なら' : ''}${repRange[0]}-${repRange[1]}回が効率的`;
+  } else if (recent.length >= 3 && recent.every(p => p.maxW === recent[0].maxW) && avgRpe !== null && avgRpe <= 1.5) {
+    nextW = nextWeightStep(recent[0].maxW);
+    nextR = repRange[0];
+    reason = `直近3回${fmtNum(recent[0].maxW)}kgで「余裕」続き → 重量UP`;
+  } else if (avgRpe !== null && avgRpe >= 2.6) {
+    nextW = snapWeight(lastSet.weight * 0.9);
+    nextR = repRange[0];
+    reason = '「限界」続き → 1段下げてレップ数を稼ぐ';
+  } else if (lastSet.reps < repRange[1]) {
+    nextR = lastSet.reps + 1;
+    reason = `${nextR}回目標。${repRange[1]}回できたら重量UP`;
+  } else if (lastSet.reps >= repRange[1]) {
+    nextW = nextWeightStep(lastSet.weight);
+    nextR = repRange[0];
+    reason = `${repRange[1]}回到達 → 重量を上げてリスタート`;
+  } else {
+    reason = `前回 ${fmtNum(lastSet.weight)}kg × ${lastSet.reps}回 を維持`;
+  }
+
+  const today = new Date();
+  const daysSince = Math.floor((parseISO(toISO(today)) - parseISO(lastSess.date)) / 86400000);
+  if (daysSince >= 14) {
+    nextW = snapWeight(lastSet.weight * 0.9);
+    reason = `${daysSince}日ぶり。1段下げて感覚を取り戻す`;
+  }
+
+  return { weight: nextW, reps: nextR, sets: nextSets, reason, daysSince, lastSet, lastSession: lastSess };
+}
+
+function buildBigChart(points) {
+  if (!points.length) return '';
+  const values = points.map(p => p.maxW);
+  if (values.length === 1) {
+    const v = values[0];
+    return `<svg viewBox="0 0 100 60" preserveAspectRatio="none" class="sparkline">
+      <line x1="0" y1="30" x2="100" y2="30" stroke="var(--border)" stroke-width="0.5" vector-effect="non-scaling-stroke" stroke-dasharray="2 2"/>
+      <circle cx="50" cy="30" r="3" fill="var(--accent)"/>
+      <text x="52" y="24" font-size="9" fill="var(--text-soft)" font-family="Inter,sans-serif">${fmtNum(v)}kg</text>
+    </svg>`;
+  }
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || max * 0.1 || 1;
+  const yMax = max + range * 0.15;
+  const yMin = Math.max(0, min - range * 0.15);
+  const yRange = yMax - yMin || 1;
+  const w = 100, h = 60;
+  const pts = values.map((v, i) => {
+    const x = (i / (values.length - 1)) * w;
+    const y = h - ((v - yMin) / yRange) * (h - 8) - 4;
+    return [x, y];
+  });
+  const polyPoints = pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+  const areaPoints = `0,${h} ${polyPoints} ${w},${h}`;
+  const trend = values[values.length - 1] - values[0];
+  const color = trend > 0 ? 'var(--success)' : trend < 0 ? 'var(--coral)' : 'var(--accent)';
+  const last = pts[pts.length - 1];
+  return `
+    <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" class="sparkline">
+      <defs>
+        <linearGradient id="bg-${Math.random().toString(36).slice(2, 8)}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${color}" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <polygon points="${areaPoints}" fill="${color}" fill-opacity="0.12"/>
+      <polyline points="${polyPoints}" stroke="${color}" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+      ${pts.map((p, i) => `<circle cx="${p[0]}" cy="${p[1]}" r="${i === pts.length - 1 ? 2.6 : 1.6}" fill="${color}"/>`).join('')}
+    </svg>
+  `;
+}
+
 function renderExerciseProgress() {
   const container = document.getElementById('exerciseProgress');
   const head = document.getElementById('progressHead');
   const rangeDays = getRangeDays();
   const today = new Date();
+  const profile = state.profile;
 
-  let scoped = state.sessions.slice().sort((a, b) => a.date.localeCompare(b.date));
+  const allSessions = state.sessions.slice().sort((a, b) => a.date.localeCompare(b.date));
+  let scoped = allSessions;
   if (rangeDays) {
     const cutoff = new Date(today);
     cutoff.setDate(today.getDate() - rangeDays);
@@ -2051,7 +2174,9 @@ function renderExerciseProgress() {
   for (const name of exNames) {
     const points = exerciseStats(name, scoped);
     if (!points.length) continue;
-    cards.push({ name, points });
+    const allPoints = exerciseStats(name, allSessions);
+    const suggestion = computeNextSuggestion(name, allSessions, profile);
+    cards.push({ name, points, allPoints, suggestion });
   }
   cards.sort((a, b) => b.points[b.points.length - 1].date.localeCompare(a.points[a.points.length - 1].date));
 
@@ -2062,31 +2187,35 @@ function renderExerciseProgress() {
   }
   head.style.display = 'flex';
 
-  for (const { name, points } of cards) {
+  for (const { name, points, allPoints, suggestion } of cards) {
     const card = document.createElement('div');
-    card.className = 'progress-card';
-    const maxW = Math.max(...points.map(p => p.maxW));
-    const lastP = points[points.length - 1];
-    const firstP = points[0];
-    const change = points.length >= 2 ? lastP.maxW - firstP.maxW : 0;
+    card.className = 'progress-card progress-card-big';
+    const maxW = Math.max(...allPoints.map(p => p.maxW));
+    const lastP = allPoints[allPoints.length - 1];
+    const firstP = allPoints[0];
+    const change = allPoints.length >= 2 ? lastP.maxW - firstP.maxW : 0;
     let changeHtml = '';
-    if (points.length >= 2) {
+    if (allPoints.length >= 2) {
       if (change > 0) changeHtml = `<span class="change-pill up">+${fmtNum(change)} kg</span>`;
       else if (change < 0) changeHtml = `<span class="change-pill down">${fmtNum(change)} kg</span>`;
       else changeHtml = `<span class="change-pill flat">→ 同じ</span>`;
     }
-    const sparkValues = points.map(p => p.bestVol);
-    const tip = progressTipFor(points);
-    const tipHtml = tip ? `
-      <div class="progress-tip">
-        <svg class="tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <span>${escapeHTML(tip.text)}</span>
-      </div>` : '';
 
     const lastSession = scoped.filter(s => s.exercises.some(e => e.name === name)).pop();
     const lastEx = lastSession?.exercises.find(e => e.name === name);
+    const lastSetsCount = lastEx ? lastEx.sets.length : 0;
     const lastSet = lastEx ? lastEx.sets[lastEx.sets.length - 1] : null;
-    const lastUnit = lastSet ? `kg × ${lastSet.reps}` : 'kg';
+    const dayLabel = suggestion ? (suggestion.daysSince === 0 ? '今日' : suggestion.daysSince === 1 ? '昨日' : `${suggestion.daysSince}日前`) : '';
+
+    const nextHtml = suggestion ? `
+      <div class="next-target">
+        <div class="next-target-row">
+          <span class="nt-label">次回</span>
+          <span class="nt-value"><span class="num">${fmtNum(suggestion.weight)}</span><span class="nt-unit">kg</span> × <span class="num">${suggestion.reps}</span><span class="nt-unit">回</span> × <span class="num">${suggestion.sets}</span><span class="nt-unit">セット</span></span>
+        </div>
+        <div class="nt-reason">${escapeHTML(suggestion.reason)}</div>
+      </div>
+    ` : '';
 
     card.innerHTML = `
       <div class="progress-head">
@@ -2094,27 +2223,35 @@ function renderExerciseProgress() {
           <div class="progress-name">${escapeHTML(name)}</div>
           <div class="progress-sub">
             <span class="group-tag">${escapeHTML(exerciseGroup(name))}</span>
-            <span>${points.length}セッション</span>
+            <span>${points.length}セッション${dayLabel ? ' ・ 最終 ' + dayLabel : ''}</span>
           </div>
         </div>
         ${changeHtml}
       </div>
-      <div class="progress-stats">
-        <div><span class="ps-label">最大</span><span class="ps-value num">${fmtNum(maxW)}</span><span class="ps-unit">kg</span></div>
-        <div><span class="ps-label">最終</span><span class="ps-value num">${fmtNum(lastP.maxW)}</span><span class="ps-unit">${lastUnit}</span></div>
+
+      ${nextHtml}
+
+      <div class="big-chart">${buildBigChart(allPoints)}</div>
+
+      <div class="progress-foot">
+        <span>最大 <strong class="num">${fmtNum(maxW)}</strong>kg</span>
+        ${lastSet ? `<span>最終 <strong class="num">${fmtNum(lastSet.weight)}</strong>kg × ${lastSet.reps}回 × ${lastSetsCount}セット</span>` : ''}
       </div>
-      <div class="sparkline-wrap">${buildSparkline(sparkValues)}</div>
-      ${tipHtml}
     `;
     card.style.cursor = 'pointer';
     card.addEventListener('click', () => {
-      if (lastSession) {
-        dateInput.value = lastSession.date;
-        onDateChange();
-      }
+      const todayIso = toISO(new Date());
+      dateInput.value = todayIso;
+      onDateChange();
       showTab('record');
       setTimeout(() => {
         selectExercise(name);
+        if (suggestion) {
+          inputWeight.value = String(snapWeight(suggestion.weight));
+          inputReps.value = suggestion.reps;
+          inputSets.value = suggestion.sets;
+          refreshAddBtnLabel();
+        }
         setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
       }, 50);
     });
@@ -2509,9 +2646,6 @@ function renderCoach() {
     nutCard.style.display = 'none';
   }
 
-  // ----- Per-exercise progressions -----
-  renderCoachExList(sortedSessions, todayIso, repRange, profile);
-
   // ----- Untrained groups -----
   renderUntrainedGroups(sortedSessions, todayIso);
 }
@@ -2664,6 +2798,7 @@ function renderTodayFocus(profile, goal, today, todayIso, todaySession, lastSess
 
 function renderRoutine(profile, goal, todaySession, repRange) {
   const card = document.getElementById('routineCard');
+  if (!card) return; // routine card removed from merged tab
   const list = document.getElementById('routineList');
   const summary = document.getElementById('routineSummary');
 
