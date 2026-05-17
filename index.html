@@ -457,6 +457,36 @@
   .insight-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; line-height: 1.4; letter-spacing: -0.005em; }
   .insight-body { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
 
+  /* HIIT TIMER */
+  .hiit-modal { text-align: left; }
+  .hiit-cfg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .hiit-cfg { display: flex; flex-direction: column; }
+  .hiit-cfg label { margin-bottom: 6px; }
+  .hiit-cfg .stepper { height: 56px; }
+  .hiit-cfg .stepper input { font-size: 22px; }
+  .hiit-cfg-unit { font-size: 11px; color: var(--muted); margin-top: 4px; text-align: center; font-weight: 600; letter-spacing: 0.08em; }
+  .hiit-toggles { display: flex; gap: 20px; margin-bottom: 8px; }
+  .hiit-toggle { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-soft); text-transform: none; letter-spacing: 0; cursor: pointer; }
+  .hiit-toggle input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .hiit-total { font-size: 12px; color: var(--muted); text-align: center; margin-top: 6px; font-weight: 600; }
+
+  #hiitRunning { text-align: center; padding: 20px 0 8px; }
+  .hiit-set { font-size: 13px; color: var(--muted); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+  .hiit-phase {
+    font-size: 28px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 8px;
+  }
+  .hiit-phase.prep { color: var(--cyan); }
+  .hiit-phase.work { color: var(--coral); }
+  .hiit-phase.rest { color: var(--success); }
+  .hiit-count {
+    font-size: 88px; font-weight: 900; line-height: 1; letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums; margin: 4px 0 8px;
+  }
+  .hiit-next { font-size: 12px; color: var(--muted); margin-bottom: 22px; font-weight: 600; }
+  .hiit-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hiit-done-title { font-size: 32px; font-weight: 900; color: var(--accent); letter-spacing: -0.02em; }
+  .hiit-done-sub { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+
   /* PROGRESS CARD — BIG (merged coach + history) */
   .progress-card-big { padding: 16px; }
   .next-target {
@@ -704,8 +734,9 @@
     <div class="equip-grid" id="equipGrid"></div>
     <div class="equip-grid-foot">
       <a href="#" id="openExercisePicker">+ 他の機材から選ぶ</a>
-      <span id="currentExLabel" style="display:none;"></span>
+      <a href="#" id="openHiit" style="font-weight:700; color:var(--accent);">⏱ HIIT タイマー</a>
     </div>
+    <span id="currentExLabel" style="display:none;"></span>
 
     <div id="setEntryCard" style="display:none; margin-top:12px;">
       <div class="card">
@@ -1070,6 +1101,63 @@
   </button>
 </nav>
 
+<div class="modal-bg" id="hiitModal">
+  <div class="modal hiit-modal">
+    <div class="modal-handle"></div>
+
+    <div id="hiitConfig">
+      <h2>HIIT タイマー</h2>
+      <div class="hiit-cfg-grid">
+        <div class="hiit-cfg">
+          <label>準備</label>
+          <div class="stepper"><button type="button" data-h="prep" data-d="-5">−</button><input type="number" id="hiitPrep" inputmode="numeric" value="10"><button type="button" data-h="prep" data-d="5">＋</button></div>
+          <span class="hiit-cfg-unit">秒</span>
+        </div>
+        <div class="hiit-cfg">
+          <label>実施</label>
+          <div class="stepper"><button type="button" data-h="work" data-d="-5">−</button><input type="number" id="hiitWork" inputmode="numeric" value="20"><button type="button" data-h="work" data-d="5">＋</button></div>
+          <span class="hiit-cfg-unit">秒</span>
+        </div>
+        <div class="hiit-cfg">
+          <label>休み</label>
+          <div class="stepper"><button type="button" data-h="rest" data-d="-5">−</button><input type="number" id="hiitRest" inputmode="numeric" value="30"><button type="button" data-h="rest" data-d="5">＋</button></div>
+          <span class="hiit-cfg-unit">秒</span>
+        </div>
+        <div class="hiit-cfg">
+          <label>セット数</label>
+          <div class="stepper"><button type="button" data-h="sets" data-d="-1">−</button><input type="number" id="hiitSets" inputmode="numeric" value="4"><button type="button" data-h="sets" data-d="1">＋</button></div>
+          <span class="hiit-cfg-unit">セット</span>
+        </div>
+      </div>
+      <div class="hiit-toggles">
+        <label class="hiit-toggle"><input type="checkbox" id="hiitSound" checked> ビープ音</label>
+        <label class="hiit-toggle"><input type="checkbox" id="hiitVoice" checked> 音声ガイド</label>
+      </div>
+      <div class="hiit-total" id="hiitTotal"></div>
+      <button id="hiitStart" style="width:100%; margin-top:14px; padding:16px; font-size:16px;">スタート</button>
+      <button class="ghost" id="hiitCloseCfg" style="width:100%; margin-top:8px;">閉じる</button>
+    </div>
+
+    <div id="hiitRunning" style="display:none;">
+      <div class="hiit-set" id="hiitSetLabel">セット 1 / 4</div>
+      <div class="hiit-phase" id="hiitPhase">準備</div>
+      <div class="hiit-count" id="hiitCount">10</div>
+      <div class="hiit-next" id="hiitNext"></div>
+      <div class="hiit-controls">
+        <button class="secondary" id="hiitPause">一時停止</button>
+        <button class="danger" id="hiitStop">中止</button>
+      </div>
+    </div>
+
+    <div id="hiitDone" style="display:none; text-align:center; padding:20px 0;">
+      <div class="hiit-done-title">完了！</div>
+      <div class="hiit-done-sub" id="hiitDoneSub"></div>
+      <button id="hiitRecord" style="width:100%; margin-top:18px; padding:16px;">実施済みにして記録</button>
+      <button class="ghost" id="hiitCloseDone" style="width:100%; margin-top:8px;">記録せず閉じる</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg" id="exPickerModal">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -1134,13 +1222,14 @@ function loadState() {
     if (!Array.isArray(parsed.weights)) parsed.weights = [];
     if (!parsed.updatedAt) parsed.updatedAt = 0;
     if (!parsed.profile) parsed.profile = null;
+    if (!parsed.hiit) parsed.hiit = { prep: 10, work: 20, rest: 30, sets: 4, sound: true, voice: true };
     return parsed;
   } catch {
     return initialState();
   }
 }
 function initialState() {
-  return { exercises: DEFAULT_EXERCISES.map(e => ({ ...e })), sessions: [], weights: [], updatedAt: 0, profile: null };
+  return { exercises: DEFAULT_EXERCISES.map(e => ({ ...e })), sessions: [], weights: [], updatedAt: 0, profile: null, hiit: { prep: 10, work: 20, rest: 30, sets: 4, sound: true, voice: true } };
 }
 function saveState() {
   state.updatedAt = Date.now();
@@ -3635,6 +3724,230 @@ document.getElementById('syncNowBtn').addEventListener('click', async () => {
 });
 
 // ====================================================================
+// ====================================================================
+// HIIT timer
+// ====================================================================
+const hiitModal = document.getElementById('hiitModal');
+let hiitAudioCtx = null;
+let hiitState = null; // { seq, idx, remaining, paused, rafId, endAt }
+
+function hiitBeep(freq, dur, vol) {
+  if (!state.hiit.sound) return;
+  try {
+    if (!hiitAudioCtx) hiitAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = hiitAudioCtx.createOscillator();
+    const g = hiitAudioCtx.createGain();
+    o.connect(g); g.connect(hiitAudioCtx.destination);
+    o.type = 'sine';
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(vol || 0.3, hiitAudioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, hiitAudioCtx.currentTime + dur);
+    o.start();
+    o.stop(hiitAudioCtx.currentTime + dur);
+  } catch {}
+}
+function hiitSpeak(text) {
+  if (!state.hiit.voice) return;
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP';
+    u.rate = 1.1;
+    speechSynthesis.speak(u);
+  } catch {}
+}
+
+function hiitLoadConfig() {
+  const h = state.hiit;
+  document.getElementById('hiitPrep').value = h.prep;
+  document.getElementById('hiitWork').value = h.work;
+  document.getElementById('hiitRest').value = h.rest;
+  document.getElementById('hiitSets').value = h.sets;
+  document.getElementById('hiitSound').checked = h.sound !== false;
+  document.getElementById('hiitVoice').checked = h.voice !== false;
+  hiitUpdateTotal();
+}
+function hiitReadConfig() {
+  const clampInt = (id, min, max, fb) => {
+    const v = parseInt(document.getElementById(id).value, 10);
+    return isNaN(v) ? fb : Math.max(min, Math.min(max, v));
+  };
+  state.hiit = {
+    prep: clampInt('hiitPrep', 0, 60, 10),
+    work: clampInt('hiitWork', 5, 600, 20),
+    rest: clampInt('hiitRest', 0, 600, 30),
+    sets: clampInt('hiitSets', 1, 20, 4),
+    sound: document.getElementById('hiitSound').checked,
+    voice: document.getElementById('hiitVoice').checked,
+  };
+  saveState();
+}
+function hiitUpdateTotal() {
+  const p = parseInt(document.getElementById('hiitPrep').value, 10) || 0;
+  const w = parseInt(document.getElementById('hiitWork').value, 10) || 0;
+  const r = parseInt(document.getElementById('hiitRest').value, 10) || 0;
+  const s = parseInt(document.getElementById('hiitSets').value, 10) || 1;
+  const total = p + s * w + (s - 1) * r;
+  const m = Math.floor(total / 60), sec = total % 60;
+  document.getElementById('hiitTotal').textContent = `合計 約 ${m}分${sec ? sec + '秒' : ''}（${s}セット）`;
+}
+
+document.querySelectorAll('button[data-h]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const map = { prep: 'hiitPrep', work: 'hiitWork', rest: 'hiitRest', sets: 'hiitSets' };
+    const el = document.getElementById(map[btn.dataset.h]);
+    const d = parseInt(btn.dataset.d, 10);
+    const min = btn.dataset.h === 'sets' ? 1 : 0;
+    el.value = Math.max(min, (parseInt(el.value, 10) || 0) + d);
+    hiitUpdateTotal();
+  });
+});
+['hiitPrep', 'hiitWork', 'hiitRest', 'hiitSets'].forEach(id =>
+  document.getElementById(id).addEventListener('input', hiitUpdateTotal));
+
+function openHiit() {
+  hiitLoadConfig();
+  document.getElementById('hiitConfig').style.display = 'block';
+  document.getElementById('hiitRunning').style.display = 'none';
+  document.getElementById('hiitDone').style.display = 'none';
+  hiitModal.classList.add('show');
+}
+function closeHiit() {
+  hiitStopTimer();
+  hiitModal.classList.remove('show');
+}
+document.getElementById('openHiit').addEventListener('click', (e) => { e.preventDefault(); openHiit(); });
+document.getElementById('hiitCloseCfg').addEventListener('click', closeHiit);
+document.getElementById('hiitCloseDone').addEventListener('click', closeHiit);
+
+function hiitBuildSeq() {
+  const { prep, work, rest, sets } = state.hiit;
+  const seq = [];
+  if (prep > 0) seq.push({ type: 'prep', label: '準備', sec: prep, set: 0 });
+  for (let i = 1; i <= sets; i++) {
+    seq.push({ type: 'work', label: '実施', sec: work, set: i });
+    if (i < sets && rest > 0) seq.push({ type: 'rest', label: '休み', sec: rest, set: i });
+  }
+  return seq;
+}
+
+function hiitRenderPhase() {
+  const cur = hiitState.seq[hiitState.idx];
+  const phaseEl = document.getElementById('hiitPhase');
+  phaseEl.textContent = cur.label;
+  phaseEl.className = 'hiit-phase ' + cur.type;
+  document.getElementById('hiitCount').textContent = hiitState.remaining;
+  document.getElementById('hiitSetLabel').textContent =
+    cur.type === 'prep' ? 'まもなく開始' : `セット ${cur.set} / ${state.hiit.sets}`;
+  const next = hiitState.seq[hiitState.idx + 1];
+  document.getElementById('hiitNext').textContent = next ? `次: ${next.label} ${next.sec}秒` : '次: 完了';
+}
+
+function hiitAnnouncePhaseStart() {
+  const cur = hiitState.seq[hiitState.idx];
+  if (cur.type === 'work') { hiitBeep(880, 0.18, 0.35); hiitSpeak('スタート'); }
+  else if (cur.type === 'rest') { hiitBeep(440, 0.25, 0.3); hiitSpeak('休憩'); }
+  else if (cur.type === 'prep') { hiitSpeak('準備'); }
+}
+
+function hiitTick() {
+  if (!hiitState || hiitState.paused) return;
+  const now = Date.now();
+  const remMs = hiitState.endAt - now;
+  const rem = Math.max(0, Math.ceil(remMs / 1000));
+  if (rem !== hiitState.remaining) {
+    hiitState.remaining = rem;
+    document.getElementById('hiitCount').textContent = rem;
+    if (rem <= 3 && rem >= 1) hiitBeep(700, 0.1, 0.25);
+  }
+  if (remMs <= 0) {
+    hiitState.idx++;
+    if (hiitState.idx >= hiitState.seq.length) { hiitFinish(); return; }
+    const cur = hiitState.seq[hiitState.idx];
+    hiitState.remaining = cur.sec;
+    hiitState.endAt = Date.now() + cur.sec * 1000;
+    hiitRenderPhase();
+    hiitAnnouncePhaseStart();
+  }
+  hiitState.rafId = requestAnimationFrame(hiitTick);
+}
+
+function hiitStartTimer() {
+  hiitReadConfig();
+  // Unlock audio on user gesture
+  try {
+    if (!hiitAudioCtx) hiitAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (hiitAudioCtx.state === 'suspended') hiitAudioCtx.resume();
+  } catch {}
+  const seq = hiitBuildSeq();
+  if (!seq.length) return;
+  hiitState = { seq, idx: 0, remaining: seq[0].sec, paused: false, rafId: null, endAt: Date.now() + seq[0].sec * 1000 };
+  document.getElementById('hiitConfig').style.display = 'none';
+  document.getElementById('hiitDone').style.display = 'none';
+  document.getElementById('hiitRunning').style.display = 'block';
+  document.getElementById('hiitPause').textContent = '一時停止';
+  hiitRenderPhase();
+  hiitAnnouncePhaseStart();
+  hiitState.rafId = requestAnimationFrame(hiitTick);
+}
+
+function hiitStopTimer() {
+  if (hiitState && hiitState.rafId) cancelAnimationFrame(hiitState.rafId);
+  try { speechSynthesis.cancel(); } catch {}
+  hiitState = null;
+}
+
+function hiitFinish() {
+  hiitStopTimer();
+  hiitBeep(990, 0.3, 0.4);
+  setTimeout(() => hiitBeep(1320, 0.4, 0.4), 180);
+  hiitSpeak('完了。お疲れさまでした');
+  document.getElementById('hiitRunning').style.display = 'none';
+  document.getElementById('hiitDone').style.display = 'block';
+  const { work, rest, sets } = state.hiit;
+  document.getElementById('hiitDoneSub').textContent =
+    `バーピー ${sets}セット ・ 実施${work}秒 / 休み${rest}秒`;
+}
+
+document.getElementById('hiitStart').addEventListener('click', hiitStartTimer);
+document.getElementById('hiitStop').addEventListener('click', () => {
+  hiitStopTimer();
+  document.getElementById('hiitConfig').style.display = 'block';
+  document.getElementById('hiitRunning').style.display = 'none';
+});
+document.getElementById('hiitPause').addEventListener('click', () => {
+  if (!hiitState) return;
+  if (hiitState.paused) {
+    hiitState.paused = false;
+    hiitState.endAt = Date.now() + hiitState.remaining * 1000;
+    document.getElementById('hiitPause').textContent = '一時停止';
+    hiitState.rafId = requestAnimationFrame(hiitTick);
+  } else {
+    hiitState.paused = true;
+    if (hiitState.rafId) cancelAnimationFrame(hiitState.rafId);
+    document.getElementById('hiitPause').textContent = '再開';
+  }
+});
+document.getElementById('hiitRecord').addEventListener('click', () => {
+  const { work, sets } = state.hiit;
+  const date = todayStr();
+  const sess = getOrCreateSession(date);
+  const name = 'バーピーHIIT';
+  const setsArr = Array.from({ length: sets }, () => ({ weight: 0, reps: work, rpe: 3 }));
+  const idx = sess.exercises.findIndex(e => e.name === name);
+  if (idx >= 0) sess.exercises[idx].sets.push(...setsArr);
+  else sess.exercises.push({ name, sets: setsArr });
+  if (!state.exercises.some(e => e.name === name)) {
+    state.exercises.push({ name, group: '有酸素' });
+  }
+  saveState();
+  renderTodaySummary(); renderEquipGrid();
+  refreshHeader();
+  toast(`バーピーHIIT ${sets}セット 記録`);
+  closeHiit();
+});
+hiitModal.addEventListener('click', (e) => { if (e.target === hiitModal) closeHiit(); });
+
 // Profile button wiring
 document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
 document.getElementById('goToProfile').addEventListener('click', () => showTab('settings'));
