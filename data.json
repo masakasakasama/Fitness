@@ -138,11 +138,16 @@
       "proteinPct": 24.5,
       "leanMass": 58.4,
       "source": "chocozap"
+    },
+    {
+      "date": "2026-05-17",
+      "weight": 67.4,
+      "source": "chocozap"
     }
   ],
   "profile": {
     "height": 183,
-    "weight": 66.9,
+    "weight": 67.4,
     "goalWeight": 70,
     "age": null,
     "sex": "male",
