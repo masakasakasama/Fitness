@@ -63,6 +63,10 @@
     {
       "name": "マルチプレス",
       "group": "胸"
+    },
+    {
+      "name": "バーピーHIIT",
+      "group": "有酸素"
     }
   ],
   "sessions": [
@@ -403,6 +407,37 @@
           ]
         }
       ]
+    },
+    {
+      "id": "mp9ot4luj2xa",
+      "date": "2026-05-17",
+      "exercises": [
+        {
+          "name": "バーピーHIIT",
+          "sets": [
+            {
+              "weight": 0,
+              "reps": 20,
+              "rpe": 3
+            },
+            {
+              "weight": 0,
+              "reps": 20,
+              "rpe": 3
+            },
+            {
+              "weight": 0,
+              "reps": 20,
+              "rpe": 3
+            },
+            {
+              "weight": 0,
+              "reps": 20,
+              "rpe": 3
+            }
+          ]
+        }
+      ]
     }
   ],
   "weights": [
@@ -435,7 +470,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1779016842894,
+  "updatedAt": 1779017033874,
   "hiit": {
     "prep": 10,
     "work": 20,
