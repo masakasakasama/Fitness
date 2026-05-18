@@ -1786,6 +1786,7 @@ function cancelEdit() {
 }
 document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
 
+const prAnnounced = new Set();
 function prevMaxWeight(exName, exceptDate) {
   let mx = 0;
   for (const s of state.sessions) {
@@ -1817,7 +1818,14 @@ function commitCurrentExercise(showToast = true) {
   renderTodaySummary(); renderEquipGrid();
   refreshHeader();
   if (prevMax > 0 && newMax > prevMax) {
-    setTimeout(() => toast(`🎉 ${currentExercise} 自己ベスト ${fmtNum(newMax)}kg！`), 300);
+    const prKey = date + '|' + currentExercise;
+    if (!prAnnounced.has(prKey)) {
+      prAnnounced.add(prKey);
+      const exName = currentExercise;
+      setTimeout(() => toast(`🎉 ${exName} 自己ベスト ${fmtNum(newMax)}kg！`), 300);
+    } else if (showToast) {
+      toast('保存しました');
+    }
   } else if (showToast) {
     toast('保存しました');
   }
