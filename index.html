@@ -457,6 +457,57 @@
   .insight-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; line-height: 1.4; letter-spacing: -0.005em; }
   .insight-body { font-size: 12.5px; color: var(--muted); line-height: 1.55; }
 
+  /* METRIC TABS + BODY COMP */
+  .metric-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .metric-tab {
+    flex: 1; background: var(--surface-2); color: var(--muted); border: 1px solid var(--border);
+    border-radius: 999px; padding: 7px 4px; font-size: 12px; font-weight: 700;
+  }
+  .metric-tab.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .bodycomp-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 14px;
+  }
+  .bodycomp-cell {
+    background: var(--surface-2); border: 1px solid var(--border-soft);
+    border-radius: var(--r-sm); padding: 10px 12px;
+  }
+  .bodycomp-cell .bc-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-bottom: 4px; }
+  .bodycomp-cell .bc-val { font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+  .bodycomp-cell .bc-unit { font-size: 11px; color: var(--muted); font-weight: 500; margin-left: 2px; }
+
+  .we-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 11px 0; border-bottom: 1px solid var(--border-soft); font-size: 13px;
+  }
+  .we-row:last-child { border-bottom: none; }
+  .we-row .we-date { color: var(--muted); font-weight: 600; }
+  .we-row .we-w { font-weight: 800; font-size: 15px; }
+  .we-row .we-del { color: var(--muted); background: none; border: none; padding: 6px; font-size: 12px; }
+  .we-row .we-del:active { color: var(--danger); }
+
+  /* REST TIMER BAR */
+  .rest-bar {
+    display: flex; align-items: center; gap: 8px; margin-top: 12px;
+    padding-top: 12px; border-top: 1px dashed var(--border);
+  }
+  .rest-label { font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: 0.06em; }
+  .rest-chip {
+    background: var(--surface-2); color: var(--text-soft); border: 1px solid var(--border);
+    border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 700;
+  }
+  .rest-chip.running { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .rest-count {
+    margin-left: auto; font-size: 20px; font-weight: 900; color: var(--accent);
+    font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+  }
+
+  /* PR badge */
+  .pr-badge {
+    display: inline-block; font-size: 9.5px; font-weight: 900; color: var(--bg);
+    background: var(--accent); padding: 1px 6px; border-radius: 4px;
+    letter-spacing: 0.06em; margin-left: 6px; vertical-align: middle;
+  }
+
   /* HIIT TIMER */
   .hiit-modal { text-align: left; }
   .hiit-cfg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
@@ -796,6 +847,14 @@
 
         <div id="lastTimeHint" class="hint-last" style="display:none;"></div>
 
+        <div class="rest-bar" id="restBar">
+          <span class="rest-label">セット間レスト</span>
+          <button class="rest-chip" data-rest="60">60s</button>
+          <button class="rest-chip" data-rest="90">90s</button>
+          <button class="rest-chip" data-rest="120">120s</button>
+          <span class="rest-count" id="restCount"></span>
+        </div>
+
         <div id="pendingSets" style="margin-top:12px;"></div>
       </div>
     </div>
@@ -859,15 +918,32 @@
       <div class="card" id="weightCard" style="display:none;">
         <div class="card-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
-          体重の推移 <span style="margin-left:auto; color:var(--muted-soft); letter-spacing:0.16em;">WEIGHT</span>
+          体組成の推移
+          <button id="openWeightEntry" style="margin-left:auto; padding:5px 12px; font-size:11px;">＋ 記録</button>
+        </div>
+        <div class="metric-tabs" id="metricTabs">
+          <button class="metric-tab active" data-metric="weight">体重</button>
+          <button class="metric-tab" data-metric="bodyFat">体脂肪率</button>
+          <button class="metric-tab" data-metric="muscleMassPct">骨格筋率</button>
         </div>
         <div class="weight-current">
-          <span class="num" id="weightCurrent">—</span><span class="weight-unit">kg</span>
+          <span class="num" id="weightCurrent">—</span><span class="weight-unit" id="weightCurrentUnit">kg</span>
           <span class="weight-trend" id="weightTrend"></span>
         </div>
         <div class="weight-chart" id="weightChart"></div>
         <div class="weight-meta" id="weightMeta"></div>
+        <div class="bodycomp-grid" id="bodycompGrid"></div>
       </div>
+
+      <div class="card" id="weightEmptyCard" style="display:none;">
+        <div class="card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+          体組成
+        </div>
+        <p style="color:var(--muted); font-size:12px; margin:0 0 12px; line-height:1.6;">チョコザップの体組成計で測ったら記録しよう。体重・体脂肪率などの推移が見える。</p>
+        <button id="openWeightEntry2" style="width:100%;">＋ 体組成を記録</button>
+      </div>
+
 
       <div class="card">
         <div class="card-title">
@@ -1100,6 +1176,40 @@
     設定
   </button>
 </nav>
+
+<div class="modal-bg" id="weightModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>体組成を記録</h2>
+    <div class="row" style="margin-bottom:10px;">
+      <div>
+        <label>日付</label>
+        <input type="date" id="weDate">
+      </div>
+      <div>
+        <label>体重 (kg) <span style="color:var(--accent);">*</span></label>
+        <input type="number" id="weWeight" inputmode="decimal" step="0.1" placeholder="67.4">
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:10px;">
+      <div><label>体脂肪率 (%)</label><input type="number" id="weBodyFat" inputmode="decimal" step="0.1" placeholder="12.7"></div>
+      <div><label>骨格筋率 (%)</label><input type="number" id="weMuscle" inputmode="decimal" step="0.1" placeholder="47.2"></div>
+    </div>
+    <div class="row" style="margin-bottom:10px;">
+      <div><label>基礎代謝 (kcal)</label><input type="number" id="weBmr" inputmode="numeric" placeholder="1636"></div>
+      <div><label>体水分 (%)</label><input type="number" id="weWater" inputmode="decimal" step="0.1" placeholder="57.8"></div>
+    </div>
+    <div class="row" style="margin-bottom:10px;">
+      <div><label>内臓脂肪Lv</label><input type="number" id="weVisceral" inputmode="numeric" placeholder="3"></div>
+      <div><label>体内年齢</label><input type="number" id="weBodyAge" inputmode="numeric" placeholder="17"></div>
+    </div>
+    <button id="weSave" style="width:100%; margin-top:6px;">保存</button>
+    <button class="ghost" id="weClose" style="width:100%; margin-top:8px;">閉じる</button>
+
+    <div class="subhead" style="margin-top:20px;">記録履歴</div>
+    <div id="weList"></div>
+  </div>
+</div>
 
 <div class="modal-bg" id="hiitModal">
   <div class="modal hiit-modal">
@@ -1676,11 +1786,24 @@ function cancelEdit() {
 }
 document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
 
+function prevMaxWeight(exName, exceptDate) {
+  let mx = 0;
+  for (const s of state.sessions) {
+    if (s.date === exceptDate) continue;
+    const ex = s.exercises.find(e => e.name === exName);
+    if (ex) for (const set of ex.sets) if (set.weight > mx) mx = set.weight;
+  }
+  return mx;
+}
+
 function commitCurrentExercise(showToast = true) {
   if (!currentExercise) return;
   const date = dateInput.value;
   const sess = getOrCreateSession(date);
   const idx = sess.exercises.findIndex(e => e.name === currentExercise);
+  // PR check: highest weight ever for this exercise excluding today's session
+  const prevMax = prevMaxWeight(currentExercise, date);
+  const newMax = pendingSets.reduce((m, s) => Math.max(m, s.weight || 0), 0);
   if (pendingSets.length === 0) {
     if (idx >= 0) sess.exercises.splice(idx, 1);
   } else {
@@ -1693,7 +1816,11 @@ function commitCurrentExercise(showToast = true) {
   saveState();
   renderTodaySummary(); renderEquipGrid();
   refreshHeader();
-  if (showToast) toast('保存しました');
+  if (prevMax > 0 && newMax > prevMax) {
+    setTimeout(() => toast(`🎉 ${currentExercise} 自己ベスト ${fmtNum(newMax)}kg！`), 300);
+  } else if (showToast) {
+    toast('保存しました');
+  }
 }
 
 function renderTodaySummary() {
@@ -2498,73 +2625,116 @@ function lastSetForExerciseAnyDate(exName) {
 // ====================================================================
 // Coach tab — recommendations
 // ====================================================================
+let currentMetric = 'weight';
+const METRIC_UNITS = { weight: 'kg', bodyFat: '%', muscleMassPct: '%' };
+
 function renderWeightChart() {
   const card = document.getElementById('weightCard');
+  const emptyCard = document.getElementById('weightEmptyCard');
   if (!card) return;
   const list = (state.weights || []).slice().sort((a, b) => a.date.localeCompare(b.date));
   if (!list.length) {
     card.style.display = 'none';
+    if (emptyCard) emptyCard.style.display = 'block';
     return;
   }
   card.style.display = 'block';
+  if (emptyCard) emptyCard.style.display = 'none';
+
+  const metric = currentMetric;
+  const unit = METRIC_UNITS[metric] || '';
+  // Only points that have this metric
+  const pts = list.filter(p => p[metric] != null);
   const last = list[list.length - 1];
-  document.getElementById('weightCurrent').textContent = fmtNum(last.weight);
+  const lastMetricVal = pts.length ? pts[pts.length - 1][metric] : null;
+
+  document.getElementById('weightCurrent').textContent = lastMetricVal != null ? fmtNum(lastMetricVal) : '—';
+  document.getElementById('weightCurrentUnit').textContent = unit;
 
   const trendEl = document.getElementById('weightTrend');
-  if (list.length >= 2) {
-    const first = list[0];
-    const diff = last.weight - first.weight;
+  if (pts.length >= 2) {
+    const diff = pts[pts.length - 1][metric] - pts[0][metric];
     const sign = diff > 0 ? '+' : '';
-    trendEl.textContent = `${sign}${diff.toFixed(1)} kg`;
-    trendEl.className = 'weight-trend ' + (diff > 0.1 ? 'up' : diff < -0.1 ? 'down' : 'flat');
+    trendEl.textContent = `${sign}${diff.toFixed(1)} ${unit}`;
+    // For body fat, down is good (cyan); for weight/muscle on bulk, up is good
+    const goodUp = metric !== 'bodyFat';
+    const pos = diff > 0.1, neg = diff < -0.1;
+    trendEl.textContent = `${sign}${diff.toFixed(1)} ${unit}`;
+    trendEl.className = 'weight-trend ' + (pos ? (goodUp ? 'up' : 'down') : neg ? (goodUp ? 'down' : 'up') : 'flat');
   } else {
     trendEl.textContent = '';
     trendEl.className = 'weight-trend';
   }
 
+  const goalW = state.profile?.goalWeight;
   document.getElementById('weightMeta').textContent =
     `${list.length}回測定 ・ 最終 ${fmtDateLong(last.date)}` +
-    (state.profile?.goalWeight ? ` ・ 目標 ${state.profile.goalWeight}kg` : '');
+    (metric === 'weight' && goalW ? ` ・ 目標 ${goalW}kg` : '');
 
-  // Draw line chart
-  const w = 100, h = 40;
-  const last30 = list.slice(-30);
-  const values = last30.map(p => p.weight);
-  const max = Math.max(...values);
-  const min = Math.min(...values);
-  const goalW = state.profile?.goalWeight;
-  const yMax = Math.max(max, goalW || 0) + 0.5;
-  const yMin = Math.min(min, goalW || Infinity) - 0.5;
-  const range = yMax - yMin || 1;
-  const points = last30.map((p, i) => {
-    const x = last30.length === 1 ? w / 2 : (i / (last30.length - 1)) * w;
-    const y = h - ((p.weight - yMin) / range) * (h - 4) - 2;
-    return [x, y];
-  });
-  const polyPoints = points.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
-  const areaPoints = `0,${h} ${polyPoints} ${w},${h}`;
-  const lastPoint = points[points.length - 1];
-  let goalLine = '';
-  if (goalW != null) {
-    const y = h - ((goalW - yMin) / range) * (h - 4) - 2;
-    goalLine = `<line x1="0" y1="${y.toFixed(1)}" x2="${w}" y2="${y.toFixed(1)}" stroke="var(--muted-soft)" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>`;
-  }
-  const html = `
-    <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
+  // Chart for selected metric
+  const wd = 100, h = 40;
+  const series = pts.slice(-30);
+  if (series.length < 1) {
+    document.getElementById('weightChart').innerHTML =
+      `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted-soft);font-size:12px;">このデータがありません</div>`;
+  } else {
+    const values = series.map(p => p[metric]);
+    let max = Math.max(...values), min = Math.min(...values);
+    const showGoal = metric === 'weight' && goalW != null;
+    if (showGoal) { max = Math.max(max, goalW); min = Math.min(min, goalW); }
+    const pad = (max - min) * 0.15 || 1;
+    const yMax = max + pad, yMin = min - pad;
+    const range = yMax - yMin || 1;
+    const P = series.map((p, i) => {
+      const x = series.length === 1 ? wd / 2 : (i / (series.length - 1)) * wd;
+      const y = h - ((p[metric] - yMin) / range) * (h - 4) - 2;
+      return [x, y];
+    });
+    const poly = P.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+    const area = `0,${h} ${poly} ${wd},${h}`;
+    const lp = P[P.length - 1];
+    let goalLine = '';
+    if (showGoal) {
+      const gy = h - ((goalW - yMin) / range) * (h - 4) - 2;
+      goalLine = `<line x1="0" y1="${gy.toFixed(1)}" x2="${wd}" y2="${gy.toFixed(1)}" stroke="var(--muted-soft)" stroke-width="1" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>`;
+    }
+    document.getElementById('weightChart').innerHTML = `
+      <svg viewBox="0 0 ${wd} ${h}" preserveAspectRatio="none">
+        <defs><linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.3"/>
           <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      ${goalLine}
-      <polygon points="${areaPoints}" fill="url(#wg)"/>
-      <polyline points="${polyPoints}" stroke="var(--accent)" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
-      <circle cx="${lastPoint[0]}" cy="${lastPoint[1]}" r="2.4" fill="var(--accent)"/>
-    </svg>
-  `;
-  document.getElementById('weightChart').innerHTML = html;
+        </linearGradient></defs>
+        ${goalLine}
+        <polygon points="${area}" fill="url(#wg)"/>
+        <polyline points="${poly}" stroke="var(--accent)" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+        <circle cx="${lp[0]}" cy="${lp[1]}" r="2.4" fill="var(--accent)"/>
+      </svg>`;
+  }
+
+  // Body composition summary (latest entry that has the fields)
+  const bc = document.getElementById('bodycompGrid');
+  if (bc) {
+    const latest = list[list.length - 1];
+    const cells = [];
+    const add = (label, val, u) => { if (val != null) cells.push(`<div class="bodycomp-cell"><div class="bc-label">${label}</div><div class="bc-val num">${fmtNum(val)}<span class="bc-unit">${u}</span></div></div>`); };
+    add('体脂肪率', latest.bodyFat, '%');
+    add('骨格筋率', latest.muscleMassPct, '%');
+    add('基礎代謝', latest.bmr, 'kcal');
+    add('体水分', latest.bodyWater, '%');
+    add('内臓脂肪Lv', latest.visceralFatLevel, '');
+    add('体内年齢', latest.bodyAge, '歳');
+    bc.innerHTML = cells.join('');
+  }
 }
+
+document.querySelectorAll('.metric-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.metric-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentMetric = tab.dataset.metric;
+    renderWeightChart();
+  });
+});
 
 function renderCoach() {
   const profile = state.profile;
@@ -3947,6 +4117,119 @@ document.getElementById('hiitRecord').addEventListener('click', () => {
   closeHiit();
 });
 hiitModal.addEventListener('click', (e) => { if (e.target === hiitModal) closeHiit(); });
+
+// ====================================================================
+// Body composition entry
+// ====================================================================
+const weightModal = document.getElementById('weightModal');
+function openWeightEntry() {
+  document.getElementById('weDate').value = todayStr();
+  ['weWeight','weBodyFat','weMuscle','weBmr','weWater','weVisceral','weBodyAge'].forEach(id => document.getElementById(id).value = '');
+  renderWeightEntryList();
+  weightModal.classList.add('show');
+}
+document.getElementById('openWeightEntry').addEventListener('click', openWeightEntry);
+const owe2 = document.getElementById('openWeightEntry2');
+if (owe2) owe2.addEventListener('click', openWeightEntry);
+document.getElementById('weClose').addEventListener('click', () => weightModal.classList.remove('show'));
+weightModal.addEventListener('click', e => { if (e.target === weightModal) weightModal.classList.remove('show'); });
+
+function renderWeightEntryList() {
+  const el = document.getElementById('weList');
+  const list = (state.weights || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+  if (!list.length) { el.innerHTML = '<div style="color:var(--muted-soft);font-size:12px;padding:8px 0;">まだ記録なし</div>'; return; }
+  el.innerHTML = list.map(w => `
+    <div class="we-row">
+      <span class="we-date">${fmtDateLong(w.date)}</span>
+      <span class="we-w num">${fmtNum(w.weight)}<span style="font-size:11px;color:var(--muted);font-weight:600;"> kg</span>${w.bodyFat != null ? ` <span style="font-size:11px;color:var(--muted);">体脂${fmtNum(w.bodyFat)}%</span>` : ''}</span>
+      <button class="we-del" data-date="${escapeHTML(w.date)}">削除</button>
+    </div>`).join('');
+  el.querySelectorAll('.we-del').forEach(b => b.addEventListener('click', () => {
+    const d = b.dataset.date;
+    state.weights = state.weights.filter(x => x.date !== d);
+    saveState();
+    renderWeightEntryList();
+    renderWeightChart();
+    if (state.profile && state.weights.length) {
+      const latest = state.weights.slice().sort((a,b)=>a.date.localeCompare(b.date)).pop();
+      state.profile.weight = latest.weight;
+      saveState(); loadProfileForm();
+    }
+    toast('削除しました');
+  }));
+}
+
+document.getElementById('weSave').addEventListener('click', () => {
+  const num = id => { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; };
+  const date = document.getElementById('weDate').value;
+  const weight = num('weWeight');
+  if (!date || weight == null) { toast('日付と体重は必須'); return; }
+  const entry = { date, weight, source: 'manual' };
+  const bf = num('weBodyFat'); if (bf != null) entry.bodyFat = bf;
+  const mm = num('weMuscle'); if (mm != null) entry.muscleMassPct = mm;
+  const bmr = num('weBmr'); if (bmr != null) entry.bmr = bmr;
+  const bw = num('weWater'); if (bw != null) entry.bodyWater = bw;
+  const vf = num('weVisceral'); if (vf != null) entry.visceralFatLevel = vf;
+  const ba = num('weBodyAge'); if (ba != null) entry.bodyAge = ba;
+  if (!Array.isArray(state.weights)) state.weights = [];
+  // Replace same-date entry if exists
+  state.weights = state.weights.filter(w => w.date !== date);
+  state.weights.push(entry);
+  state.weights.sort((a, b) => a.date.localeCompare(b.date));
+  // Update profile.weight to latest measurement
+  const latest = state.weights[state.weights.length - 1];
+  if (state.profile) state.profile.weight = latest.weight;
+  saveState();
+  renderWeightChart();
+  renderWeightEntryList();
+  if (typeof renderCoach === 'function') renderCoach();
+  loadProfileForm();
+  toast('体組成を記録しました');
+  ['weWeight','weBodyFat','weMuscle','weBmr','weWater','weVisceral','weBodyAge'].forEach(id => document.getElementById(id).value = '');
+});
+
+// ====================================================================
+// Rest timer (between sets)
+// ====================================================================
+let restState = null;
+function stopRest() {
+  if (restState) { cancelAnimationFrame(restState.raf); restState = null; }
+  document.querySelectorAll('.rest-chip').forEach(c => c.classList.remove('running'));
+  const rc = document.getElementById('restCount');
+  if (rc) rc.textContent = '';
+}
+function startRest(sec) {
+  stopRest();
+  try {
+    if (!hiitAudioCtx) hiitAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (hiitAudioCtx.state === 'suspended') hiitAudioCtx.resume();
+  } catch {}
+  restState = { endAt: Date.now() + sec * 1000, sec, raf: null };
+  const tick = () => {
+    if (!restState) return;
+    const rem = Math.max(0, Math.ceil((restState.endAt - Date.now()) / 1000));
+    const rc = document.getElementById('restCount');
+    if (rc) rc.textContent = rem + 's';
+    if (rem <= 3 && rem >= 1 && rem !== restState.lastBeep) { restState.lastBeep = rem; hiitBeep(700, 0.1, 0.25); }
+    if (restState.endAt - Date.now() <= 0) {
+      hiitBeep(990, 0.3, 0.4);
+      hiitSpeak('レスト終了');
+      stopRest();
+      return;
+    }
+    restState.raf = requestAnimationFrame(tick);
+  };
+  restState.raf = requestAnimationFrame(tick);
+}
+document.querySelectorAll('.rest-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const sec = parseInt(chip.dataset.rest, 10);
+    if (chip.classList.contains('running')) { stopRest(); return; }
+    document.querySelectorAll('.rest-chip').forEach(c => c.classList.remove('running'));
+    chip.classList.add('running');
+    startRest(sec);
+  });
+});
 
 // Profile button wiring
 document.getElementById('saveProfileBtn').addEventListener('click', saveProfile);
