@@ -505,6 +505,26 @@
               "rpe": 3
             }
           ]
+        },
+        {
+          "name": "ショルダープレス",
+          "sets": [
+            {
+              "weight": 35,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 35,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 35,
+              "reps": 8,
+              "rpe": 3
+            }
+          ]
         }
       ]
     }
@@ -539,7 +559,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1780402435517,
+  "updatedAt": 1780402470471,
   "hiit": {
     "prep": 10,
     "work": 20,
