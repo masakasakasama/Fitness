@@ -566,6 +566,26 @@
               "rpe": 3
             }
           ]
+        },
+        {
+          "name": "レッグプレス",
+          "sets": [
+            {
+              "weight": 70,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 70,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 70,
+              "reps": 8,
+              "rpe": 2
+            }
+          ]
         }
       ]
     }
@@ -600,7 +620,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1781522458748,
+  "updatedAt": 1781522725244,
   "hiit": {
     "prep": 10,
     "work": 20,
