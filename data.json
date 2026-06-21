@@ -617,6 +617,26 @@
               "rpe": 2
             }
           ]
+        },
+        {
+          "name": "ラットプルダウン",
+          "sets": [
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
         }
       ]
     }
@@ -651,7 +671,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1782037293513,
+  "updatedAt": 1782037559039,
   "hiit": {
     "prep": 10,
     "work": 20,
