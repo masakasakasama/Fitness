@@ -600,6 +600,11 @@
               "weight": 35,
               "reps": 10,
               "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
             }
           ]
         }
@@ -636,7 +641,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1782037025425,
+  "updatedAt": 1782037142584,
   "hiit": {
     "prep": 10,
     "work": 20,
