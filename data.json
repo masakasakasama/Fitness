@@ -639,6 +639,21 @@
           ]
         }
       ]
+    },
+    {
+      "id": "mr0li7721tek",
+      "date": "2026-06-30",
+      "exercises": [
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 10
+            }
+          ]
+        }
+      ]
     }
   ],
   "weights": [
@@ -671,7 +686,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1782037559039,
+  "updatedAt": 1782820854255,
   "hiit": {
     "prep": 10,
     "work": 20,
