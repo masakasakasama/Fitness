@@ -689,6 +689,27 @@
           ]
         }
       ]
+    },
+    {
+      "id": "mramnf38fe36",
+      "date": "2026-07-07",
+      "exercises": [
+        {
+          "name": "ショルダープレス",
+          "sets": [
+            {
+              "weight": 30,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 30,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        }
+      ]
     }
   ],
   "weights": [
@@ -721,7 +742,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1782821540122,
+  "updatedAt": 1783427439141,
   "hiit": {
     "prep": 10,
     "work": 20,
