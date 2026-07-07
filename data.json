@@ -708,6 +708,21 @@
               "rpe": 2
             }
           ]
+        },
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 2
+            }
+          ]
         }
       ]
     }
@@ -742,7 +757,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1783427439141,
+  "updatedAt": 1783427589338,
   "hiit": {
     "prep": 10,
     "work": 20,
