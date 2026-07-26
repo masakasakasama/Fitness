@@ -769,6 +769,26 @@
               "rpe": 2
             }
           ]
+        },
+        {
+          "name": "ダンベルカール",
+          "sets": [
+            {
+              "weight": 12,
+              "reps": 10,
+              "rpe": 3
+            },
+            {
+              "weight": 12,
+              "reps": 10,
+              "rpe": 3
+            },
+            {
+              "weight": 12,
+              "reps": 10,
+              "rpe": 3
+            }
+          ]
         }
       ]
     }
@@ -803,7 +823,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1785042179013,
+  "updatedAt": 1785042299837,
   "hiit": {
     "prep": 10,
     "work": 20,
