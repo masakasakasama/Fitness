@@ -725,6 +725,22 @@
           ]
         }
       ]
+    },
+    {
+      "id": "ms1bmnnvhxqj",
+      "date": "2026-07-26",
+      "exercises": [
+        {
+          "name": "ラットプルダウン",
+          "sets": [
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 1
+            }
+          ]
+        }
+      ]
     }
   ],
   "weights": [
@@ -757,7 +773,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1783427589338,
+  "updatedAt": 1785041514571,
   "hiit": {
     "prep": 10,
     "work": 20,
