@@ -289,7 +289,72 @@
   .ex-selector .ex-selector-value.empty { color: var(--muted-soft); font-weight: 500; }
   .ex-selector svg { color: var(--muted); }
 
-  .weight-select { height: 64px !important; text-align: center; text-align-last: center; font-size: 22px !important; font-weight: 700 !important; background-position: right 12px center; padding-right: 32px; }
+  .weight-select { display: none; }
+  .weight-picker-button {
+    position: relative;
+    width: 100%;
+    height: 64px;
+    padding: 0 42px;
+    background: var(--surface-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .weight-picker-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: translateY(-70%) rotate(45deg);
+  }
+  .weight-picker-bg { align-items: center; padding: 24px 16px; }
+  .weight-picker-modal {
+    width: min(100%, 420px);
+    height: min(70vh, 560px);
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .weight-picker-list {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-snap-type: y proximity;
+    scrollbar-width: none;
+  }
+  .weight-picker-list::-webkit-scrollbar { display: none; }
+  .weight-picker-option {
+    position: relative;
+    width: 100%;
+    min-height: 64px;
+    padding: 0 24px;
+    border: 0;
+    border-bottom: 1px solid var(--border-soft);
+    border-radius: 0;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    scroll-snap-align: center;
+  }
+  .weight-picker-option:last-child { border-bottom: 0; }
+  .weight-picker-option.selected {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .weight-picker-option.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 24px;
+  }
 
   /* STEPPER */
   .stepper { display: grid; grid-template-columns: 48px 1fr 48px; align-items: stretch; border: 1px solid var(--border); border-radius: var(--r-sm); height: 64px; overflow: hidden; background: var(--surface-2); }
@@ -798,7 +863,8 @@
 
         <div style="margin-bottom:12px;">
           <label>重量</label>
-          <select id="inputWeight" class="weight-select" style="height:64px; font-size:22px; font-weight:700; text-align:center; text-align-last:center; padding-right:30px;"></select>
+          <select id="inputWeight" class="weight-select" tabindex="-1" aria-hidden="true"></select>
+          <button type="button" id="weightPickerButton" class="weight-picker-button" aria-haspopup="dialog" aria-controls="weightPickerModal">—</button>
         </div>
 
         <div class="row" style="margin-bottom:12px;">
@@ -1176,6 +1242,12 @@
     設定
   </button>
 </nav>
+
+<div class="modal-bg weight-picker-bg" id="weightPickerModal" role="dialog" aria-modal="true" aria-label="重量を選択">
+  <div class="modal weight-picker-modal">
+    <div class="weight-picker-list" id="weightPickerList"></div>
+  </div>
+</div>
 
 <div class="modal-bg" id="weightModal">
   <div class="modal">
@@ -1565,12 +1637,69 @@ function populateWeightSelect() {
     opt.textContent = w + ' kg';
     inputWeight.appendChild(opt);
   });
+  updateWeightPickerButton();
 }
 
 function snapWeight(w) {
   if (w == null || isNaN(w)) return '';
   return WEIGHT_OPTIONS.reduce((p, c) => Math.abs(c - w) < Math.abs(p - w) ? c : p, WEIGHT_OPTIONS[0]);
 }
+
+const weightPickerButton = document.getElementById('weightPickerButton');
+const weightPickerModal = document.getElementById('weightPickerModal');
+const weightPickerList = document.getElementById('weightPickerList');
+
+function updateWeightPickerButton() {
+  weightPickerButton.textContent = inputWeight.value === '' ? '—' : `${inputWeight.value} kg`;
+}
+
+function setInputWeight(value) {
+  inputWeight.value = value == null ? '' : String(value);
+  updateWeightPickerButton();
+}
+
+function closeWeightPicker() {
+  weightPickerModal.classList.remove('show');
+  weightPickerButton.focus();
+}
+
+function openWeightPicker() {
+  const currentValue = inputWeight.value;
+  weightPickerList.innerHTML = '';
+
+  Array.from(inputWeight.options).forEach(option => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'weight-picker-option';
+    button.dataset.value = option.value;
+    button.textContent = option.textContent;
+    const isSelected = option.value === currentValue;
+    button.classList.toggle('selected', isSelected);
+    button.setAttribute('aria-selected', String(isSelected));
+    button.addEventListener('click', () => {
+      setInputWeight(option.value);
+      closeWeightPicker();
+    });
+    weightPickerList.appendChild(button);
+  });
+
+  weightPickerModal.classList.add('show');
+  requestAnimationFrame(() => {
+    const selected = weightPickerList.querySelector('.selected');
+    if (!selected) return;
+    const listRect = weightPickerList.getBoundingClientRect();
+    const selectedRect = selected.getBoundingClientRect();
+    weightPickerList.scrollTop +=
+      (selectedRect.top + selectedRect.height / 2) -
+      (listRect.top + listRect.height / 2);
+    selected.focus({ preventScroll: true });
+  });
+}
+
+weightPickerButton.addEventListener('click', openWeightPicker);
+weightPickerModal.addEventListener('click', e => {
+  if (e.target === weightPickerModal) closeWeightPicker();
+});
 
 function selectExercise(name) {
   if (!name) {
@@ -1607,12 +1736,12 @@ function selectExercise(name) {
 
   const last = lastSetForExercise(name, dateInput.value);
   if (last) {
-    inputWeight.value = String(snapWeight(last.weight));
+    setInputWeight(snapWeight(last.weight));
     inputReps.value = last.reps;
     lastTimeHint.style.display = 'flex';
     lastTimeHint.innerHTML = `<span class="dot"></span>前回 ${fmtDateLong(last.date)} · <strong style="color:var(--text-soft);">${fmtNum(last.weight)}kg × ${last.reps}</strong>`;
   } else {
-    inputWeight.value = '';
+    setInputWeight('');
     inputReps.value = 10;
     lastTimeHint.style.display = 'none';
   }
@@ -1759,7 +1888,7 @@ function editGroup(gi) {
   const groups = computeGroups(pendingSets);
   const g = groups[gi];
   if (!g) return;
-  inputWeight.value = String(snapWeight(g.weight));
+  setInputWeight(snapWeight(g.weight));
   inputReps.value = g.reps;
   inputSets.value = g.count;
   currentRPE = g.rpe || null;
@@ -2471,7 +2600,7 @@ function renderExerciseProgress() {
       setTimeout(() => {
         selectExercise(name);
         if (suggestion) {
-          inputWeight.value = String(snapWeight(suggestion.weight));
+          setInputWeight(snapWeight(suggestion.weight));
           inputReps.value = suggestion.reps;
           inputSets.value = suggestion.sets;
           refreshAddBtnLabel();
@@ -3138,7 +3267,7 @@ function renderRoutine(profile, goal, todaySession, repRange) {
       showTab('record');
       setTimeout(() => {
         selectExercise(name);
-        if (weight) inputWeight.value = String(snapWeight(weight));
+        if (weight) setInputWeight(snapWeight(weight));
         inputReps.value = repRange[0];
         setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
       }, 50);
@@ -3258,7 +3387,7 @@ function renderCoachExList(sortedSessions, todayIso, repRange, profile) {
       showTab('record');
       setTimeout(() => {
         selectExercise(c.name);
-        inputWeight.value = String(snapWeight(c.nextW));
+        setInputWeight(snapWeight(c.nextW));
         inputReps.value = c.nextR;
         setTimeout(() => setEntryCard.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
       }, 50);
