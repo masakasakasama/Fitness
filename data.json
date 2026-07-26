@@ -749,6 +749,26 @@
               "rpe": 2
             }
           ]
+        },
+        {
+          "name": "サイドレイズ",
+          "sets": [
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            }
+          ]
         }
       ]
     }
@@ -783,7 +803,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1785041806889,
+  "updatedAt": 1785042179013,
   "hiit": {
     "prep": 10,
     "work": 20,
