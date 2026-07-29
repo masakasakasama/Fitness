@@ -840,15 +840,18 @@
           "sets": [
             {
               "weight": 35,
-              "reps": 8
+              "reps": 8,
+              "rpe": 2
             },
             {
               "weight": 35,
-              "reps": 8
+              "reps": 8,
+              "rpe": 2
             },
             {
               "weight": 35,
-              "reps": 8
+              "reps": 8,
+              "rpe": 2
             }
           ]
         },
@@ -895,7 +898,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1785332440342,
+  "updatedAt": 1785332450781,
   "hiit": {
     "prep": 10,
     "work": 20,
