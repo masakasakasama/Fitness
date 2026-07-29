@@ -810,6 +810,32 @@
           ]
         }
       ]
+    },
+    {
+      "id": "ms5xch75hz6s",
+      "date": "2026-07-29",
+      "exercises": [
+        {
+          "name": "ラットプルダウン",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        }
+      ]
     }
   ],
   "weights": [
@@ -842,7 +868,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1785042543408,
+  "updatedAt": 1785319855890,
   "hiit": {
     "prep": 10,
     "work": 20,
