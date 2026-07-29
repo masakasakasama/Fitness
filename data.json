@@ -851,6 +851,15 @@
               "reps": 8
             }
           ]
+        },
+        {
+          "name": "マルチプレス",
+          "sets": [
+            {
+              "weight": 20,
+              "reps": 8
+            }
+          ]
         }
       ]
     }
@@ -885,7 +894,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1785320203292,
+  "updatedAt": 1785332428222,
   "hiit": {
     "prep": 10,
     "work": 20,
