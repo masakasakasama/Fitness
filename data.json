@@ -866,6 +866,32 @@
           ]
         }
       ]
+    },
+    {
+      "id": "ms9va6r711gd",
+      "date": "2026-08-01",
+      "exercises": [
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 3
+            }
+          ]
+        }
+      ]
     }
   ],
   "weights": [
@@ -898,7 +924,7 @@
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1785332450781,
+  "updatedAt": 1785558254515,
   "hiit": {
     "prep": 10,
     "work": 20,
