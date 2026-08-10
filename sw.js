@@ -1,6 +1,7 @@
-const CACHE = 'gym-tracker-v29';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js'];
+const CACHE = 'gym-tracker-v30';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js', './latest-weight-v1.js'];
 const COACH_SCRIPT = '<script src="./coach-logic-v2.js"></script>';
+const WEIGHT_SCRIPT = '<script src="./latest-weight-v1.js"></script>';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).catch(() => {}));
@@ -16,15 +17,19 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
-async function injectCoachLogic(response) {
+async function injectAppLogic(response) {
   if (!response) return response;
   const type = response.headers.get('content-type') || '';
   if (!type.includes('text/html')) return response;
 
   const html = await response.text();
-  const patched = html.includes('coach-logic-v2.js')
-    ? html
-    : html.replace('</body>', `${COACH_SCRIPT}\n</body>`);
+  let patched = html;
+  if (!patched.includes('coach-logic-v2.js')) {
+    patched = patched.replace('</body>', `${COACH_SCRIPT}\n</body>`);
+  }
+  if (!patched.includes('latest-weight-v1.js')) {
+    patched = patched.replace('</body>', `${WEIGHT_SCRIPT}\n</body>`);
+  }
 
   const headers = new Headers(response.headers);
   headers.delete('content-length');
@@ -36,8 +41,7 @@ async function injectCoachLogic(response) {
 }
 
 // Network-first for navigation/HTML so UI updates roll out immediately.
-// The HTML itself is unchanged in Git; the service worker injects only the
-// recommendation-logic override script, so the existing design stays intact.
+// HTML/CSS stay unchanged; the service worker injects logic-only overrides.
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
@@ -56,10 +60,10 @@ self.addEventListener('fetch', (e) => {
         const res = await fetch(e.request, { cache: 'no-store' });
         const copy = res.clone();
         caches.open(CACHE).then((c) => c.put(e.request, copy));
-        return injectCoachLogic(res);
+        return injectAppLogic(res);
       } catch {
         const cached = await caches.match(e.request) || await caches.match('./index.html');
-        return injectCoachLogic(cached);
+        return injectAppLogic(cached);
       }
     })());
     return;
