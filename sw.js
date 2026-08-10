@@ -1,5 +1,6 @@
-const CACHE = 'gym-tracker-v28';
-const ASSETS = ['./', './index.html', './manifest.webmanifest'];
+const CACHE = 'gym-tracker-v29';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js'];
+const COACH_SCRIPT = '<script src="./coach-logic-v2.js"></script>';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).catch(() => {}));
@@ -15,8 +16,28 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
+async function injectCoachLogic(response) {
+  if (!response) return response;
+  const type = response.headers.get('content-type') || '';
+  if (!type.includes('text/html')) return response;
+
+  const html = await response.text();
+  const patched = html.includes('coach-logic-v2.js')
+    ? html
+    : html.replace('</body>', `${COACH_SCRIPT}\n</body>`);
+
+  const headers = new Headers(response.headers);
+  headers.delete('content-length');
+  return new Response(patched, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 // Network-first for navigation/HTML so UI updates roll out immediately.
-// Cache-first for other static assets.
+// The HTML itself is unchanged in Git; the service worker injects only the
+// recommendation-logic override script, so the existing design stays intact.
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
@@ -30,13 +51,17 @@ self.addEventListener('fetch', (e) => {
     || url.pathname === '/' || url.pathname.endsWith('/');
 
   if (isHTML) {
-    e.respondWith(
-      fetch(e.request).then((res) => {
+    e.respondWith((async () => {
+      try {
+        const res = await fetch(e.request, { cache: 'no-store' });
         const copy = res.clone();
         caches.open(CACHE).then((c) => c.put(e.request, copy));
-        return res;
-      }).catch(() => caches.match(e.request).then((c) => c || caches.match('./index.html')))
-    );
+        return injectCoachLogic(res);
+      } catch {
+        const cached = await caches.match(e.request) || await caches.match('./index.html');
+        return injectCoachLogic(cached);
+      }
+    })());
     return;
   }
 
