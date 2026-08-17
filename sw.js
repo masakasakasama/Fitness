@@ -1,4 +1,4 @@
-const CACHE = 'gym-tracker-v34';
+const CACHE = 'gym-tracker-v35';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js', './latest-weight-v1.js', './record-recommendation-v1.js', './auto-rest-v1.js', './daily-plan-v1.js', './app-version-v1.js'];
 const COACH_SCRIPT = '<script src="./coach-logic-v2.js"></script>';
 const WEIGHT_SCRIPT = '<script src="./latest-weight-v1.js"></script>';
@@ -56,13 +56,9 @@ async function injectAppLogic(response) {
   });
 }
 
-// Network-first for navigation/HTML so UI updates roll out immediately.
-// HTML/CSS stay unchanged; the service worker injects logic-only overrides.
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-
-  // Never intercept API calls (GitHub sync etc.)
   if (url.origin !== self.location.origin) return;
 
   const isHTML = e.request.mode === 'navigate'
