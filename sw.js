@@ -1,8 +1,9 @@
-const CACHE = 'gym-tracker-v31';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js', './latest-weight-v1.js', './record-recommendation-v1.js'];
+const CACHE = 'gym-tracker-v32';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js', './latest-weight-v1.js', './record-recommendation-v1.js', './auto-rest-v1.js'];
 const COACH_SCRIPT = '<script src="./coach-logic-v2.js"></script>';
 const WEIGHT_SCRIPT = '<script src="./latest-weight-v1.js"></script>';
 const RECORD_RECOMMENDATION_SCRIPT = '<script src="./record-recommendation-v1.js"></script>';
+const AUTO_REST_SCRIPT = '<script src="./auto-rest-v1.js"></script>';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).catch(() => {}));
@@ -33,6 +34,9 @@ async function injectAppLogic(response) {
   }
   if (!patched.includes('record-recommendation-v1.js')) {
     patched = patched.replace('</body>', `${RECORD_RECOMMENDATION_SCRIPT}\n</body>`);
+  }
+  if (!patched.includes('auto-rest-v1.js')) {
+    patched = patched.replace('</body>', `${AUTO_REST_SCRIPT}\n</body>`);
   }
 
   const headers = new Headers(response.headers);
