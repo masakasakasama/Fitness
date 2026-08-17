@@ -36,7 +36,7 @@
       if (old) old.remove();
       const line = document.createElement('div');
       line.dataset.autoRestLine = '1';
-      line.textContent = `・セット間レスト: ${sec}秒を自動設定`;
+      line.textContent = `・セット間レスト: ${sec}秒。各セット終了後、きつさを記録した時点で自動開始`;
       logic.appendChild(line);
     }
 
@@ -55,43 +55,47 @@
     setAdvisorRest(sec);
   }
 
+  function startRecommendedRest(rpe) {
+    if (typeof currentExercise === 'undefined' || !currentExercise) return;
+    if (typeof editingGroupIndices !== 'undefined' && Array.isArray(editingGroupIndices) && editingGroupIndices.length) return;
+    if (typeof startRest !== 'function') return;
+
+    const reps = typeof inputReps !== 'undefined' ? Number(inputReps.value) : 0;
+    const sec = recommendRestSec(currentExercise, reps, rpe);
+    window.__autoRestSec = sec;
+    setAdvisorRest(sec);
+    startRest(sec);
+    const chip = document.querySelector(`.rest-chip[data-rest="${sec}"]`);
+    if (chip) chip.classList.add('running');
+  }
+
   const baseSelectExercise = selectExercise;
   selectExercise = function (name) {
     baseSelectExercise(name);
     setTimeout(refreshAutoRest, 0);
   };
 
+  // A set physically ends before the final batch-save action. Use the effort tap
+  // as the per-set completion signal, then start the recommended rest immediately.
+  // Keep the same effort selected so the user can tap the same chip after each set.
   document.querySelectorAll('#rpeRow .rpe-chip').forEach((btn) => {
-    btn.addEventListener('click', () => setTimeout(refreshAutoRest, 0));
+    btn.addEventListener('click', () => {
+      const selected = Number(btn.dataset.rpe);
+      if (typeof currentRPE !== 'undefined') currentRPE = selected;
+      document.querySelectorAll('#rpeRow .rpe-chip').forEach((b) => {
+        b.classList.toggle('active', Number(b.dataset.rpe) === selected);
+      });
+      refreshAutoRest();
+      startRecommendedRest(selected);
+    });
   });
+
   if (typeof inputReps !== 'undefined' && inputReps) {
     inputReps.addEventListener('input', refreshAutoRest);
   }
 
-  let addContext = null;
-  const addBtn = document.getElementById('addSetBtn');
-  if (addBtn) {
-    addBtn.addEventListener('click', () => {
-      const reps = typeof inputReps !== 'undefined' ? Number(inputReps.value) : 0;
-      const rpe = typeof currentRPE !== 'undefined' ? currentRPE : null;
-      const name = typeof currentExercise !== 'undefined' ? currentExercise : '';
-      const weight = typeof inputWeight !== 'undefined' ? Number(inputWeight.value) : NaN;
-      const editing = typeof editingGroupIndices !== 'undefined' && Array.isArray(editingGroupIndices) && editingGroupIndices.length > 0;
-      addContext = {
-        valid: !!name && Number.isFinite(weight) && reps > 0 && !editing,
-        sec: recommendRestSec(name, reps, rpe),
-      };
-    }, true);
-
-    addBtn.addEventListener('click', () => {
-      const ctx = addContext;
-      addContext = null;
-      if (!ctx || !ctx.valid || typeof startRest !== 'function') return;
-      startRest(ctx.sec);
-      const chip = document.querySelector(`.rest-chip[data-rest="${ctx.sec}"]`);
-      if (chip) chip.classList.add('running');
-    });
-  }
+  // Intentionally do not start rest from #addSetBtn. That action is the final
+  // record/save step after the working sets are already finished.
 
   window.recommendRestSec = recommendRestSec;
 })();
