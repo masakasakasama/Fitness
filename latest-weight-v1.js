@@ -1,32 +1,51 @@
 (function () {
   'use strict';
 
-  // One-time data migration from the latest ChocoZAP measurement supplied on 2026-08-10.
-  // Keeps any body-composition fields already stored for the same date.
-  const LATEST_WEIGHT = { date: '2026-08-10', weight: 69.6, source: 'chocozap' };
+  // One-time data migration from the latest ChocoZAP body-composition measurement.
+  // Extra body-composition fields are stored alongside the weight entry even if the
+  // current UI only renders weight, so future coach logic can use them without data loss.
+  const LATEST_MEASUREMENT = {
+    date: '2026-08-17',
+    weight: 69.4,
+    bmi: 20.7,
+    bodyFatPct: 14.4,
+    bodyWaterPct: 57.1,
+    skeletalMusclePct: 46.1,
+    boneMassKg: 3.3,
+    bmrKcal: 1669,
+    visceralFatLevel: 4,
+    bodyAge: 20,
+    proteinPct: 23.7,
+    fatFreeMassKg: 59.4,
+    source: 'chocozap'
+  };
+
+  function sameMeasurement(current) {
+    return Object.keys(LATEST_MEASUREMENT).every((key) => current && current[key] === LATEST_MEASUREMENT[key]);
+  }
 
   function applyLatestWeight() {
     if (typeof state === 'undefined' || !state) return false;
     if (!Array.isArray(state.weights)) state.weights = [];
 
     let changed = false;
-    const idx = state.weights.findIndex((x) => x && x.date === LATEST_WEIGHT.date);
+    const idx = state.weights.findIndex((x) => x && x.date === LATEST_MEASUREMENT.date);
 
     if (idx >= 0) {
       const current = state.weights[idx] || {};
-      if (Number(current.weight) !== LATEST_WEIGHT.weight || current.source !== LATEST_WEIGHT.source) {
-        state.weights[idx] = { ...current, ...LATEST_WEIGHT };
+      if (!sameMeasurement(current)) {
+        state.weights[idx] = { ...current, ...LATEST_MEASUREMENT };
         changed = true;
       }
     } else {
-      state.weights.push({ ...LATEST_WEIGHT });
+      state.weights.push({ ...LATEST_MEASUREMENT });
       changed = true;
     }
 
     state.weights.sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
 
-    if (state.profile && Number(state.profile.weight) !== LATEST_WEIGHT.weight) {
-      state.profile.weight = LATEST_WEIGHT.weight;
+    if (state.profile && Number(state.profile.weight) !== LATEST_MEASUREMENT.weight) {
+      state.profile.weight = LATEST_MEASUREMENT.weight;
       changed = true;
     }
 
