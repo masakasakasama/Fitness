@@ -1,11 +1,12 @@
-const CACHE = 'gym-tracker-v35';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js', './latest-weight-v1.js', './record-recommendation-v1.js', './auto-rest-v1.js', './daily-plan-v1.js', './app-version-v1.js'];
+const CACHE = 'gym-tracker-v36';
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js', './latest-weight-v1.js', './record-recommendation-v1.js', './auto-rest-v1.js', './daily-plan-v1.js', './app-version-v1.js', './familiar-recommendations-v1.js'];
 const COACH_SCRIPT = '<script src="./coach-logic-v2.js"></script>';
 const WEIGHT_SCRIPT = '<script src="./latest-weight-v1.js"></script>';
 const RECORD_RECOMMENDATION_SCRIPT = '<script src="./record-recommendation-v1.js"></script>';
 const AUTO_REST_SCRIPT = '<script src="./auto-rest-v1.js"></script>';
 const DAILY_PLAN_SCRIPT = '<script src="./daily-plan-v1.js"></script>';
 const APP_VERSION_SCRIPT = '<script src="./app-version-v1.js"></script>';
+const FAMILIAR_RECOMMENDATIONS_SCRIPT = '<script src="./familiar-recommendations-v1.js"></script>';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).catch(() => {}));
@@ -28,32 +29,17 @@ async function injectAppLogic(response) {
 
   const html = await response.text();
   let patched = html;
-  if (!patched.includes('coach-logic-v2.js')) {
-    patched = patched.replace('</body>', `${COACH_SCRIPT}\n</body>`);
-  }
-  if (!patched.includes('latest-weight-v1.js')) {
-    patched = patched.replace('</body>', `${WEIGHT_SCRIPT}\n</body>`);
-  }
-  if (!patched.includes('record-recommendation-v1.js')) {
-    patched = patched.replace('</body>', `${RECORD_RECOMMENDATION_SCRIPT}\n</body>`);
-  }
-  if (!patched.includes('auto-rest-v1.js')) {
-    patched = patched.replace('</body>', `${AUTO_REST_SCRIPT}\n</body>`);
-  }
-  if (!patched.includes('daily-plan-v1.js')) {
-    patched = patched.replace('</body>', `${DAILY_PLAN_SCRIPT}\n</body>`);
-  }
-  if (!patched.includes('app-version-v1.js')) {
-    patched = patched.replace('</body>', `${APP_VERSION_SCRIPT}\n</body>`);
-  }
+  if (!patched.includes('coach-logic-v2.js')) patched = patched.replace('</body>', `${COACH_SCRIPT}\n</body>`);
+  if (!patched.includes('latest-weight-v1.js')) patched = patched.replace('</body>', `${WEIGHT_SCRIPT}\n</body>`);
+  if (!patched.includes('record-recommendation-v1.js')) patched = patched.replace('</body>', `${RECORD_RECOMMENDATION_SCRIPT}\n</body>`);
+  if (!patched.includes('auto-rest-v1.js')) patched = patched.replace('</body>', `${AUTO_REST_SCRIPT}\n</body>`);
+  if (!patched.includes('daily-plan-v1.js')) patched = patched.replace('</body>', `${DAILY_PLAN_SCRIPT}\n</body>`);
+  if (!patched.includes('app-version-v1.js')) patched = patched.replace('</body>', `${APP_VERSION_SCRIPT}\n</body>`);
+  if (!patched.includes('familiar-recommendations-v1.js')) patched = patched.replace('</body>', `${FAMILIAR_RECOMMENDATIONS_SCRIPT}\n</body>`);
 
   const headers = new Headers(response.headers);
   headers.delete('content-length');
-  return new Response(patched, {
-    status: response.status,
-    statusText: response.statusText,
-    headers,
-  });
+  return new Response(patched, { status: response.status, statusText: response.statusText, headers });
 }
 
 self.addEventListener('fetch', (e) => {
