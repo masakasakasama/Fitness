@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = 'v0.1.1';
+  const APP_VERSION = 'v0.1.2';
   window.REPS_VERSION = APP_VERSION;
 
   function renderVersion() {
