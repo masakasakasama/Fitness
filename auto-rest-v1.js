@@ -86,13 +86,10 @@
     addBtn.addEventListener('click', () => {
       const ctx = addContext;
       addContext = null;
-      if (!ctx || !ctx.valid) return;
-      setTimeout(() => {
-        if (typeof startRest !== 'function') return;
-        startRest(ctx.sec);
-        const chip = document.querySelector(`.rest-chip[data-rest="${ctx.sec}"]`);
-        if (chip) chip.classList.add('running');
-      }, 0);
+      if (!ctx || !ctx.valid || typeof startRest !== 'function') return;
+      startRest(ctx.sec);
+      const chip = document.querySelector(`.rest-chip[data-rest="${ctx.sec}"]`);
+      if (chip) chip.classList.add('running');
     });
   }
 
