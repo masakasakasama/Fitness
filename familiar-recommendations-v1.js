@@ -132,23 +132,9 @@
     return familiarExerciseEntries(group, endIso).find((e) => !used.has(e.name)) || null;
   }
 
-  function targetFor(name, groupItem) {
-    let rec = null;
-    if (typeof computeNextSuggestion === 'function') {
-      try { rec = computeNextSuggestion(name, state.sessions); } catch (_) {}
-    }
-    const recent = state.sessions
-      .filter((s) => s.date <= todayIso() && s.exercises.some((e) => e.name === name))
-      .sort((a, b) => b.date.localeCompare(a.date))[0];
-    const recentEx = recent && recent.exercises.find((e) => e.name === name);
-    const recentSet = recentEx && recentEx.sets && recentEx.sets[recentEx.sets.length - 1];
-
-    let weight = rec && Number.isFinite(Number(rec.weight)) ? Number(rec.weight) : (recentSet ? Number(recentSet.weight) : null);
-    let reps = rec && Number(rec.reps) > 0 ? Number(rec.reps) : (recentSet ? Number(recentSet.reps) : (isCompound(name) ? 8 : 12));
-    let sets = rec && Number(rec.sets) > 0 ? Number(rec.sets) : 3;
-    sets = Math.max(2, Math.min(3, sets, Math.ceil(groupItem.deficit || 2)));
-    const rest = typeof recommendRestSec === 'function' ? recommendRestSec(name, reps, 2) : (isCompound(name) ? 120 : 90);
-    return { weight, reps, sets, rest };
+  function targetFor(name, groupItem, selectedIso) {
+    if (!window.REPSEngine || typeof window.REPSEngine.recommendExercise !== 'function') return null;
+    return window.REPSEngine.recommendExercise(name, selectedIso || todayIso());
   }
 
   function buildPlan(endIso) {
@@ -164,9 +150,9 @@
       if (g.score <= 0.5 || g.recoveryPenalty >= 8 || planned >= maxRemaining) continue;
       const ex = bestFamiliarExercise(g.group, endIso, used);
       if (!ex) continue;
-      const target = targetFor(ex.name, g);
-      target.sets = Math.min(target.sets, maxRemaining - planned);
-      if (target.sets < 2) continue;
+      const target = targetFor(ex.name, g, endIso);
+      if (!target || target.sets < 1) continue;
+      if (planned + target.sets > maxRemaining) continue;
       items.push({ ...target, name: ex.name, group: g.group, useCount: ex.count, lastDate: ex.lastDate });
       planned += target.sets;
       used.add(ex.name);
