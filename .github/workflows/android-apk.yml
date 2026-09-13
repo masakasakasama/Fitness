@@ -42,6 +42,7 @@ jobs:
           cp long-term-growth-v1.js android/app/src/main/assets/
           cp workout-flow-v1.js android/app/src/main/assets/
           cp native-bridge-v1.js android/app/src/main/assets/
+          cp legacy-import-v1.js android/app/src/main/assets/
           cp app-version-v1.js android/app/src/main/assets/
           find android/app/src/main/assets -maxdepth 1 -type f -printf '%f\n' | sort
 
@@ -67,13 +68,13 @@ jobs:
 
       - name: Prepare APK
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk REPS-v0.5.2.apk
-          ls -lh REPS-v0.5.2.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk REPS-v0.5.3.apk
+          ls -lh REPS-v0.5.3.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: REPS-v0.5.2-apk
-          path: REPS-v0.5.2.apk
+          name: REPS-v0.5.3-apk
+          path: REPS-v0.5.3.apk
           if-no-files-found: error
 
