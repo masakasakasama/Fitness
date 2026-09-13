@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
         settings.setAllowContentAccess(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        settings.setUserAgentString(settings.getUserAgentString() + " REPS-Android/0.5.0");
+        settings.setUserAgentString(settings.getUserAgentString() + " REPS-Android/0.5.2");
 
         webView.addJavascriptInterface(new RepsAndroidBridge(), "RepsAndroid");
         webView.setWebChromeClient(new WebChromeClient());
