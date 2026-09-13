@@ -927,6 +927,396 @@
           ]
         }
       ]
+    },
+    {
+      "id": "msk7nbz17bbu",
+      "date": "2026-08-08",
+      "exercises": [
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 45,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 45,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 50,
+              "reps": 8,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "ラットプルダウン",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "msmgjka71uro",
+      "date": "2026-08-10",
+      "exercises": [
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 50,
+              "reps": 6,
+              "rpe": 3
+            },
+            {
+              "weight": 45,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 45,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "サイドレイズ",
+          "sets": [
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "msvmdhtqtb2k",
+      "date": "2026-08-16",
+      "exercises": [
+        {
+          "name": "サイドレイズ",
+          "sets": [
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "ダンベルカール",
+          "sets": [
+            {
+              "weight": 12,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 12,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "ショルダープレス",
+          "sets": [
+            {
+              "weight": 35,
+              "reps": 10,
+              "rpe": 3
+            },
+            {
+              "weight": 30,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 30,
+              "reps": 8,
+              "rpe": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "msx21dzxguvl",
+      "date": "2026-08-17",
+      "exercises": [
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 8,
+              "rpe": 2
+            },
+            {
+              "weight": 45,
+              "reps": 6,
+              "rpe": 3
+            }
+          ]
+        },
+        {
+          "name": "レッグプレス",
+          "sets": [
+            {
+              "weight": 60,
+              "reps": 10,
+              "rpe": 1
+            },
+            {
+              "weight": 60,
+              "reps": 10,
+              "rpe": 1
+            },
+            {
+              "weight": 60,
+              "reps": 10,
+              "rpe": 1
+            }
+          ]
+        },
+        {
+          "name": "ショルダープレス",
+          "sets": [
+            {
+              "weight": 25,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 25,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "ラットプルダウン",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mt588tg1xiy3",
+      "date": "2026-08-23",
+      "exercises": [
+        {
+          "name": "サイドレイズ",
+          "sets": [
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "ラットプルダウン",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 45,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 45,
+              "reps": 8,
+              "rpe": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mtz9obboel2u",
+      "date": "2026-09-13",
+      "exercises": [
+        {
+          "name": "サイドレイズ",
+          "sets": [
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            },
+            {
+              "weight": 6,
+              "reps": 12,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "チェストプレス（マシン）",
+          "sets": [
+            {
+              "weight": 45,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 45,
+              "reps": 8,
+              "rpe": 3
+            },
+            {
+              "weight": 45,
+              "reps": 8,
+              "rpe": 3
+            }
+          ]
+        },
+        {
+          "name": "ラットプルダウン",
+          "sets": [
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            },
+            {
+              "weight": 40,
+              "reps": 10,
+              "rpe": 2
+            }
+          ]
+        },
+        {
+          "name": "レッグプレス",
+          "sets": [
+            {
+              "weight": 60,
+              "reps": 8
+            }
+          ]
+        }
+      ]
     }
   ],
   "weights": [
@@ -953,33 +1343,39 @@
     {
       "date": "2026-08-10",
       "weight": 69.6,
-      "source": "health-data"
+      "source": "chocozap"
     },
     {
       "date": "2026-08-17",
       "weight": 69.4,
       "bmi": 20.7,
+      "bodyFatPct": 14.4,
+      "bodyWaterPct": 57.1,
+      "skeletalMusclePct": 46.1,
+      "boneMassKg": 3.3,
+      "bmrKcal": 1669,
+      "visceralFatLevel": 4,
+      "bodyAge": 20,
+      "proteinPct": 23.7,
+      "fatFreeMassKg": 59.4,
+      "source": "chocozap",
       "bodyFat": 14.4,
       "bodyWater": 57.1,
       "muscleMassPct": 46.1,
       "boneMass": 3.3,
       "bmr": 1669,
-      "visceralFatLevel": 4,
-      "bodyAge": 20,
-      "proteinPct": 23.7,
-      "leanMass": 59.4,
-      "source": "body-composition"
+      "leanMass": 59.4
     }
   ],
   "profile": {
     "height": 183,
     "weight": 69.4,
     "goalWeight": 70,
-    "age": 29,
+    "age": null,
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1789285440000,
+  "updatedAt": 1789306740000,
   "hiit": {
     "prep": 10,
     "work": 20,
@@ -987,45 +1383,5 @@
     "sets": 4,
     "sound": true,
     "voice": true
-  },
-  "exerciseObservations": [
-    {
-      "date": "2026-08-16",
-      "exercise": "チェストプレス（マシン）",
-      "weight": 40,
-      "reps": 8,
-      "source": "reps-screenshot",
-      "note": "前回表示から確認。セット総数・RPEは未取得"
-    },
-    {
-      "date": "2026-08-23",
-      "exercise": "サイドレイズ",
-      "weight": 6,
-      "reps": 12,
-      "source": "reps-screenshot",
-      "note": "前回表示から確認。セット総数・RPEは未取得"
-    },
-    {
-      "date": "2026-08-23",
-      "exercise": "ラットプルダウン",
-      "weight": 40,
-      "reps": 10,
-      "source": "reps-screenshot",
-      "note": "前回表示から確認。セット総数・RPEは未取得"
-    }
-  ],
-  "sessionSummaries": [
-    {
-      "date": "2026-09-13",
-      "totalSets": 6,
-      "weeklyEffectiveSets": {
-        "胸": 3,
-        "背中": 0,
-        "脚": 0,
-        "肩": 4.1
-      },
-      "source": "reps-coach-screenshot",
-      "note": "コーチ画面から確認。6セットの種目別重量・回数・RPEは画面上で完全取得できていないため推測値は保存しない"
-    }
-  ]
+  }
 }
