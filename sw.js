@@ -10,6 +10,7 @@ const LOGIC_ASSETS = [
   './familiar-recommendations-v1.js',
   './long-term-growth-v1.js',
   './workout-flow-v1.js',
+  './native-bridge-v1.js',
   './app-version-v1.js',
 ];
 
