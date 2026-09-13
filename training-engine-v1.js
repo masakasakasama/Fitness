@@ -81,9 +81,24 @@
   }
 
   function priorSessions(name, selectedIso) {
-    return (state.sessions || [])
-      .filter((s) => s.date < selectedIso && s.exercises.some((e) => e.name === name))
-      .sort((a, b) => b.date.localeCompare(a.date));
+    const full = (state.sessions || [])
+      .filter((s) => s.date < selectedIso && s.exercises.some((e) => e.name === name));
+
+    const fullDates = new Set(full.map((s) => s.date));
+    const observed = (state.exerciseObservations || [])
+      .filter((o) => o.exercise === name && o.date < selectedIso && !fullDates.has(o.date))
+      .map((o) => ({
+        id: `observation-${o.date}-${name}`,
+        date: o.date,
+        observedOnly: true,
+        exercises: [{
+          name,
+          observedOnly: true,
+          sets: [{ weight: Number(o.weight), reps: Number(o.reps) }]
+        }]
+      }));
+
+    return [...full, ...observed].sort((a, b) => b.date.localeCompare(a.date));
   }
 
   function previousGroupLoad(group, selectedIso) {
@@ -176,6 +191,7 @@
 
     const last = prior[0];
     const ex = last.exercises.find((e) => e.name === name);
+    const observedOnly = !!(last.observedOnly || ex?.observedOnly);
     const workWeight = modeWeight(ex.sets);
     const workSets = ex.sets.filter((s) => Number(s.weight) === workWeight);
     const reps = workSets.map((s) => Number(s.reps) || 0);
@@ -191,7 +207,7 @@
 
     let weight = workWeight;
     let targetReps = Math.max(lo, Math.min(hi, Math.round(avgReps) || lo));
-    let targetSets = Math.max(2, Math.min(3, workSets.length || 3));
+    let targetSets = observedOnly ? 3 : Math.max(2, Math.min(3, workSets.length || 3));
     const reasons = [];
 
     if (days >= 42) {
@@ -282,7 +298,7 @@
     }).filter(Boolean);
 
     const lines = [
-      `前回: ${fmtDate(last.date)}、${fmt(workWeight)}kg × ${minReps === maxReps ? minReps : `${minReps}〜${maxReps}`}回 × ${workSets.length}セット`,
+      `前回: ${fmtDate(last.date)}、${fmt(workWeight)}kg × ${minReps === maxReps ? minReps : `${minReps}〜${maxReps}`}回${observedOnly ? '（セット詳細未取得）' : ` × ${workSets.length}セット`}`,
       `きつさ: ${rpe.label}`,
       `前回から: ${days}日`,
     ];
