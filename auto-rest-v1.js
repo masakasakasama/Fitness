@@ -1,25 +1,11 @@
 (function () {
   'use strict';
 
-  function isCompound(name) {
-    return /チェストプレス|インクライン.*プレス|マルチプレス|ショルダープレス|ラットプル|シーテッドロー|懸垂|デッドリフト|レッグプレス|スクワット/.test(name || '');
-  }
-
-  function isIsolation(name) {
-    return /サイドレイズ|リアレイズ|フライ|カール|トライセ|プレスダウン|アブドミナル|カーフ/.test(name || '');
-  }
-
   function recommendRestSec(name, reps, rpe) {
-    const n = Number(reps) || 0;
-    const effort = Number(rpe) || 0;
-
-    if (effort === 3) return 120;
-    if (isCompound(name)) return 120;
-    if (isIsolation(name)) {
-      if (effort === 1 && n >= 15) return 60;
-      return 90;
+    if (window.REPSEngine && typeof window.REPSEngine.recommendRestSec === 'function') {
+      return window.REPSEngine.recommendRestSec(name, reps, rpe);
     }
-    return effort >= 2 || n <= 10 ? 120 : 90;
+    return 90;
   }
 
   function setAdvisorRest(sec) {
@@ -62,7 +48,6 @@
     const sec = recommendRestSec(currentExercise, reps, rpe);
     window.__autoRestSec = sec;
     window.__autoRestStartedAt = Date.now();
-    setAdvisorRest(sec);
     startRest(sec);
     setAdvisorRest(sec);
     return sec;
@@ -79,8 +64,9 @@
 
   const baseSelectExercise = selectExercise;
   selectExercise = function (name) {
-    baseSelectExercise(name);
+    const result = baseSelectExercise(name);
     setTimeout(refreshAutoRest, 0);
+    return result;
   };
 
   document.querySelectorAll('#rpeRow .rpe-chip').forEach((btn) => {
@@ -96,14 +82,11 @@
       if (typeof commitCurrentExercise === 'function') commitCurrentExercise(false);
 
       const reps = Number(pendingSets[idx].reps) || Number(inputReps.value) || 0;
-      const sec = recommendRestSec(currentExercise, reps, selected);
-      adjustRunningRest(sec);
+      adjustRunningRest(recommendRestSec(currentExercise, reps, selected));
     });
   });
 
-  if (typeof inputReps !== 'undefined' && inputReps) {
-    inputReps.addEventListener('input', refreshAutoRest);
-  }
+  if (typeof inputReps !== 'undefined' && inputReps) inputReps.addEventListener('input', refreshAutoRest);
 
   window.recommendRestSec = recommendRestSec;
   window.startRecommendedRest = startRecommendedRest;
