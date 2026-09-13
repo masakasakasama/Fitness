@@ -987,5 +987,45 @@
     "sets": 4,
     "sound": true,
     "voice": true
-  }
+  },
+  "exerciseObservations": [
+    {
+      "date": "2026-08-16",
+      "exercise": "チェストプレス（マシン）",
+      "weight": 40,
+      "reps": 8,
+      "source": "reps-screenshot",
+      "note": "前回表示から確認。セット総数・RPEは未取得"
+    },
+    {
+      "date": "2026-08-23",
+      "exercise": "サイドレイズ",
+      "weight": 6,
+      "reps": 12,
+      "source": "reps-screenshot",
+      "note": "前回表示から確認。セット総数・RPEは未取得"
+    },
+    {
+      "date": "2026-08-23",
+      "exercise": "ラットプルダウン",
+      "weight": 40,
+      "reps": 10,
+      "source": "reps-screenshot",
+      "note": "前回表示から確認。セット総数・RPEは未取得"
+    }
+  ],
+  "sessionSummaries": [
+    {
+      "date": "2026-09-13",
+      "totalSets": 6,
+      "weeklyEffectiveSets": {
+        "胸": 3,
+        "背中": 0,
+        "脚": 0,
+        "肩": 4.1
+      },
+      "source": "reps-coach-screenshot",
+      "note": "コーチ画面から確認。6セットの種目別重量・回数・RPEは画面上で完全取得できていないため推測値は保存しない"
+    }
+  ]
 }
