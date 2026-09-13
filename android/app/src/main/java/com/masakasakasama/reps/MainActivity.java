@@ -12,17 +12,20 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class MainActivity extends Activity {
-    private static final String SITE_URL = "https://masakasakasama.github.io/Fitness/";
-    private static final String SITE_HOST = "masakasakasama.github.io";
+    private static final String APP_ORIGIN = "https://app.reps.local";
+    private static final String APP_HOST = "app.reps.local";
     private static volatile boolean foreground = false;
 
     private WebView webView;
@@ -49,22 +52,40 @@ public class MainActivity extends Activity {
         settings.setAllowFileAccess(false);
         settings.setAllowContentAccess(false);
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
-        settings.setUserAgentString(settings.getUserAgentString() + " REPS-Android/0.4.1");
-
-        CookieManager.getInstance().setAcceptCookie(true);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(webView, false);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        settings.setUserAgentString(settings.getUserAgentString() + " REPS-Android/0.5.0");
 
         webView.addJavascriptInterface(new RepsAndroidBridge(), "RepsAndroid");
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
             @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                Uri uri = request.getUrl();
+                if (!APP_HOST.equalsIgnoreCase(uri.getHost())) return null;
+
+                String path = uri.getPath();
+                if (path == null || path.equals("/") || path.isEmpty()) path = "/index.html";
+                if (path.startsWith("/")) path = path.substring(1);
+
+                try {
+                    InputStream stream = getAssets().open(path);
+                    return new WebResourceResponse(mimeType(path), "UTF-8", stream);
+                } catch (IOException ignored) {
+                    return new WebResourceResponse(
+                            "text/plain",
+                            "UTF-8",
+                            404,
+                            "Not Found",
+                            null,
+                            new java.io.ByteArrayInputStream(new byte[0])
+                    );
+                }
+            }
+
+            @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
-                if ("https".equalsIgnoreCase(uri.getScheme())
-                        && SITE_HOST.equalsIgnoreCase(uri.getHost())) {
-                    return false;
-                }
+                if (APP_HOST.equalsIgnoreCase(uri.getHost())) return false;
 
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, uri));
@@ -77,7 +98,20 @@ public class MainActivity extends Activity {
         requestNotificationPermission();
         requestExactAlarmPermission();
         RestAlarmReceiver.ensureNotificationChannel(this);
-        webView.loadUrl(SITE_URL);
+
+        webView.loadUrl(APP_ORIGIN + "/index.html");
+    }
+
+    private String mimeType(String path) {
+        String lower = path.toLowerCase();
+        if (lower.endsWith(".html")) return "text/html";
+        if (lower.endsWith(".js")) return "application/javascript";
+        if (lower.endsWith(".json") || lower.endsWith(".webmanifest")) return "application/json";
+        if (lower.endsWith(".css")) return "text/css";
+        if (lower.endsWith(".svg")) return "image/svg+xml";
+        if (lower.endsWith(".png")) return "image/png";
+        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+        return "application/octet-stream";
     }
 
     private void requestNotificationPermission() {
@@ -157,7 +191,7 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public String platform() {
-            return "android-apk";
+            return "android-apk-local";
         }
     }
 }
