@@ -4364,9 +4364,20 @@ document.addEventListener('visibilitychange', () => {
   performInitialSync();
 });
 
-if ('serviceWorker' in navigator) {
+if (!window.RepsAndroid && 'serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 </script>
+<script src="./training-engine-v1.js"></script>
+<script src="./coach-logic-v2.js"></script>
+<script src="./latest-weight-v1.js"></script>
+<script src="./record-recommendation-v1.js"></script>
+<script src="./auto-rest-v1.js"></script>
+<script src="./daily-plan-v1.js"></script>
+<script src="./familiar-recommendations-v1.js"></script>
+<script src="./long-term-growth-v1.js"></script>
+<script src="./workout-flow-v1.js"></script>
+<script src="./native-bridge-v1.js"></script>
+<script src="./app-version-v1.js"></script>
 </body>
 </html>
