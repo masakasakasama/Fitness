@@ -1,5 +1,5 @@
 const CACHE = 'gym-tracker-v37';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js', './latest-weight-v1.js', './record-recommendation-v1.js', './auto-rest-v1.js', './daily-plan-v1.js', './app-version-v1.js', './familiar-recommendations-v1.js', './long-term-growth-v1.js'];
+const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js', './latest-weight-v1.js', './record-recommendation-v1.js', './auto-rest-v1.js', './daily-plan-v1.js', './app-version-v1.js', './familiar-recommendations-v1.js', './long-term-growth-v1.js', './workout-flow-v1.js'];
 const COACH_SCRIPT = '<script src="./coach-logic-v2.js"></script>';
 const WEIGHT_SCRIPT = '<script src="./latest-weight-v1.js"></script>';
 const RECORD_RECOMMENDATION_SCRIPT = '<script src="./record-recommendation-v1.js"></script>';
@@ -7,7 +7,7 @@ const AUTO_REST_SCRIPT = '<script src="./auto-rest-v1.js"></script>';
 const DAILY_PLAN_SCRIPT = '<script src="./daily-plan-v1.js"></script>';
 const APP_VERSION_SCRIPT = '<script src="./app-version-v1.js"></script>';
 const FAMILIAR_RECOMMENDATIONS_SCRIPT = '<script src="./familiar-recommendations-v1.js"></script>';
-const LONG_TERM_GROWTH_SCRIPT = '<script src="./long-term-growth-v1.js"></script>';
+const LONG_TERM_GROWTH_SCRIPT = '<script src="./long-term-growth-v1.js"></script>';\nconst WORKOUT_FLOW_SCRIPT = '<script src="./workout-flow-v1.js"></script>';
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).catch(() => {}));
