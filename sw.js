@@ -1,23 +1,29 @@
-const CACHE = 'gym-tracker-v37';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './coach-logic-v2.js', './latest-weight-v1.js', './record-recommendation-v1.js', './auto-rest-v1.js', './daily-plan-v1.js', './app-version-v1.js', './familiar-recommendations-v1.js', './long-term-growth-v1.js', './workout-flow-v1.js'];
-const COACH_SCRIPT = '<script src="./coach-logic-v2.js"></script>';
-const WEIGHT_SCRIPT = '<script src="./latest-weight-v1.js"></script>';
-const RECORD_RECOMMENDATION_SCRIPT = '<script src="./record-recommendation-v1.js"></script>';
-const AUTO_REST_SCRIPT = '<script src="./auto-rest-v1.js"></script>';
-const DAILY_PLAN_SCRIPT = '<script src="./daily-plan-v1.js"></script>';
-const APP_VERSION_SCRIPT = '<script src="./app-version-v1.js"></script>';
-const FAMILIAR_RECOMMENDATIONS_SCRIPT = '<script src="./familiar-recommendations-v1.js"></script>';
-const LONG_TERM_GROWTH_SCRIPT = '<script src="./long-term-growth-v1.js"></script>';\nconst WORKOUT_FLOW_SCRIPT = '<script src="./workout-flow-v1.js"></script>';
+const CACHE = 'gym-tracker-v39';
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)).catch(() => {}));
+const LOGIC_ASSETS = [
+  './training-engine-v1.js',
+  './coach-logic-v2.js',
+  './latest-weight-v1.js',
+  './record-recommendation-v1.js',
+  './auto-rest-v1.js',
+  './daily-plan-v1.js',
+  './familiar-recommendations-v1.js',
+  './long-term-growth-v1.js',
+  './workout-flow-v1.js',
+  './app-version-v1.js',
+];
+
+const ASSETS = ['./', './index.html', './manifest.webmanifest', ...LOGIC_ASSETS];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).catch(() => {}));
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))
     )
   );
   self.clients.claim();
@@ -28,59 +34,59 @@ async function injectAppLogic(response) {
   const type = response.headers.get('content-type') || '';
   if (!type.includes('text/html')) return response;
 
-  const html = await response.text();
-  let patched = html;
-  if (!patched.includes('coach-logic-v2.js')) patched = patched.replace('</body>', `${COACH_SCRIPT}\n</body>`);
-  if (!patched.includes('latest-weight-v1.js')) patched = patched.replace('</body>', `${WEIGHT_SCRIPT}\n</body>`);
-  if (!patched.includes('record-recommendation-v1.js')) patched = patched.replace('</body>', `${RECORD_RECOMMENDATION_SCRIPT}\n</body>`);
-  if (!patched.includes('auto-rest-v1.js')) patched = patched.replace('</body>', `${AUTO_REST_SCRIPT}\n</body>`);
-  if (!patched.includes('daily-plan-v1.js')) patched = patched.replace('</body>', `${DAILY_PLAN_SCRIPT}\n</body>`);
-  if (!patched.includes('app-version-v1.js')) patched = patched.replace('</body>', `${APP_VERSION_SCRIPT}\n</body>`);
-  if (!patched.includes('familiar-recommendations-v1.js')) patched = patched.replace('</body>', `${FAMILIAR_RECOMMENDATIONS_SCRIPT}\n</body>`);
-  if (!patched.includes('long-term-growth-v1.js')) patched = patched.replace('</body>', `${LONG_TERM_GROWTH_SCRIPT}\n</body>`);
+  let html = await response.text();
+  if (!html.includes('training-engine-v1.js')) {
+    const scriptBlock = LOGIC_ASSETS.map((src) => `<script src="${src}"></script>`).join('\n');
+    html = html.replace('</body>', `${scriptBlock}\n</body>`);
+  }
 
   const headers = new Headers(response.headers);
   headers.delete('content-length');
-  return new Response(patched, { status: response.status, statusText: response.statusText, headers });
+  return new Response(html, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
 }
 
-self.addEventListener('fetch', (e) => {
-  if (e.request.method !== 'GET') return;
-  const url = new URL(e.request.url);
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  const isHTML = e.request.mode === 'navigate'
-    || e.request.destination === 'document'
-    || url.pathname.endsWith('.html')
-    || url.pathname === '/' || url.pathname.endsWith('/');
+  const isHTML =
+    event.request.mode === 'navigate' ||
+    event.request.destination === 'document' ||
+    url.pathname.endsWith('.html') ||
+    url.pathname === '/' ||
+    url.pathname.endsWith('/');
 
   if (isHTML) {
-    e.respondWith((async () => {
+    event.respondWith((async () => {
       try {
-        const res = await fetch(e.request, { cache: 'no-store' });
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(e.request, copy));
-        return injectAppLogic(res);
+        const response = await fetch(event.request, { cache: 'no-store' });
+        caches.open(CACHE).then((cache) => cache.put(event.request, response.clone()));
+        return injectAppLogic(response);
       } catch {
-        const cached = await caches.match(e.request) || await caches.match('./index.html');
+        const cached = await caches.match(event.request) || await caches.match('./index.html');
         return injectAppLogic(cached);
       }
     })());
     return;
   }
 
-  e.respondWith(
-    caches.match(e.request).then((cached) => {
-      const fetchPromise = fetch(e.request)
-        .then((res) => {
-          if (res && res.status === 200 && res.type === 'basic') {
-            const copy = res.clone();
-            caches.open(CACHE).then((c) => c.put(e.request, copy));
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      const network = fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            caches.open(CACHE).then((cache) => cache.put(event.request, response.clone()));
           }
-          return res;
+          return response;
         })
         .catch(() => cached);
-      return cached || fetchPromise;
+      return cached || network;
     })
   );
 });
