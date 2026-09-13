@@ -32,7 +32,6 @@
     };
   }
 
-  window.addEventListener('beforeunload', cancelNativeRest);
 
   window.REPSNative = Object.freeze({
     available: nativeAvailable,
