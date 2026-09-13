@@ -202,8 +202,12 @@
   function buildActionForGroup(item, doneTodayNames) {
     const ex = pickExercise(item.g, doneTodayNames);
     if (!ex) return null;
-    const sets = Math.max(2, Math.min(3, Math.ceil(item.deficit || 2)));
-    return { group: item.g, exercise: ex, sets };
+    const selectedIso = typeof todayStr === 'function' ? todayStr() : toISO(new Date());
+    const rec = window.REPSEngine && typeof window.REPSEngine.recommendExercise === 'function'
+      ? window.REPSEngine.recommendExercise(ex, selectedIso)
+      : null;
+    const sets = rec && Number(rec.sets) > 0 ? Number(rec.sets) : Math.max(2, Math.min(3, Math.ceil(item.deficit || 2)));
+    return { group: item.g, exercise: ex, sets, recommendation: rec };
   }
 
   function renderTodayFocusV2(profile, goal, today, todayIso, todaySession, lastSession) {
@@ -298,78 +302,12 @@
     );
   }
 
-  function repRangeForExercise(name) {
-    if (/サイドレイズ|リアレイズ|フライ|カール|トライセ|プレスダウン|アブドミナル/.test(name)) return [10, 15];
-    if (/デッドリフト|スクワット/.test(name)) return [5, 8];
-    return [6, 12];
-  }
-
-  function median(nums) {
-    const a = nums.slice().sort((x, y) => x - y);
-    if (!a.length) return 0;
-    const m = Math.floor(a.length / 2);
-    return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2;
-  }
-
-  function previousWeightStep(w) {
-    if (w > 14) return Math.max(0, w - 5);
-    if (w > 4) return Math.max(0, w - 2);
-    return Math.max(0, w - 2);
-  }
-
-  function computeNextSuggestionV2(name, sessions) {
-    const relevant = sessions
-      .filter((s) => s.exercises.some((e) => e.name === name))
-      .sort((a, b) => a.date.localeCompare(b.date));
-    if (!relevant.length) return null;
-
-    const lastSess = relevant[relevant.length - 1];
-    const lastEx = lastSess.exercises.find((e) => e.name === name);
-    if (!lastEx || !lastEx.sets.length) return null;
-
-    const sets = lastEx.sets;
-    const lastWeight = median(sets.map((s) => Number(s.weight) || 0));
-    const reps = sets.map((s) => Number(s.reps) || 0);
-    const avgReps = reps.reduce((a, b) => a + b, 0) / reps.length;
-    const rpes = sets.map((s) => s.rpe).filter(Boolean);
-    const limitRate = rpes.length ? rpes.filter((x) => x === 3).length / rpes.length : 0;
-    const easyRate = rpes.length ? rpes.filter((x) => x === 1).length / rpes.length : 0;
-    const [lo, hi] = repRangeForExercise(name);
-
-    let weight = lastWeight;
-    let targetReps = Math.max(lo, Math.min(hi, Math.round(avgReps)));
-    let targetSets = Math.max(2, Math.min(4, sets.length));
-    let reason = '';
-
-    if (avgReps < lo || (limitRate >= 0.67 && avgReps <= lo + 1)) {
-      weight = previousWeightStep(lastWeight);
-      targetReps = lo;
-      targetSets = 3;
-      reason = `前回は${Math.round(avgReps)}回平均で限界寄り。1段下げて${lo}回から積み直す`;
-    } else if (reps.every((r) => r >= hi) && limitRate < 0.5) {
-      weight = nextWeightStep(lastWeight);
-      targetReps = lo;
-      targetSets = 3;
-      reason = `前回は全セット${hi}回以上。重量を1段上げ、${lo}回から再スタート`;
-    } else if (avgReps >= hi - 1 && easyRate >= 0.5) {
-      weight = nextWeightStep(lastWeight);
-      targetReps = lo;
-      targetSets = 3;
-      reason = '前回は余裕あり。重量を1段上げるタイミング';
-    } else {
-      weight = lastWeight;
-      targetReps = Math.min(hi, Math.max(lo, Math.floor(avgReps) + 1));
-      targetSets = Math.max(2, Math.min(3, sets.length));
-      reason = `重量は据え置き。まず平均${targetReps}回まで伸ばし、上限到達後に重量UP`;
-    }
-
-    return {
-      weight: snapWeight(weight),
-      reps: targetReps,
-      sets: targetSets,
-      reason,
-      daysSince: dateDiffDays(toISO(new Date()), lastSess.date),
-    };
+  function computeNextSuggestionCanonical(name) {
+    if (!window.REPSEngine || typeof window.REPSEngine.recommendExercise !== 'function') return null;
+    const selectedIso = (typeof dateInput !== 'undefined' && dateInput && dateInput.value)
+      ? dateInput.value
+      : (typeof todayStr === 'function' ? todayStr() : toISO(new Date()));
+    return window.REPSEngine.recommendExercise(name, selectedIso);
   }
 
   function patchDiagnosis(profile, goal) {
@@ -407,7 +345,7 @@
   }
 
   renderTodayFocus = renderTodayFocusV2;
-  computeNextSuggestion = computeNextSuggestionV2;
+  computeNextSuggestion = computeNextSuggestionCanonical;
   freqTargetFor = function () { return 2; };
 
   const renderCoachBase = renderCoach;
