@@ -3611,19 +3611,45 @@ function insightIconPath(kind) {
 
 function renderHistory() {
   const sessions = filteredSessions();
-  const totalSets = sessions.reduce((a, s) => a + sessionSetCount(s), 0);
-  document.getElementById('statSessions').textContent = sessions.length;
+  const summaries = Array.isArray(state.sessionSummaries) ? state.sessionSummaries : [];
+  const observations = Array.isArray(state.exerciseObservations) ? state.exerciseObservations : [];
+
+  const fullDates = new Set(sessions.map(s => s.date));
+  const partialByDate = new Map();
+
+  for (const o of observations) {
+    if (fullDates.has(o.date)) continue;
+    if (!partialByDate.has(o.date)) partialByDate.set(o.date, { date: o.date, observations: [], summary: null });
+    partialByDate.get(o.date).observations.push(o);
+  }
+  for (const s of summaries) {
+    if (fullDates.has(s.date)) continue;
+    if (!partialByDate.has(s.date)) partialByDate.set(s.date, { date: s.date, observations: [], summary: null });
+    partialByDate.get(s.date).summary = s;
+  }
+
+  const partials = [...partialByDate.values()];
+  const totalSets = sessions.reduce((a, s) => a + sessionSetCount(s), 0)
+    + partials.reduce((a, p) => a + (Number(p.summary?.totalSets) || 0), 0);
+
+  document.getElementById('statSessions').textContent = sessions.length + partials.length;
   document.getElementById('statSets').textContent = totalSets;
   document.getElementById('statStreak').textContent = computeStreak();
 
   renderVolumeChart();
   generateInsights();
   renderExerciseProgress();
-  document.getElementById('historyHead').style.display = sessions.length ? 'flex' : 'none';
+
+  const allItems = [
+    ...sessions.map(s => ({ kind: 'full', date: s.date, session: s })),
+    ...partials.map(p => ({ kind: 'partial', date: p.date, partial: p })),
+  ].sort((a, b) => b.date.localeCompare(a.date));
+
+  document.getElementById('historyHead').style.display = allItems.length ? 'flex' : 'none';
 
   const list = document.getElementById('historyList');
   list.innerHTML = '';
-  if (!sessions.length) {
+  if (!allItems.length) {
     list.innerHTML = `
       <div class="empty">
         <div class="empty-ic">
@@ -3634,14 +3660,75 @@ function renderHistory() {
       </div>`;
     return;
   }
-  sessions.forEach(s => {
+
+  allItems.forEach(item => {
+    if (item.kind === 'partial') {
+      const p = item.partial;
+      const dt = parseISO(p.date);
+      const isWeekend = dt.getDay() === 0 || dt.getDay() === 6;
+      const card = document.createElement('div');
+      card.className = 'session';
+
+      const total = Number(p.summary?.totalSets) || 0;
+      const obsCount = p.observations.length;
+      card.innerHTML = `
+        <div class="session-head">
+          <div class="day">
+            <span class="d num">${dt.getDate()}</span>
+            <span class="m">${dt.getMonth() + 1}月</span>
+            <span class="w ${isWeekend ? 'weekend' : ''}">${WEEKDAYS_JP[dt.getDay()]}</span>
+          </div>
+          <div class="session-meta">
+            <div class="v">${total ? `<span class="num">${total}</span> セット` : '部分記録'}</div>
+            <div class="l">${obsCount ? `${obsCount} 種目確認済み` : '詳細未取得'}</div>
+          </div>
+        </div>
+        <div class="session-body" data-body></div>
+        <div style="padding:12px 0 2px;color:var(--muted);font-size:11px;line-height:1.6;border-top:1px solid var(--border-soft);">
+          スクショ等で確認できた情報のみ保存。未確認のセット数・RPEは補完していません
+        </div>
+      `;
+
+      const body = card.querySelector('[data-body]');
+      for (const o of p.observations) {
+        const block = document.createElement('div');
+        block.className = 'ex-block';
+        block.innerHTML = `
+          <div class="ex-name">
+            <span>${escapeHTML(o.exercise)}</span>
+            <span class="vol">部分記録</span>
+          </div>
+          <div class="set-list">
+            <span class="set-pill"><strong>${fmtNum(Number(o.weight))}kg</strong> × ${Number(o.reps)} <span style="color:var(--muted);">詳細未取得</span></span>
+          </div>
+        `;
+        body.appendChild(block);
+      }
+
+      if (p.summary && !p.observations.length) {
+        const block = document.createElement('div');
+        block.className = 'ex-block';
+        block.innerHTML = `
+          <div class="ex-name">
+            <span>当日セッション</span>
+            <span class="vol">${total ? total + 'セット確認済み' : '部分記録'}</span>
+          </div>
+          <div style="color:var(--muted);font-size:12px;line-height:1.7;">種目別の重量・回数・RPEは未取得</div>
+        `;
+        body.appendChild(block);
+      }
+
+      list.appendChild(card);
+      return;
+    }
+
+    const s = item.session;
     const card = document.createElement('div');
     card.className = 'session';
-    const vol = sessionVolume(s);
     const dt = parseISO(s.date);
     const isWeekend = dt.getDay() === 0 || dt.getDay() === 6;
-
     const sets = sessionSetCount(s);
+
     card.innerHTML = `
       <div class="session-head">
         <div class="day">
@@ -3660,6 +3747,7 @@ function renderHistory() {
         <button class="ghost small" data-del style="color:var(--danger);">削除</button>
       </div>
     `;
+
     const body = card.querySelector('[data-body]');
     s.exercises.forEach(ex => {
       const block = document.createElement('div');
@@ -3695,6 +3783,7 @@ function renderHistory() {
       onDateChange();
       showTab('record');
     });
+
     card.querySelector('[data-del]').addEventListener('click', () => {
       if (!confirm(`${fmtDateLong(s.date)} の記録を削除しますか？`)) return;
       state.sessions = state.sessions.filter(x => x.id !== s.id);
