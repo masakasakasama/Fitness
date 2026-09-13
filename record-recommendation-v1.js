@@ -134,16 +134,41 @@
     let targetSets = Math.max(2, Math.min(3, workSets.length || 3));
     const reasons = [];
 
-    if (days >= 21) {
-      weight = prevStep(workWeight);
-      targetReps = lo;
-      targetSets = 3;
-      reasons.push(`前回から${days}日空いているため、復帰初回は1段階落として再開`);
+    if (days >= 42) {
+      const candidate = prevStep(workWeight);
+      const dropRate = workWeight > 0 ? (workWeight - candidate) / workWeight : 0;
+      const canReduceWithoutOvershoot = dropRate > 0 && dropRate <= 0.20;
+      if (canReduceWithoutOvershoot && (rpe.limitRate >= 0.5 || avgReps <= lo + 1)) {
+        weight = candidate;
+        targetReps = lo;
+        targetSets = 2;
+        reasons.push(`前回から${days}日空いており、前回も高負荷寄り。重量差が${Math.round(dropRate * 100)}%以内なので1段階だけ落とす`);
+      } else {
+        weight = workWeight;
+        targetReps = Math.max(lo, Math.min(hi, Math.floor(avgReps) - 2));
+        targetSets = 2;
+        reasons.push(`前回から${days}日空いているが、${fmtNum(workWeight)}kg→${fmtNum(candidate)}kgは${Math.round(dropRate * 100)}%低下で落としすぎ。重量は維持し、回数とセット数を下げて復帰`);
+      }
+    } else if (days >= 28) {
+      const candidate = prevStep(workWeight);
+      const dropRate = workWeight > 0 ? (workWeight - candidate) / workWeight : 0;
+      const priorWasHard = rpe.limitRate >= 0.5 || avgReps <= lo + 1;
+      if (priorWasHard && dropRate > 0 && dropRate <= 0.15) {
+        weight = candidate;
+        targetReps = lo;
+        targetSets = 2;
+        reasons.push(`前回から${days}日空き、前回も高負荷寄り。1段階の低下が${Math.round(dropRate * 100)}%なので軽くして再開`);
+      } else {
+        weight = workWeight;
+        targetReps = Math.max(lo, Math.min(hi, Math.floor(avgReps) - 2));
+        targetSets = 2;
+        reasons.push(`前回から${days}日空いているためボリュームだけ落とす。重量は前回と同じで、まず${targetReps}回×2セットを確認`);
+      }
     } else if (days >= 14) {
-      weight = prevStep(workWeight);
-      targetReps = Math.max(lo, Math.min(hi, Math.round(avgReps)));
-      targetSets = 3;
-      reasons.push(`前回から${days}日空いているため、筋力低下を見込み1段階落とす`);
+      weight = workWeight;
+      targetReps = Math.max(lo, Math.min(hi, Math.floor(avgReps) - 2));
+      targetSets = 2;
+      reasons.push(`前回から${days}日空いているが、2〜3週間の空白だけで重量は自動減量しない。前回重量を維持し、回数を${targetReps}回・2セットに落として復帰`);
     } else if (highGroupFatigue) {
       if (rpe.limitRate >= 0.5 || avgReps <= lo + 1) {
         weight = prevStep(workWeight);
@@ -199,7 +224,7 @@
       lines.push(`${group}全体: ${groupLoad.sets}セット${groupLoad.limitSets ? `、限界${groupLoad.limitSets}セット` : ''}`);
     }
     lines.push(...reasons);
-    lines.push(`進行ルール: ${lo}〜${hi}回の範囲で回数を先に伸ばし、上限を安定達成したら重量を1段階上げる`);
+    lines.push(`進行ルール: ${lo}〜${hi}回の範囲で回数を先に伸ばし、上限を安定達成したら重量を1段階上げる。休止後は重量を機械的に落とさず、まず回数・セット数を下げて再評価`);
 
     return {
       weight,
