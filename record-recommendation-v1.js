@@ -274,6 +274,16 @@
     if (value) value.textContent = rec.title;
     if (logic) logic.innerHTML = rec.lines.map((line) => `<div>・${escapeHTML(line)}</div>`).join('');
     if (details) details.open = false;
+
+    // A recommendation should be immediately usable. On a fresh exercise, prefill
+    // the working-set controls instead of leaving stale values from the previous session.
+    if (Array.isArray(pendingSets) && pendingSets.length === 0
+        && !(Array.isArray(editingGroupIndices) && editingGroupIndices.length)) {
+      if (Number.isFinite(Number(rec.weight)) && Number(rec.weight) >= 0) setInputWeight(rec.weight);
+      if (Number(rec.reps) > 0) inputReps.value = rec.reps;
+      if (Number(rec.sets) > 0) inputSets.value = rec.sets;
+      if (typeof refreshAddBtnLabel === 'function') refreshAddBtnLabel();
+    }
   }
 
   const baseSelectExercise = selectExercise;
