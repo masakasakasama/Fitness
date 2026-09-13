@@ -28,6 +28,7 @@ jobs:
         run: |
           rm -rf android/app/src/main/assets
           mkdir -p android/app/src/main/assets
+          node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync('data.json','utf8'));fs.writeFileSync('android/app/src/main/assets/bundled-data-v1.js','window.REPS_BUNDLED_DATA = '+JSON.stringify(d)+';\n')"
           cp index.html android/app/src/main/assets/
           cp data.json android/app/src/main/assets/
           cp manifest.webmanifest android/app/src/main/assets/
@@ -66,13 +67,13 @@ jobs:
 
       - name: Prepare APK
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk REPS-v0.5.0.apk
-          ls -lh REPS-v0.5.0.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk REPS-v0.5.1.apk
+          ls -lh REPS-v0.5.1.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: REPS-v0.5.0-apk
-          path: REPS-v0.5.0.apk
+          name: REPS-v0.5.1-apk
+          path: REPS-v0.5.1.apk
           if-no-files-found: error
 
