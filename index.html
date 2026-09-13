@@ -1406,6 +1406,33 @@ function loadState() {
     if (!parsed.updatedAt) parsed.updatedAt = 0;
     if (!parsed.profile) parsed.profile = null;
     if (!parsed.hiit) parsed.hiit = { prep: 10, work: 20, rest: 30, sets: 4, sound: true, voice: true };
+
+    // APK updates ship a known-good baseline snapshot. Merge it without deleting
+    // anything recorded locally after installation.
+    if (window.REPS_BUNDLED_DATA) {
+      const bundled = JSON.parse(JSON.stringify(window.REPS_BUNDLED_DATA));
+
+      const sessionByDate = new Map((bundled.sessions || []).map(s => [s.date, s]));
+      for (const s of parsed.sessions) sessionByDate.set(s.date, s);
+      parsed.sessions = [...sessionByDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+
+      const weightByDate = new Map((bundled.weights || []).map(w => [w.date, w]));
+      for (const w of parsed.weights) weightByDate.set(w.date, { ...(weightByDate.get(w.date) || {}), ...w });
+      parsed.weights = [...weightByDate.values()].sort((a, b) => a.date.localeCompare(b.date));
+
+      const exerciseByName = new Map((bundled.exercises || []).map(e => [e.name, e]));
+      for (const e of parsed.exercises) exerciseByName.set(e.name, e);
+      parsed.exercises = [...exerciseByName.values()];
+
+      const latestLocalWeight = parsed.weights.length ? parsed.weights[parsed.weights.length - 1].weight : null;
+      parsed.profile = {
+        ...(bundled.profile || {}),
+        ...(parsed.profile || {}),
+        ...(latestLocalWeight != null ? { weight: latestLocalWeight } : {}),
+      };
+      parsed.updatedAt = Math.max(Number(parsed.updatedAt) || 0, Number(bundled.updatedAt) || 0);
+    }
+
     return parsed;
   } catch {
     return initialState();
