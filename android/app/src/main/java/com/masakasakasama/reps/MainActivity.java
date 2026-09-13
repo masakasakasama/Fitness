@@ -2,12 +2,16 @@ package com.masakasakasama.reps;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -71,6 +75,7 @@ public class MainActivity extends Activity {
         });
 
         requestNotificationPermission();
+        requestExactAlarmPermission();
         RestAlarmReceiver.ensureNotificationChannel(this);
         webView.loadUrl(SITE_URL);
     }
@@ -81,6 +86,30 @@ public class MainActivity extends Activity {
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 4101);
         }
+    }
+
+    private void requestExactAlarmPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
+
+        AlarmManager alarmManager =
+                (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager.canScheduleExactAlarms()) return;
+
+        new AlertDialog.Builder(this)
+                .setTitle("レスト通知を正確にする")
+                .setMessage("60・90・120秒の終了通知を遅れにくくするため、「アラームとリマインダー」を許可してください。")
+                .setNegativeButton("あとで", null)
+                .setPositiveButton("設定を開く", (dialog, which) -> {
+                    try {
+                        Intent intent = new Intent(
+                                Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                                Uri.parse("package:" + getPackageName())
+                        );
+                        startActivity(intent);
+                    } catch (Exception ignored) {
+                    }
+                })
+                .show();
     }
 
     @Override
