@@ -2409,56 +2409,11 @@ function progressTipFor(points) {
 }
 
 function computeNextSuggestion(name, sessions, profile) {
-  const points = exerciseStats(name, sessions);
-  if (!points.length) return null;
-  const lastSess = sessions.filter(s => s.exercises.some(e => e.name === name)).pop();
-  const lastEx = lastSess.exercises.find(e => e.name === name);
-  const lastSet = lastEx.sets[lastEx.sets.length - 1];
-  const lastSetsCount = lastEx.sets.length;
-  const goal = profile ? getGoalKind(profile) : 'maintain';
-  const repRange = repRangeFor(goal);
-
-  const recent = points.slice(-3);
-  const rpes = [];
-  for (const s of sessions.slice(-3)) {
-    const ex = s.exercises.find(e => e.name === name);
-    if (ex) for (const set of ex.sets) if (set.rpe) rpes.push(set.rpe);
-  }
-  const avgRpe = rpes.length ? rpes.reduce((a, b) => a + b, 0) / rpes.length : null;
-
-  let nextW = lastSet.weight, nextR = lastSet.reps, nextSets = lastSetsCount, reason;
-
-  if (lastSet.reps < repRange[0]) {
-    nextW = snapWeight(lastSet.weight * 0.85);
-    nextR = repRange[0];
-    reason = `前回${lastSet.reps}回は強度高すぎ。${goal === 'bulk' ? '筋肥大目的なら' : ''}${repRange[0]}-${repRange[1]}回が効率的`;
-  } else if (recent.length >= 3 && recent.every(p => p.maxW === recent[0].maxW) && avgRpe !== null && avgRpe <= 1.5) {
-    nextW = nextWeightStep(recent[0].maxW);
-    nextR = repRange[0];
-    reason = `直近3回${fmtNum(recent[0].maxW)}kgで「余裕」続き → 重量UP`;
-  } else if (avgRpe !== null && avgRpe >= 2.6) {
-    nextW = snapWeight(lastSet.weight * 0.9);
-    nextR = repRange[0];
-    reason = '「限界」続き → 1段下げてレップ数を稼ぐ';
-  } else if (lastSet.reps < repRange[1]) {
-    nextR = lastSet.reps + 1;
-    reason = `${nextR}回目標。${repRange[1]}回できたら重量UP`;
-  } else if (lastSet.reps >= repRange[1]) {
-    nextW = nextWeightStep(lastSet.weight);
-    nextR = repRange[0];
-    reason = `${repRange[1]}回到達 → 重量を上げてリスタート`;
-  } else {
-    reason = `前回 ${fmtNum(lastSet.weight)}kg × ${lastSet.reps}回 を維持`;
-  }
-
-  const today = new Date();
-  const daysSince = Math.floor((parseISO(toISO(today)) - parseISO(lastSess.date)) / 86400000);
-  if (daysSince >= 14) {
-    nextW = snapWeight(lastSet.weight * 0.9);
-    reason = `${daysSince}日ぶり。1段下げて感覚を取り戻す`;
-  }
-
-  return { weight: nextW, reps: nextR, sets: nextSets, reason, daysSince, lastSet, lastSession: lastSess };
+  if (!window.REPSEngine || typeof window.REPSEngine.recommendExercise !== 'function') return null;
+  const selectedIso = (typeof dateInput !== 'undefined' && dateInput && dateInput.value)
+    ? dateInput.value
+    : (typeof todayStr === 'function' ? todayStr() : new Date().toISOString().slice(0, 10));
+  return window.REPSEngine.recommendExercise(name, selectedIso);
 }
 
 function buildBigChart(points) {
