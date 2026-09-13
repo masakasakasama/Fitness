@@ -949,17 +949,37 @@
       "proteinPct": 24.5,
       "leanMass": 58.4,
       "source": "chocozap"
+    },
+    {
+      "date": "2026-08-10",
+      "weight": 69.6,
+      "source": "health-data"
+    },
+    {
+      "date": "2026-08-17",
+      "weight": 69.4,
+      "bmi": 20.7,
+      "bodyFat": 14.4,
+      "bodyWater": 57.1,
+      "muscleMassPct": 46.1,
+      "boneMass": 3.3,
+      "bmr": 1669,
+      "visceralFatLevel": 4,
+      "bodyAge": 20,
+      "proteinPct": 23.7,
+      "leanMass": 59.4,
+      "source": "body-composition"
     }
   ],
   "profile": {
     "height": 183,
-    "weight": 66.9,
+    "weight": 69.4,
     "goalWeight": 70,
-    "age": null,
+    "age": 29,
     "sex": "male",
     "activity": 1.55
   },
-  "updatedAt": 1785558798687,
+  "updatedAt": 1789285440000,
   "hiit": {
     "prep": 10,
     "work": 20,
