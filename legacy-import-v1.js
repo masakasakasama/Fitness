@@ -96,7 +96,9 @@
 
       const merged = mergeState(current || window.REPS_BUNDLED_DATA || {}, legacy);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-      localStorage.setItem('reps-legacy-migrated-at', String(Date.now()));
+      // The data save above is authoritative; optional bookkeeping must not
+      // turn an already saved migration into a reported failure.
+      try { localStorage.setItem('reps-legacy-migrated-at', String(Date.now())); } catch {}
 
       const sessionCount = merged.sessions.length;
       const setTotal = merged.sessions.reduce((sum, s) => sum + setCount(s), 0);
