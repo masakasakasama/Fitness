@@ -4149,8 +4149,8 @@ const hiitModal = document.getElementById('hiitModal');
 let hiitAudioCtx = null;
 let hiitState = null; // { seq, idx, remaining, paused, rafId, endAt }
 
-function hiitBeep(freq, dur, vol) {
-  if (!state.hiit.sound) return;
+function hiitBeep(freq, dur, vol, force) {
+  if (!force && !state.hiit.sound) return;
   try {
     if (!hiitAudioCtx) hiitAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const o = hiitAudioCtx.createOscillator();
@@ -4458,9 +4458,10 @@ function startRest(sec) {
     const rem = Math.max(0, Math.ceil((restState.endAt - Date.now()) / 1000));
     const rc = document.getElementById('restCount');
     if (rc) rc.textContent = rem + 's';
-    if (rem <= 3 && rem >= 1 && rem !== restState.lastBeep) { restState.lastBeep = rem; hiitBeep(700, 0.1, 0.25); }
+    if (rem <= 3 && rem >= 1 && rem !== restState.lastBeep) { restState.lastBeep = rem; hiitBeep(700, 0.1, 0.25, true); }
     if (restState.endAt - Date.now() <= 0) {
-      hiitBeep(990, 0.3, 0.4);
+      // Android APK: the native notification plays the end alarm, so skip the web beep to avoid doubling.
+      if (typeof window.RepsAndroid === 'undefined') hiitBeep(990, 0.3, 0.4, true);
       hiitSpeak('レスト終了');
       stopRest();
       return;

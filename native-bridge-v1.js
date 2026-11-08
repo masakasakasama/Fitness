@@ -27,7 +27,10 @@
   if (typeof window.stopRest === 'function') {
     const baseStopRest = window.stopRest;
     window.stopRest = function () {
-      cancelNativeRest();
+      // When the countdown ends naturally, let the native alarm fire instead of cancelling it.
+      const finishedNaturally = typeof restState !== 'undefined' && restState
+        && Number(restState.endAt) - Date.now() <= 0;
+      if (!finishedNaturally) cancelNativeRest();
       return baseStopRest.apply(this, arguments);
     };
   }

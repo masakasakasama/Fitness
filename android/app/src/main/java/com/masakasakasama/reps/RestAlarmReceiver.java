@@ -22,10 +22,9 @@ public class RestAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         ensureNotificationChannel(context);
 
-        if (MainActivity.isInForeground()) {
-            return;
-        }
-
+        // Always post the notification, even while the app is open.
+        // WebView audio is unreliable (autoplay policy, paused timers, media volume 0),
+        // so the native notification is the single reliable source of the end-of-rest alarm.
         NotificationManager nm =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 

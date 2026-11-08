@@ -1,4 +1,4 @@
-const CACHE = 'gym-tracker-v40';
+const CACHE = 'gym-tracker-v41';
 
 const LOGIC_ASSETS = [
   './training-engine-v1.js',

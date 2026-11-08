@@ -59,6 +59,11 @@
     if (!restState || !window.__autoRestStartedAt) return;
     restState.sec = sec;
     restState.endAt = window.__autoRestStartedAt + sec * 1000;
+    // Keep the native Android alarm in sync with the adjusted end time.
+    const remainingSec = Math.ceil((restState.endAt - Date.now()) / 1000);
+    if (remainingSec >= 1 && window.REPSNative && typeof window.REPSNative.scheduleRest === 'function') {
+      window.REPSNative.scheduleRest(remainingSec);
+    }
     setAdvisorRest(sec);
   }
 
