@@ -11,10 +11,14 @@ import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.SystemClock;
-import android.provider.Settings;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 
 public class RestAlarmReceiver extends BroadcastReceiver {
-    private static final String CHANNEL_ID = "reps_rest";
+    // Channel settings are immutable once created, so the vibrate-only channel uses a new ID.
+    private static final String CHANNEL_ID = "reps_rest_vibrate";
+    private static final String LEGACY_CHANNEL_ID = "reps_rest";
+    private static final long[] VIBRATION_PATTERN = {0, 400, 150, 400, 150, 600};
     private static final int ALARM_REQUEST_CODE = 4100;
     private static final int NOTIFICATION_ID = 4100;
 
@@ -22,9 +26,9 @@ public class RestAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         ensureNotificationChannel(context);
 
-        // Always post the notification, even while the app is open.
-        // WebView audio is unreliable (autoplay policy, paused timers, media volume 0),
-        // so the native notification is the single reliable source of the end-of-rest alarm.
+        // Vibrate only (no sound). Vibrate directly so it works whether the app is open or not.
+        vibrate(context);
+
         NotificationManager nm =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -51,13 +55,6 @@ public class RestAlarmReceiver extends BroadcastReceiver {
                 .setPriority(android.app.Notification.PRIORITY_HIGH)
                 .setCategory(android.app.Notification.CATEGORY_ALARM);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            builder.setDefaults(
-                    android.app.Notification.DEFAULT_SOUND
-                            | android.app.Notification.DEFAULT_VIBRATE
-            );
-        }
-
         nm.notify(NOTIFICATION_ID, builder.build());
     }
 
@@ -67,6 +64,10 @@ public class RestAlarmReceiver extends BroadcastReceiver {
         NotificationManager nm =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        if (nm.getNotificationChannel(LEGACY_CHANNEL_ID) != null) {
+            nm.deleteNotificationChannel(LEGACY_CHANNEL_ID);
+        }
+
         NotificationChannel existing = nm.getNotificationChannel(CHANNEL_ID);
         if (existing != null) return;
 
@@ -75,18 +76,24 @@ public class RestAlarmReceiver extends BroadcastReceiver {
                 "レストタイマー",
                 NotificationManager.IMPORTANCE_HIGH
         );
-        channel.setDescription("セット間レスト終了を通知");
-        channel.enableVibration(true);
-        channel.setVibrationPattern(new long[]{0, 250, 120, 350});
+        channel.setDescription("セット間レスト終了をバイブで通知（音なし）");
+        // Vibration is played directly in onReceive; the channel itself stays silent.
+        channel.setSound(null, null);
+        channel.enableVibration(false);
         channel.enableLights(true);
         channel.setLightColor(Color.YELLOW);
-        channel.setSound(
-                Settings.System.DEFAULT_NOTIFICATION_URI,
+        nm.createNotificationChannel(channel);
+    }
+
+    private static void vibrate(Context context) {
+        Vibrator vibrator = context.getSystemService(Vibrator.class);
+        if (vibrator == null || !vibrator.hasVibrator()) return;
+        vibrator.vibrate(
+                VibrationEffect.createWaveform(VIBRATION_PATTERN, -1),
                 new AudioAttributes.Builder()
                         .setUsage(AudioAttributes.USAGE_ALARM)
                         .build()
         );
-        nm.createNotificationChannel(channel);
     }
 
     public static void schedule(Context context, int seconds) {
