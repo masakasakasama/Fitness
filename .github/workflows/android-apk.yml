@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "claude/gym-tracking-app-SVUkz"
+      - "ccr-3ea4b4b6-qohja9"
     paths:
       - "android/**"
       - "index.html"
