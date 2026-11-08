@@ -1,7 +1,7 @@
 # REPS / Fitness
 
 現在のAndroid同梱UIはv0.5.4。既定ブランチは`claude/gym-tracking-app-SVUkz`。
-Android APKのビルドは`.github/workflows/android-apk.yml`、実行結果の`REPS-v0.5.4-apk` artifactから取得する。
+Android APKのビルドは`.github/workflows/android-apk.yml`、実行結果の`REPS-v0.5.5-apk` artifactから取得する。
 GitHub Pagesの現行workflowは`migrate.html`だけを配信する移行ヘルパーであり、REPS本体のWeb公開とは区別する。
 
 以下は元のWebアプリの利用方法。最新Androidの実機動作は個別に検証する。
